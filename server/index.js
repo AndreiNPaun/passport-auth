@@ -1,0 +1,67 @@
+const express = require('express');
+const mongoose = require('mongoose');
+const morgan = require('morgan');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const https = require('https');
+const fs = require('fs');
+const dotenv = require('dotenv');
+dotenv.config();
+
+// Read the certificate and key
+const privateKey = fs.readFileSync('../certs/localhost.key', 'utf8');
+const certificate = fs.readFileSync('../certs/localhost.crt', 'utf8');
+
+const credentials = { key: privateKey, cert: certificate };
+
+// Routes
+const authRoute = require('./routes/users');
+const passport = require('./middleware/passport');
+
+mongoose.connect('mongodb://localhost:27017/auth', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+const db = mongoose.connection;
+
+db.on('error', (error) => {
+  console.error(error);
+});
+
+db.once('open', () => {
+  console.log('Database Connected');
+});
+
+const app = express();
+
+app.use(morgan('dev'));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(
+  cors({
+    origin: 'https://localhost:3000',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'Access-Control-Allow-Origin',
+    ],
+  })
+);
+app.use(cookieParser());
+
+app.use(passport.initialize());
+
+app.get('/', (req, res) => {
+  res.send('<h1>Server is running</h1>');
+});
+
+app.use('/', authRoute);
+
+// Create the HTTPS server and listen on port 8000
+const httpsServer = https.createServer(credentials, app);
+httpsServer.listen(8000, () => {
+  console.log(`Server is running on port 8000`);
+});
