@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+
+import httpRequest from '../../utils/httpRequest';
 
 import styles from './Form.module.css';
 
@@ -43,11 +44,10 @@ const Form = () => {
 
     try {
       console.log(userData);
-      const response = await axios.post(
+      const response = httpRequest(
+        'post',
         `${process.env.REACT_APP_SERVER_URL}/user-data`,
-        {
-          userData,
-        }
+        { userData }
       );
 
       if (response.status === 200) {

@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
 
 import Login from '../components/Authentication/Login';
 import LoggedIn from '../components/LoggedIn';
 import Logout from '../components/Authentication/Logout';
+import httpRequest from '../utils/httpRequest';
 
 const Homepage = () => {
   const login = useSelector((state) => state.login.loginCheck);
@@ -12,10 +12,9 @@ const Homepage = () => {
   useEffect(() => {
     const refreshExpiredToken = async () => {
       try {
-        await axios.post(
-          `${process.env.REACT_APP_SERVER_URL}/refresh-token`,
-          {},
-          { withCredentials: true }
+        await httpRequest(
+          'post',
+          `${process.env.REACT_APP_SERVER_URL}/refresh-token`
         );
         console.log('Token refresh successfully.');
       } catch (error) {

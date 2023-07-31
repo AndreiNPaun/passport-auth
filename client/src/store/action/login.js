@@ -1,4 +1,4 @@
-import axios from 'axios';
+import httpRequest from '../../utils/httpRequest';
 
 import { loginActions } from '../slice/login';
 
@@ -25,13 +25,7 @@ export const unsetToken = () => {
       localStorage.removeItem('isLoggedIn');
 
       // Send the logout request to the server
-      await axios.post(
-        `${process.env.REACT_APP_SERVER_URL}/logout`,
-        {},
-        {
-          withCredentials: true,
-        }
-      );
+      await httpRequest('post', `${process.env.REACT_APP_SERVER_URL}/logout`);
     } catch (error) {
       console.log(error);
     }
