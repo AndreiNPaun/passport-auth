@@ -15,7 +15,7 @@ passport.use(
     {
       clientID: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: '/auth/github/callback',
+      callbackURL: process.env.GITHUB_CALLBACK,
     },
     async (accessToken, refreshToken, profile, done) => {
       console.log('GitHub Profile:', profile);
@@ -64,7 +64,7 @@ passport.use(
     {
       clientID: process.env.LINKEDIN_CLIENT_ID,
       clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
-      callbackURL: '/auth/linkedin/callback',
+      callbackURL: process.env.LINKEDIN_CALLBACK,
       scope: ['r_emailaddress', 'r_liteprofile'],
     },
     async (accessToken, refreshToken, profile, done) => {
@@ -99,7 +99,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: '/auth/google/callback',
+      callbackURL: process.env.GOOGLE_CALLBACK,
       scope: ['profile', 'email'],
     },
     async (accessToken, refreshToken, profile, done) => {
@@ -134,7 +134,7 @@ passport.use(
     {
       clientID: process.env.MICROSOFT_CLIENT_ID,
       clientSecret: process.env.MICROSOFT_CLIENT_SECRET,
-      callbackURL: '/auth/microsoft/callback',
+      callbackURL: process.env.MICROSOFT_CALLBACK,
       scope: ['user.read'],
       tenant: 'common',
       userAudience: 'All',

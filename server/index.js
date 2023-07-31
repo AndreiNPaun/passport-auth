@@ -9,8 +9,8 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 // Read the certificate and key
-const privateKey = fs.readFileSync('../certs/localhost.key', 'utf8');
-const certificate = fs.readFileSync('../certs/localhost.crt', 'utf8');
+const privateKey = fs.readFileSync(process.env.CERTIFICATE_PATH, 'utf8');
+const certificate = fs.readFileSync(process.env.PRIVATE_KEY_PATH, 'utf8');
 
 const credentials = { key: privateKey, cert: certificate };
 
@@ -18,7 +18,7 @@ const credentials = { key: privateKey, cert: certificate };
 const authRoute = require('./routes/users');
 const passport = require('./middleware/passport');
 
-mongoose.connect('mongodb://localhost:27017/auth', {
+mongoose.connect(process.env.MONGODB_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -26,7 +26,7 @@ mongoose.connect('mongodb://localhost:27017/auth', {
 const db = mongoose.connection;
 
 db.on('error', (error) => {
-  console.error(error);
+  console.error('DB Error:', error);
 });
 
 db.once('open', () => {
@@ -40,18 +40,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(
   cors({
-    origin: 'https://localhost:3000',
+    origin: [process.env.CLIENT_URL, `${process.env.CLIENT_URL}/`],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
-    allowedHeaders: [
-      'Content-Type',
-      'Authorization',
-      'Access-Control-Allow-Origin',
-    ],
+    allowedHeaders: ['Content-Type', 'Access-Control-Allow-Origin'],
   })
 );
 app.use(cookieParser());
-
 app.use(passport.initialize());
 
 app.get('/', (req, res) => {
@@ -60,8 +55,8 @@ app.get('/', (req, res) => {
 
 app.use('/', authRoute);
 
-// Create the HTTPS server and listen on port 8000
+// Create the HTTPS server
 const httpsServer = https.createServer(credentials, app);
-httpsServer.listen(8000, () => {
-  console.log(`Server is running on port 8000`);
+httpsServer.listen(process.env.PORT, () => {
+  console.log(`Server is running on port ${process.env.PORT}`);
 });

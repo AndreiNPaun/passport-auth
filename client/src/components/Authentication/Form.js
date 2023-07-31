@@ -43,9 +43,12 @@ const Form = () => {
 
     try {
       console.log(userData);
-      const response = await axios.post('https://localhost:8000/user-data', {
-        userData,
-      });
+      const response = await axios.post(
+        `${process.env.REACT_APP_SERVER_URL}/user-data`,
+        {
+          userData,
+        }
+      );
 
       if (response.status === 200) {
         navigate('/');

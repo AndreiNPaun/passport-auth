@@ -26,7 +26,7 @@ export const unsetToken = () => {
 
       // Send the logout request to the server
       await axios.post(
-        'https://localhost:8000/logout',
+        `${process.env.REACT_APP_SERVER_URL}/logout`,
         {},
         {
           withCredentials: true,

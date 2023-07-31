@@ -165,7 +165,7 @@ const userData = async (req, res, next) => {
       }
     );
 
-    return res.status(200).redirect('https://localhost:3000');
+    return res.status(200).redirect(process.env.CLIENT_URL);
   }
 
   // If no account has this email, create a new record
@@ -187,7 +187,7 @@ const userData = async (req, res, next) => {
   await newUserAccount.save();
   console.log('User created.');
 
-  res.status(200).redirect('https://localhost:3000');
+  res.status(200).redirect(process.env.CLIENT_URL);
 };
 
 // Refresh Token
@@ -218,7 +218,7 @@ const refreshExpiredToken = (req, res, next) => {
 
         console.log('Newly generated token:', token);
 
-        res
+        return res
           .cookie('token', token, {
             httpOnly: true,
             secure: false,

@@ -38,7 +38,7 @@ const userRedirect = (req, res) => {
       : '';
 
     return res.redirect(
-      `https://localhost:3000/user-form?provider=${providerType}&providerID=${providerID}${givenNameUrl}${familyNameUrl}${emailUrl}${extraParamUrl}`
+      `${process.env.CLIENT_URL}/user-form?provider=${providerType}&providerID=${providerID}${givenNameUrl}${familyNameUrl}${emailUrl}${extraParamUrl}`
     );
   }
 
@@ -58,10 +58,10 @@ const userRedirect = (req, res) => {
         secure: true,
         sameSite: 'Strict',
       })
-      .redirect('https://localhost:3000/login-check?isLoggedIn=true');
+      .redirect(`${process.env.CLIENT_URL}/login-check?isLoggedIn=true`);
   } else {
     console.log('Log In failed.');
-    res.status(401).redirect('https://localhost:3000');
+    res.status(401).redirect(process.env.CLIENT_URL);
   }
 };
 

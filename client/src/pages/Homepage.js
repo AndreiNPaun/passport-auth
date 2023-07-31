@@ -13,7 +13,7 @@ const Homepage = () => {
     const refreshExpiredToken = async () => {
       try {
         await axios.post(
-          'https://localhost:8000/refresh-token',
+          `${process.env.REACT_APP_SERVER_URL}/refresh-token`,
           {},
           { withCredentials: true }
         );
