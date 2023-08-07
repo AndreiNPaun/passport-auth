@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
+import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
 import { setLogin } from '../../store/action/login';
 
 const AuthCheck = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // Login check
   useEffect(() => {
@@ -15,13 +17,13 @@ const AuthCheck = () => {
     try {
       if (isLoggedIn) {
         dispatch(setLogin(isLoggedIn));
+
+        navigate('/');
       }
     } catch (Error) {
       console.log(Error);
     }
   }, []);
-
-  return <></>;
 };
 
 export default AuthCheck;

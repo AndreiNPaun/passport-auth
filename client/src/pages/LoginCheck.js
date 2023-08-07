@@ -1,5 +1,4 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
 
 import AuthCheck from '../components/Authentication/AuthCheck';
 
@@ -8,7 +7,6 @@ const LoginCheck = () => {
     <>
       <p>test</p>
       <AuthCheck />
-      <Navigate to="/" />
     </>
   );
 };

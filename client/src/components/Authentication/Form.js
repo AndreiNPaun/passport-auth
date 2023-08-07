@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import httpRequest from '../../utils/httpRequest';
+import HttpRequest from '../../utils/HttpRequest';
 
 import styles from './Form.module.css';
 
@@ -44,7 +44,7 @@ const Form = () => {
 
     try {
       console.log(userData);
-      const response = httpRequest(
+      const response = HttpRequest(
         'post',
         `${process.env.REACT_APP_SERVER_URL}/user-data`,
         { userData }
