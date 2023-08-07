@@ -6,7 +6,7 @@ import LoggedIn from '../components/LoggedIn';
 import Logout from '../components/Authentication/Logout';
 import httpRequest from '../utils/httpRequest';
 
-const Homepage = () => {
+const HomePage = () => {
   const login = useSelector((state) => state.login.loginCheck);
 
   useEffect(() => {
@@ -37,4 +37,4 @@ const Homepage = () => {
   );
 };
 
-export default Homepage;
+export default HomePage;
