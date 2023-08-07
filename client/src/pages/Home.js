@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 
 import Login from '../components/Authentication/Login';
 import Dashboard from '../components/Dashboard';
-import Logout from '../components/Authentication/Logout';
 import HttpRequest from '../utils/HttpRequest';
 
 const HomePage = () => {
@@ -32,7 +31,6 @@ const HomePage = () => {
       <h1>Authentication</h1>
       {!login && <Login />}
       {login && <Dashboard />}
-      {login && <Logout />}
     </>
   );
 };
