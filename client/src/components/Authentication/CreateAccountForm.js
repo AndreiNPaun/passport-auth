@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import HttpRequest from '../../utils/HttpRequest';
+import httpRequest from '../../utils/httpRequest';
 
 import styles from './Form.module.css';
 
@@ -44,7 +44,7 @@ const CreateAccountForm = () => {
 
     try {
       console.log(userData);
-      const response = HttpRequest(
+      const response = httpRequest(
         'post',
         `${process.env.REACT_APP_SERVER_URL}/user-data`,
         { userData }

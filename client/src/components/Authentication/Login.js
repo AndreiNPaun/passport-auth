@@ -1,9 +1,14 @@
 import React from 'react';
+import { Text, Center, Grid, GridItem, Box } from '@chakra-ui/react';
+import { FaGithub, FaLinkedin, FaGoogle, FaMicrosoft } from 'react-icons/fa';
 
-import styles from './Login.module.css';
+import Card from '../UI/Card';
+import CustomButton from '../UI/ButtonUI';
 
 const Login = () => {
-  // GitHub Authorisation URL Build-Up
+  // Authorisation URL Build-Up
+
+  // GitHub
   const githubAuthorisationURL = () => {
     const CLIENT_ID = process.env.REACT_APP_GITHUB_ID;
     const REDIRECT_URI = `${process.env.REACT_APP_SERVER_URL}/auth/github/callback`;
@@ -12,10 +17,10 @@ const Login = () => {
       REDIRECT_URI
     )}`;
 
-    return AUTHORIZATION_URL;
+    window.location.href = AUTHORIZATION_URL;
   };
 
-  // LinkedIn Authorisation URL Build-Up
+  // LinkedIn
   const linkedinAuthorisationURL = () => {
     const CLIENT_ID = process.env.REACT_APP_LINKEDIN_ID;
     const REDIRECT_URI = `${process.env.REACT_APP_SERVER_URL}/auth/linkedin/callback`;
@@ -24,10 +29,10 @@ const Login = () => {
       REDIRECT_URI
     )}&state=abracadabraSecretStufff69&scope=r_liteprofile%20r_emailaddress`;
 
-    return AUTHORIZATION_URL;
+    window.location.href = AUTHORIZATION_URL;
   };
 
-  // Google Authorisation URL Build-Up
+  // Google
   const googleAuthorisationURL = () => {
     const CLIENT_ID = process.env.REACT_APP_GOOGLE_ID;
     const REDIRECT_URI = `${process.env.REACT_APP_SERVER_URL}/auth/google/callback`;
@@ -36,10 +41,10 @@ const Login = () => {
       REDIRECT_URI
     )}&client_id=${CLIENT_ID}`;
 
-    return AUTHORIZATION_URL;
+    window.location.href = AUTHORIZATION_URL;
   };
 
-  // Microsoft Authorisation URL Build-Up
+  // Microsoft
   const microsoftAuthorisationURL = () => {
     const CLIENT_ID = process.env.REACT_APP_MICROSOFT_ID;
     const REDIRECT_URI = `${process.env.REACT_APP_SERVER_URL}/auth/microsoft/callback`;
@@ -48,25 +53,90 @@ const Login = () => {
       REDIRECT_URI
     )}&response_mode=query&scope=https%3A%2F%2Fgraph.microsoft.com%2Fmail.read&state=avadacadabra12345`;
 
-    return AUTHORIZATION_URL;
+    window.location.href = AUTHORIZATION_URL;
+  };
+
+  const buttonStyle = {
+    w: '85%',
+    m: '0.5rem 2rem',
+    _hover: {
+      transform: 'translateY(-2px)',
+      boxShadow: '0px 5px 10px rgba(0, 0, 0, 0.2)',
+    },
+    transition: 'all 0.2s',
   };
 
   return (
-    <div className={styles['login-container']}>
-      <p>Login</p>
-      <button className={styles['login-button']}>
-        <a href={githubAuthorisationURL()}>GitHub</a>
-      </button>
-      <button className={styles['login-button']}>
-        <a href={linkedinAuthorisationURL()}>LinkedIn</a>
-      </button>
-      <button className={styles['login-button']}>
-        <a href={googleAuthorisationURL()}>Google</a>
-      </button>
-      <button className={styles['login-button']}>
-        <a href={microsoftAuthorisationURL()}>Microsoft</a>
-      </button>
-    </div>
+    <Center h="100vh">
+      <Card w="30rem" h="auto" p="2rem">
+        <Box mb="1rem">
+          <Text
+            p="1rem"
+            m="0 auto"
+            textAlign="center"
+            fontSize="2xl"
+            fontWeight="bold"
+            color="blue.600"
+          >
+            Login to {process.env.REACT_APP_NAME}
+          </Text>
+          <Text textAlign="center" fontSize="lg" color="gray.600">
+            Connect with
+          </Text>
+        </Box>
+
+        <Grid
+          templateColumns="repeat(1, 1fr)"
+          gap={4}
+          alignItems="center"
+          justifyContent="center"
+        >
+          <GridItem m="0">
+            <CustomButton
+              onClick={githubAuthorisationURL}
+              leftIcon={<FaGithub />}
+              bg="#181717"
+              {...buttonStyle}
+            >
+              GitHub
+            </CustomButton>
+          </GridItem>
+
+          <GridItem m="0">
+            <CustomButton
+              onClick={linkedinAuthorisationURL}
+              leftIcon={<FaLinkedin />}
+              bg="#0A66C2"
+              {...buttonStyle}
+            >
+              LinkedIn
+            </CustomButton>
+          </GridItem>
+
+          <GridItem m="0">
+            <CustomButton
+              onClick={googleAuthorisationURL}
+              leftIcon={<FaGoogle />}
+              bg="#DB4437"
+              {...buttonStyle}
+            >
+              Google
+            </CustomButton>
+          </GridItem>
+
+          <GridItem m="0">
+            <CustomButton
+              onClick={microsoftAuthorisationURL}
+              leftIcon={<FaMicrosoft />}
+              bg="#0078D4"
+              {...buttonStyle}
+            >
+              Microsoft
+            </CustomButton>
+          </GridItem>
+        </Grid>
+      </Card>
+    </Center>
   );
 };
 

@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 
 import Login from '../components/Authentication/Login';
 import Dashboard from '../components/Dashboard';
-import HttpRequest from '../utils/HttpRequest';
+import httpRequest from '../utils/httpRequest';
 
 const HomePage = () => {
   const login = useSelector((state) => state.login.loginCheck);
@@ -11,7 +11,7 @@ const HomePage = () => {
   useEffect(() => {
     const refreshExpiredToken = async () => {
       try {
-        await HttpRequest(
+        await httpRequest(
           'post',
           `${process.env.REACT_APP_SERVER_URL}/refresh-token`
         );
@@ -28,7 +28,6 @@ const HomePage = () => {
 
   return (
     <>
-      <h1>Authentication</h1>
       {!login && <Login />}
       {login && <Dashboard />}
     </>
