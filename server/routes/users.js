@@ -38,7 +38,7 @@ const userRedirect = (req, res) => {
       : '';
 
     return res.redirect(
-      `${process.env.CLIENT_URL}/user-form?provider=${providerType}&providerID=${providerID}${givenNameUrl}${familyNameUrl}${emailUrl}${extraParamUrl}`
+      `${process.env.CLIENT_URL}/create-account?provider=${providerType}&providerID=${providerID}${givenNameUrl}${familyNameUrl}${emailUrl}${extraParamUrl}`
     );
   }
 

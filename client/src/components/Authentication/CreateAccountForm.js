@@ -5,7 +5,7 @@ import HttpRequest from '../../utils/HttpRequest';
 
 import styles from './Form.module.css';
 
-const Form = () => {
+const CreateAccountForm = () => {
   const givenNameInputRef = useRef();
   const familyNameInputRef = useRef();
   const emailInputRef = useRef();
@@ -104,4 +104,4 @@ const Form = () => {
   );
 };
 
-export default Form;
+export default CreateAccountForm;

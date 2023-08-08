@@ -8,7 +8,7 @@ import RootLayout from './pages/RootLayout';
 import ErrorPage from './pages/Error';
 import HomePage from './pages/Home';
 import LoginCheck from './pages/LoginCheck';
-import UserForm from './pages/UserForm';
+import CreateAccount from './pages/CreateAccount';
 
 const router = createBrowserRouter([
   {
@@ -18,7 +18,10 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <HomePage /> },
       { path: 'login-check', element: <LoginCheck /> },
-      { path: 'user-form', element: <UserForm /> },
+      {
+        path: 'create-account',
+        element: <CreateAccount />,
+      },
     ],
   },
 ]);
