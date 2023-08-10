@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { useNavigate, Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Text, Center, Box, FormControl, Link } from '@chakra-ui/react';
 
 import httpRequest from '../../utils/httpRequest';
@@ -55,12 +55,11 @@ const CreateAccountForm = () => {
         { userData }
       );
 
-      console.log('works');
-
-      console.log(response);
-
       if (response.status === 200) {
+        console.log('Success.');
         navigate('/');
+      } else {
+        console.log('Error');
       }
     } catch (error) {
       console.log('Error:', error);

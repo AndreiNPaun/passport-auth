@@ -145,49 +145,54 @@ const userData = async (req, res, next) => {
   const key = splitParams[0];
   const value = splitParams[1];
 
-  // Check if there is an existing account with the same email
-  const response = await User.findOne({ email });
+  try {
+    // Check if there is an existing account with the same email
+    const response = await User.findOne({ email });
 
-  // If same email account exists update record
-  if (response) {
-    console.log('Synchronizing existing accounts.');
+    // If same email account exists update record
+    if (response) {
+      console.log('Synchronizing existing accounts.');
 
-    await User.updateOne(
-      { email },
-      {
-        $set: {
-          [`provider.${providerType}.id`]: providerID,
-          [`provider.${providerType}.givenName`]: givenName,
-          [`provider.${providerType}.familyName`]: familyName,
-          [`provider.${providerType}.email`]: email,
-          [`provider.${providerType}.${key}`]: value,
-        },
-      }
-    );
+      await User.updateOne(
+        { email },
+        {
+          $set: {
+            [`provider.${providerType}.id`]: providerID,
+            [`provider.${providerType}.givenName`]: givenName,
+            [`provider.${providerType}.familyName`]: familyName,
+            [`provider.${providerType}.email`]: email,
+            [`provider.${providerType}.${key}`]: value,
+          },
+        }
+      );
 
-    return res.status(200).redirect(process.env.CLIENT_URL);
-  }
-
-  // If no account has this email, create a new record
-  const newUserAccount = new User({
-    givenName,
-    familyName,
-    email,
-    provider: {
-      [providerType]: {
-        id: providerID,
+      res.status(200).send('Account synchronized.');
+    } else {
+      // If no account has this email, create a new record
+      const newUserAccount = new User({
         givenName,
         familyName,
         email,
-        [key]: value,
-      },
-    },
-  });
+        provider: {
+          [providerType]: {
+            id: providerID,
+            givenName,
+            familyName,
+            email,
+            [key]: value,
+          },
+        },
+      });
 
-  await newUserAccount.save();
-  console.log('User created.');
+      await newUserAccount.save();
+      console.log('User created.');
 
-  res.status(200).redirect(process.env.CLIENT_URL);
+      res.status(200).send('Account created.');
+    }
+  } catch (error) {
+    console.log('Error:', error);
+    res.status(500).send('Server Error');
+  }
 };
 
 // Refresh Token

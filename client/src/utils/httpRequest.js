@@ -15,7 +15,7 @@ const httpRequest = async (method = 'get', url, values = {}) => {
   }
 
   const response = await axios({ method, url, ...options });
-  return response.data;
+  return response;
 };
 
 export default httpRequest;
