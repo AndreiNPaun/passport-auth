@@ -1,9 +1,11 @@
 import React, { useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
+import { Text, Center, Box, FormControl, Link } from '@chakra-ui/react';
 
 import httpRequest from '../../utils/httpRequest';
-
-import styles from './Form.module.css';
+import Card from '../UI/Card';
+import InputFields from '../UI/InputFields';
+import CustomButton from '../UI/ButtonUI';
 
 const CreateAccountForm = () => {
   const givenNameInputRef = useRef();
@@ -23,6 +25,9 @@ const CreateAccountForm = () => {
   // Can't be empty
   const provider = urlParams.get('provider');
   const providerID = urlParams.get('providerID');
+
+  // Capitalize first letter for form text
+  const providerText = provider.charAt(0).toUpperCase() + provider.slice(1);
 
   // Extra param which will be slit into key value pair
   const extraParam = urlParams.get('extraParam') || '';
@@ -44,11 +49,15 @@ const CreateAccountForm = () => {
 
     try {
       console.log(userData);
-      const response = httpRequest(
+      const response = await httpRequest(
         'post',
         `${process.env.REACT_APP_SERVER_URL}/user-data`,
         { userData }
       );
+
+      console.log('works');
+
+      console.log(response);
 
       if (response.status === 200) {
         navigate('/');
@@ -59,48 +68,98 @@ const CreateAccountForm = () => {
   };
 
   return (
-    <div className={styles['form-container']}>
-      <p>
-        Enter your details associated with your <b>{provider}</b> account:
-      </p>
-      <form>
-        <div className={styles['form-group']}>
+    <Center h="95vh">
+      <Card p="2rem">
+        <Text
+          p="1rem"
+          m="0 auto"
+          textAlign="center"
+          fontSize="2xl"
+          fontWeight="bold"
+          color="blue.600"
+        >
+          User Registration
+        </Text>
+
+        <Center>
+          <Text mb=".5rem" color="#181717">
+            Enter your details associated with your&nbsp;
+            <Box as="span" fontWeight="bold" color="blue.600">
+              {providerText}
+            </Box>
+            &nbsp;account
+          </Text>
+        </Center>
+
+        <Text
+          m=".5rem auto"
+          textAlign="center"
+          fontWeight="bold"
+          color="blue.600"
+        >
+          Or
+        </Text>
+
+        <Center>
+          <Text mb="2rem" color="#181717">
+            <Link
+              as={RouterLink}
+              to="/"
+              fontWeight="bold"
+              color="blue.600"
+              _hover={{
+                textDecoration: 'underline',
+                color: 'blue.700',
+              }}
+              _active={{
+                color: 'blue.800',
+              }}
+            >
+              Click here
+            </Link>
+            &nbsp;to go back and select another platform
+          </Text>
+        </Center>
+
+        <FormControl>
           {!givenName && (
-            <>
-              <label>First Name</label>
-              <input
-                type="text"
-                name="givenName"
-                ref={givenNameInputRef}
-                required
-              />
-            </>
+            <InputFields
+              htmlFor="givenName"
+              labelText="First Name"
+              id="givenName"
+              ref={givenNameInputRef}
+              required
+            />
           )}
-        </div>
-        <div className={styles['form-group']}>
+
           {!familyName && (
-            <>
-              <label>Last Name</label>
-              <input
-                type="text"
-                name="familyName"
-                ref={familyNameInputRef}
-                required
-              />
-            </>
+            <InputFields
+              htmlFor="familyName"
+              labelText="Last Name"
+              id="familyName"
+              ref={familyNameInputRef}
+              required
+            />
           )}
-        </div>
-        <div className={styles['form-group']}>
+
           {!email && (
-            <>
-              <label>Email</label>
-              <input type="email" name="email" ref={emailInputRef} required />
-            </>
+            <InputFields
+              htmlFor="email"
+              labelText="Email"
+              id="email"
+              ref={emailInputRef}
+              required
+            />
           )}
-        </div>
-        <button onClick={submitUserData}>Submit</button>
-      </form>
-    </div>
+
+          <Center>
+            <CustomButton mt="1.5rem" w="8rem" onClick={submitUserData}>
+              Submit
+            </CustomButton>
+          </Center>
+        </FormControl>
+      </Card>
+    </Center>
   );
 };
 
