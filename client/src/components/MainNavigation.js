@@ -17,9 +17,9 @@ const MainNavigation = () => {
       align="center"
       justify="space-between"
       wrap="wrap"
-      padding="1.5rem"
-      bg="blue.500"
-      color="white"
+      padding="1rem 2rem"
+      bg="white"
+      color="gray.700"
     >
       <Flex align="center" mr={5}>
         <Text fontSize="xl" fontWeight="bold">
