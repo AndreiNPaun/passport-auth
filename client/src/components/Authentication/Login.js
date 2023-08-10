@@ -67,8 +67,8 @@ const Login = () => {
   };
 
   return (
-    <Center h="100vh">
-      <Card w="30rem" h="auto" p="2rem">
+    <Center h="95vh">
+      <Card w="30rem" p="2rem">
         <Box mb="1rem">
           <Text
             p="1rem"

@@ -1,8 +1,8 @@
 import { Box } from '@chakra-ui/react';
 
-const Card = ({ children, ...props }) => {
+const Card = ({ children, ...styles }) => {
   return (
-    <Box bg="white" boxShadow="xl" borderRadius="lg" {...props}>
+    <Box bg="white" boxShadow="xl" borderRadius="lg" {...styles}>
       {children}
     </Box>
   );
