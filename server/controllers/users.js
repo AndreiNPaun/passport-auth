@@ -1,6 +1,5 @@
-const jwt = require('jsonwebtoken');
-
 const User = require('../models/users');
+const { setToken, refreshToken } = require('./token');
 
 // Passport user registration function
 const authentication = async (
@@ -114,19 +113,6 @@ const authentication = async (
   }
 };
 
-// Creates the JWT Tokens
-const setToken = (user) => {
-  const token = jwt.sign({ id: user._id }, 'secretToken', {
-    expiresIn: '3s',
-  });
-
-  const refreshToken = jwt.sign({ id: user._id }, 'secretRefreshToken', {
-    expiresIn: '30d',
-  });
-
-  return { token, refreshToken };
-};
-
 // Controller which will amend user record based on user input
 const userData = async (req, res, next) => {
   console.log('User Data:', req.body.userData);
@@ -166,89 +152,36 @@ const userData = async (req, res, next) => {
         }
       );
 
-      res.status(200).send('Account synchronized.');
-    } else {
-      // If no account has this email, create a new record
-      const newUserAccount = new User({
-        givenName,
-        familyName,
-        email,
-        provider: {
-          [providerType]: {
-            id: providerID,
-            givenName,
-            familyName,
-            email,
-            [key]: value,
-          },
-        },
-      });
-
-      await newUserAccount.save();
-      console.log('User created.');
-
-      res.status(200).send('Account created.');
+      return res.status(200).send('Account synchronized.');
     }
+
+    // If no account has this email, create a new record
+    const newUserAccount = new User({
+      givenName,
+      familyName,
+      email,
+      provider: {
+        [providerType]: {
+          id: providerID,
+          givenName,
+          familyName,
+          email,
+          [key]: value,
+        },
+      },
+    });
+
+    await newUserAccount.save();
+    console.log('User created.');
+
+    res.status(200).send('Account created.');
   } catch (error) {
     console.log('Error:', error);
     res.status(500).send('Server Error');
   }
 };
 
-// Refresh Token
-const refreshExpiredToken = (req, res, next) => {
-  try {
-    // Checks if the token has expired
-    const token = req.cookies.token;
-    jwt.verify(token, 'secretToken');
-
-    console.log('Token has not expired');
-  } catch (error) {
-    // If token has expired it will try to refresh it
-    if (error.name === 'TokenExpiredError') {
-      console.log('Token has expired.');
-
-      try {
-        // Checks if the refresh token has expired
-        const refreshToken = req.cookies.refreshToken;
-        const decodeRefreshToken = jwt.verify(
-          refreshToken,
-          'secretRefreshToken'
-        );
-
-        // If refresh token is valid then another token will be generated
-        const token = jwt.sign({ id: decodeRefreshToken._id }, 'secretToken', {
-          expiresIn: '3s',
-        });
-
-        console.log('Newly generated token:', token);
-
-        return res
-          .cookie('token', token, {
-            httpOnly: true,
-            secure: false,
-            sameSite: 'Strict',
-          })
-          .json({ message: 'Token refreshed.' });
-      } catch (error) {
-        // If then refresh token has expired display authentication error
-        if (error.name === 'TokenExpiredError') {
-          console.log('Refresh token has expired. Authentication failed.');
-        } else {
-          console.log('Error:', error);
-          res.status(400).json({ error: `An error has occured: ${error}` });
-        }
-      }
-    } else {
-      // In case there is another authentication error send it
-      console.log('Error:', error);
-      res.status(500).json({ message: 'Authentication failed.' });
-    }
-  }
-};
-
 module.exports = {
   authentication,
   userData,
-  refreshExpiredToken,
 };
