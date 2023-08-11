@@ -8,7 +8,7 @@ import RootLayout from './pages/RootLayout';
 import ErrorPage from './pages/Error';
 import HomePage from './pages/Home';
 import LoginCheck from './pages/LoginCheck';
-import CreateAccount from './pages/CreateAccount';
+import CreateAccountPage from './pages/CreateAccount';
 
 const router = createBrowserRouter([
   {
@@ -20,7 +20,7 @@ const router = createBrowserRouter([
       { path: 'login-check', element: <LoginCheck /> },
       {
         path: 'create-account',
-        element: <CreateAccount />,
+        element: <CreateAccountPage />,
       },
     ],
   },
