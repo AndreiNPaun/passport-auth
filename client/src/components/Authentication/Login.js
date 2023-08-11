@@ -1,6 +1,5 @@
 import React from 'react';
 import { Text, Center, Grid, GridItem, Box } from '@chakra-ui/react';
-import { FaGithub, FaLinkedin, FaGoogle, FaMicrosoft } from 'react-icons/fa';
 
 import {
   GithubAuthorisation,
