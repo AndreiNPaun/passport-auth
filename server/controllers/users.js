@@ -126,13 +126,13 @@ const userData = async (req, res, next) => {
     extraParam,
   } = req.body.userData;
 
-  // Splitting params into key value pairs
+  // Splitting params value into key value pairs
   const splitParams = extraParam.split(' ');
   const key = splitParams[0];
   const value = splitParams[1];
 
   try {
-    // Check if there is an existing account with the same email
+    // Check if there is an existing accounts with the same email
     const response = await User.findOne({ email });
 
     // If same email account exists update record

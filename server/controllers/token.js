@@ -1,12 +1,12 @@
-const jwt = require('jsonwebtoken');
+const { sign, verify } = require('jsonwebtoken');
 
 // Creates the JWT Tokens
 const setToken = (user) => {
-  const token = jwt.sign({ id: user._id }, process.env.TOKEN_SECRET, {
+  const token = sign({ id: user._id }, process.env.TOKEN_SECRET, {
     expiresIn: process.env.TOKEN_EXPIRY,
   });
 
-  const refreshToken = jwt.sign(
+  const refreshToken = sign(
     { id: user._id },
     process.env.REFRESH_TOKEN_SECRET,
     {
@@ -22,7 +22,7 @@ const refreshExpiredToken = (req, res, next) => {
   try {
     // Checks if the token has expired
     const token = req.cookies.token;
-    jwt.verify(token, 'secretToken');
+    verify(token, process.env.TOKEN_SECRET);
 
     console.log('Token has not expired');
   } catch (error) {
@@ -33,14 +33,13 @@ const refreshExpiredToken = (req, res, next) => {
       try {
         // Checks if the refresh token has expired
         const refreshToken = req.cookies.refreshToken;
-
-        const decodeRefreshToken = jwt.verify(
+        const decodeRefreshToken = verify(
           refreshToken,
           process.env.REFRESH_TOKEN_SECRET
         );
 
         // If refresh token is valid then another token will be generated
-        const token = jwt.sign(
+        const token = sign(
           { id: decodeRefreshToken._id },
           process.env.TOKEN_SECRET,
           {
@@ -53,23 +52,23 @@ const refreshExpiredToken = (req, res, next) => {
         res
           .cookie('token', token, {
             httpOnly: true,
-            secure: false,
+            secure: true,
             sameSite: 'Strict',
           })
-          .json({ message: 'Token refreshed.' });
+          .send('Token refreshed.');
       } catch (error) {
         // If then refresh token has expired display authentication error
         if (error.name === 'TokenExpiredError') {
           console.log('Refresh token has expired. Authentication failed.');
         } else {
           console.log('Error:', error);
-          res.status(400).json({ error: `An error has occured: ${error}` });
+          res.status(400).send(`An error has occured: ${error}`);
         }
       }
     } else {
       // In case there is another authentication error send it
       console.log('Error:', error);
-      res.status(500).json({ message: 'Authentication failed.' });
+      res.status(500).send('Authentication failed.');
     }
   }
 };
