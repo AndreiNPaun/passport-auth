@@ -9,6 +9,7 @@ import ErrorPage from './pages/Error';
 import HomePage from './pages/Home';
 import LoginCheck from './pages/LoginCheck';
 import CreateAccountPage from './pages/CreateAccount';
+import EditProfilePage from './pages/EditProfile.js';
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
       {
         path: 'create-account',
         element: <CreateAccountPage />,
+      },
+      {
+        path: 'edit-profile',
+        element: <EditProfilePage />,
       },
     ],
   },
