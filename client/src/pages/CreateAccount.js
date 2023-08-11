@@ -1,9 +1,9 @@
 import React from 'react';
 
-import CreateAccountForm from '../components/Authentication/CreateAccountForm';
+import CreateAccountForm from '../components/Authentication/CreateAccount';
 
-const CreateAccount = () => {
+const CreateAccountPage = () => {
   return <CreateAccountForm />;
 };
 
-export default CreateAccount;
+export default CreateAccountPage;
