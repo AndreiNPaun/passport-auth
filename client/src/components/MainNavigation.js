@@ -1,6 +1,7 @@
 import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Flex, Box, Link, Text } from '@chakra-ui/react';
 
 import Logout from '../components/Authentication/Logout';
 
@@ -22,11 +23,16 @@ const MainNavigation = () => {
       color="gray.700"
     >
       <Flex align="center" mr={5}>
-        <Text fontSize="xl" fontWeight="bold">
+        <Text as={RouterLink} to="" fontSize="xl" fontWeight="bold">
           Auth
         </Text>
       </Flex>
-      <Logout />
+      <Box>
+        <Logout />
+        <Link m="0 1rem" as={RouterLink} to="edit-profile">
+          Edit Profile
+        </Link>
+      </Box>
     </Flex>
   );
 };
