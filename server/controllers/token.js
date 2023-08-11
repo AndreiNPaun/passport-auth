@@ -25,6 +25,7 @@ const refreshExpiredToken = (req, res, next) => {
     verify(token, process.env.TOKEN_SECRET);
 
     console.log('Token has not expired');
+    res.status(200).send('Token is valid.');
   } catch (error) {
     // If token has expired it will try to refresh it
     if (error.name === 'TokenExpiredError') {
