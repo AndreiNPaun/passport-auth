@@ -2,7 +2,6 @@ import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import httpRequest from '../../utils/httpRequest';
-
 import CreateAccountForm from './CreateAccountForm';
 
 const CreateAccount = () => {
