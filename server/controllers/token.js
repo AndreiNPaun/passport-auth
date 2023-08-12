@@ -49,7 +49,7 @@ const refreshExpiredToken = (req, res, next) => {
   } catch (error) {
     // If then refresh token has expired display authentication error
     if (error.name === 'TokenExpiredError') {
-      res.status(400).send('Refresh token has expired. Authentication failed.');
+      res.status(401).send('Refresh token has expired. Authentication failed.');
     } else {
       res.status(400).send(`An error has occured: ${error}`);
     }
