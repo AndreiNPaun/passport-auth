@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Custom hook for axios requests
 
-const httpRequest = async (method = 'get', url, values = {}) => {
+const httpRequest = async (method, url, values = {}) => {
   const options = {
     headers: {
       'Content-Type': 'application/json',
