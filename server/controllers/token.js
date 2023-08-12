@@ -19,57 +19,39 @@ const setToken = (user) => {
 
 // Refresh Token
 const refreshExpiredToken = (req, res, next) => {
+  const refreshToken = req.cookies.refreshToken;
+
   try {
-    // Checks if the token has expired
-    const token = req.cookies.token;
-    verify(token, process.env.TOKEN_SECRET);
+    // Checks if the refresh token has expired
+    const checkRefreshToken = verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET
+    );
 
-    console.log('Token has not expired');
-    res.status(200).send('Token is valid.');
-  } catch (error) {
-    // If token has expired it will try to refresh it
-    if (error.name === 'TokenExpiredError') {
-      console.log('Token has expired.');
-
-      try {
-        // Checks if the refresh token has expired
-        const refreshToken = req.cookies.refreshToken;
-        const decodeRefreshToken = verify(
-          refreshToken,
-          process.env.REFRESH_TOKEN_SECRET
-        );
-
-        // If refresh token is valid then another token will be generated
-        const token = sign(
-          { id: decodeRefreshToken._id },
-          process.env.TOKEN_SECRET,
-          {
-            expiresIn: process.env.TOKEN_EXPIRY,
-          }
-        );
-
-        console.log('Newly generated token:', token);
-
-        res
-          .cookie('token', token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'Strict',
-          })
-          .send('Token refreshed.');
-      } catch (error) {
-        // If then refresh token has expired display authentication error
-        if (error.name === 'TokenExpiredError') {
-          console.log('Refresh token has expired. Authentication failed.');
-        } else {
-          console.log('Error:', error);
-          res.status(400).send(`An error has occured: ${error}`);
-        }
+    // If refresh token is valid then another token will be generated
+    const token = sign(
+      { id: checkRefreshToken._id },
+      process.env.TOKEN_SECRET,
+      {
+        expiresIn: process.env.TOKEN_EXPIRY,
       }
+    );
+
+    console.log('Newly generated token:', token);
+
+    res
+      .cookie('token', token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'Strict',
+      })
+      .send('Token refreshed.');
+  } catch (error) {
+    // If then refresh token has expired display authentication error
+    if (error.name === 'TokenExpiredError') {
+      res.status(400).send('Refresh token has expired. Authentication failed.');
     } else {
-      // In case there is another authentication error send it
-      console.log('Error:', error);
-      res.status(500).send('Authentication failed.');
+      res.status(400).send(`An error has occured: ${error}`);
     }
   }
 };

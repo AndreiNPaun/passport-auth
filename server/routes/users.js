@@ -2,8 +2,10 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 
-const { userData } = require('../controllers/users');
+const { userData, editProfile } = require('../controllers/users');
 const { refreshExpiredToken } = require('../controllers/token');
+
+const authenticate = require('../middleware/authenticate');
 
 // Reusable redirect function which checks for the JWT Token
 const userRedirect = (req, res) => {
@@ -135,6 +137,8 @@ router.get(
     userRedirect(req, res);
   }
 );
+
+router.get('/edit-profile', authenticate, editProfile);
 
 router.post('/user-data', userData);
 

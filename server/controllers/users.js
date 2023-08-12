@@ -181,7 +181,13 @@ const userData = async (req, res, next) => {
   }
 };
 
+const editProfile = (req, res, next) => {
+  console.log('edit profile');
+  res.status(200).send('Profile updated.');
+};
+
 module.exports = {
   authentication,
   userData,
+  editProfile,
 };
