@@ -2,7 +2,11 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 
-const { userData, editProfile } = require('../controllers/users');
+const {
+  userData,
+  getEditProfile,
+  postEditProfile,
+} = require('../controllers/users');
 const { refreshExpiredToken } = require('../controllers/token');
 
 const authenticate = require('../middleware/authenticate');
@@ -138,7 +142,9 @@ router.get(
   }
 );
 
-router.get('/edit-profile', authenticate, editProfile);
+router.get('/edit-profile', authenticate, getEditProfile);
+
+router.post('/edit-profile', authenticate, postEditProfile);
 
 router.post('/user-data', userData);
 

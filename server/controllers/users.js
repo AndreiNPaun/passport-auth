@@ -184,30 +184,42 @@ const userData = async (req, res, next) => {
   }
 };
 
-const editProfile = async (req, res, next) => {
+const getEditProfile = async (req, res, next) => {
   const accessToken = req.cookies.accessToken;
   const userID = decodeTokenUserID(accessToken, 'ACCESS');
 
   // Convert id to ObjectId
   const _id = new ObjectId(userID);
 
-  const user = await User.findOne({
-    _id: _id,
-  });
+  try {
+    const user = await User.findOne({
+      _id: _id,
+    });
 
-  console.log(user);
+    console.log(user);
 
-  const userData = {
-    // givenName: user.givenName,
-    // familyName: user.familyName,
-    // email: user.email,
-  };
+    const userData = {
+      givenName: user.givenName,
+      familyName: user.familyName,
+      email: user.email,
+    };
 
-  res.status(200).send(userData);
+    res.status(200).send(userData);
+  } catch (error) {
+    console.log('Error:', error);
+    res.status(500).send('An unexpected error occurred.');
+  }
+};
+
+const postEditProfile = (req, res, next) => {
+  const userData = req.body.userInputData;
+  console.log('edit', userData);
+  res.status(200).send('Account updated.');
 };
 
 module.exports = {
   authentication,
   userData,
-  editProfile,
+  getEditProfile,
+  postEditProfile,
 };
