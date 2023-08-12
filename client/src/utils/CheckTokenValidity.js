@@ -21,11 +21,11 @@ const CheckTokenValidity = (callback) => {
         if (error.request.status === 401) {
           // If server sends 401 status, attempt to refresh token
           try {
-            const token = await httpRequest(
+            const accessToken = await httpRequest(
               'post',
               `${process.env.REACT_APP_SERVER_URL}/refresh-token`
             );
-            console.log('token', token);
+            console.log('token', accessToken);
 
             // If token has been refreshed, atttempt to send the request again
             const newResponse = await callback();
@@ -41,7 +41,7 @@ const CheckTokenValidity = (callback) => {
           console.log('An error has occurred.');
           // Remove isLoggedIn from local storage and send request to server to unset tokens from cookie
           dispatch(unsetToken());
-          setNavigation(true); // Set state to trigger navigation
+          // setNavigation(true); // Set state to trigger navigation
         }
       }
     };

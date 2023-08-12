@@ -18,7 +18,8 @@ const EditProfile = () => {
     return response;
   };
 
-  CheckTokenValidity(request);
+  const userData = CheckTokenValidity(request);
+  console.log('userData', userData);
 
   return (
     <Center h="95vh">

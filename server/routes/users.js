@@ -9,10 +9,10 @@ const authenticate = require('../middleware/authenticate');
 
 // Reusable redirect function which checks for the JWT Token
 const userRedirect = (req, res) => {
-  const token = req.user.token;
+  const accessToken = req.user.accessToken;
   const refreshToken = req.user.refreshToken;
 
-  console.log('token route', token);
+  console.log('accessToken route', accessToken);
 
   // Checks if controller sent an error message
   const errorMessage = req.user.error;
@@ -45,13 +45,13 @@ const userRedirect = (req, res) => {
     );
   }
 
-  if (token && refreshToken) {
+  if (accessToken && refreshToken) {
     console.log('Log In successful.');
 
     // Sets tokens as http cookie
     res
       .status(200)
-      .cookie('token', token, {
+      .cookie('accessToken', accessToken, {
         httpOnly: true,
         secure: true,
         sameSite: 'Strict',

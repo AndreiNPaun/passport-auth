@@ -1,5 +1,8 @@
 const User = require('../models/users');
-const { setToken, refreshToken } = require('./token');
+const { ObjectId } = require('mongodb');
+
+const { setToken } = require('./token');
+const decodeTokenUserID = require('../middleware/decodeTokenUserID');
 
 // Passport user registration function
 const authentication = async (
@@ -104,7 +107,7 @@ const authentication = async (
 
     // Set Authentication Token and Refresh Token
     const jwtToken = setToken(checkUser);
-    console.log('token', jwtToken.token);
+    console.log('accessToken', jwtToken.accessToken);
     console.log('refreshToken', jwtToken.refreshToken);
 
     return jwtToken;
@@ -181,9 +184,26 @@ const userData = async (req, res, next) => {
   }
 };
 
-const editProfile = (req, res, next) => {
-  console.log('edit profile');
-  res.status(200).send('Profile updated.');
+const editProfile = async (req, res, next) => {
+  const accessToken = req.cookies.accessToken;
+  const userID = decodeTokenUserID(accessToken, 'ACCESS');
+
+  // Convert id to ObjectId
+  const _id = new ObjectId(userID);
+
+  const user = await User.findOne({
+    _id: _id,
+  });
+
+  console.log(user);
+
+  const userData = {
+    // givenName: user.givenName,
+    // familyName: user.familyName,
+    // email: user.email,
+  };
+
+  res.status(200).send(userData);
 };
 
 module.exports = {
