@@ -5,7 +5,16 @@ import { FormLabel, Input, Flex, Text } from '@chakra-ui/react';
 // reusable component for label and input
 const InputFields = React.forwardRef(
   (
-    { htmlFor, labelText, type, id, value, onChange, labelStyle, inputStyle },
+    {
+      htmlFor,
+      labelText,
+      type,
+      id,
+      defaultValue,
+      onChange,
+      labelStyle,
+      inputStyle,
+    },
     ref
   ) => {
     return (
@@ -23,7 +32,7 @@ const InputFields = React.forwardRef(
         <Input
           type={type || 'text'}
           id={id}
-          value={value}
+          defaultValue={defaultValue}
           onChange={onChange}
           ref={ref}
           fontSize="md"
