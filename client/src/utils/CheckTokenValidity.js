@@ -34,8 +34,8 @@ const CheckTokenValidity = async (callback, navigate, dispatch) => {
     } else {
       console.log('An error has occurred.');
       // Remove isLoggedIn from local storage and send request to server to unset tokens from cookie
-      dispatch(unsetToken());
-      navigate('/');
+      // dispatch(unsetToken());
+      // navigate('/');
     }
   }
 };
