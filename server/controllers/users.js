@@ -2,7 +2,8 @@ const User = require('../models/users');
 const { ObjectId } = require('mongodb');
 
 const { setToken } = require('./token');
-const decodeTokenUserID = require('../middleware/decodeTokenUserID');
+const decodeTokenUserID = require('../utils/decodeTokenUserID');
+const validationError = require('../utils/validationError');
 
 // Passport user registration function
 const authentication = async (
@@ -119,6 +120,10 @@ const authentication = async (
 // Controller which will amend user record based on user input
 const userData = async (req, res, next) => {
   console.log('User Data:', req.body.userData);
+  // Check for validation errors
+  if (validationError(req, res)) {
+    return;
+  }
 
   const {
     givenName,
@@ -210,6 +215,10 @@ const getEditProfile = async (req, res, next) => {
 };
 
 const postEditProfile = async (req, res, next) => {
+  // Check for validation errors
+  if (validationError(req, res)) {
+    return;
+  }
   try {
     const { givenName, familyName, email } = req.body.userInputData;
     const accessToken = req.cookies.accessToken;
