@@ -180,23 +180,21 @@ const userData = async (req, res, next) => {
     res.status(200).send('Account created.');
   } catch (error) {
     console.log('Error:', error);
-    res.status(500).send('Server Error');
+    res.status(500).send('Server Error.');
   }
 };
 
 const getEditProfile = async (req, res, next) => {
   const accessToken = req.cookies.accessToken;
-  const userID = decodeTokenUserID(accessToken, 'ACCESS');
 
+  const userID = decodeTokenUserID(accessToken, 'ACCESS');
   // Convert id to ObjectId
-  const _id = new ObjectId(userID);
+  const id = new ObjectId(userID);
 
   try {
     const user = await User.findOne({
-      _id: _id,
+      _id: id,
     });
-
-    console.log(user);
 
     const userData = {
       givenName: user.givenName,
@@ -207,14 +205,35 @@ const getEditProfile = async (req, res, next) => {
     res.status(200).send(userData);
   } catch (error) {
     console.log('Error:', error);
-    res.status(500).send('An unexpected error occurred.');
+    res.status(500).send('Server Error.');
   }
 };
 
-const postEditProfile = (req, res, next) => {
-  const userData = req.body.userInputData;
-  console.log('edit', userData);
-  res.status(200).send('Account updated.');
+const postEditProfile = async (req, res, next) => {
+  try {
+    const { givenName, familyName, email } = req.body.userInputData;
+    const accessToken = req.cookies.accessToken;
+
+    const userID = decodeTokenUserID(accessToken, 'ACCESS');
+    // Convert id to ObjectId
+    const id = new ObjectId(userID);
+
+    await User.updateOne(
+      { _id: id },
+      {
+        $set: {
+          givenName,
+          familyName,
+          email,
+        },
+      }
+    );
+
+    res.status(200).send('Account updated.');
+  } catch (error) {
+    console.log('Error:', error);
+    res.status(500).send('Server Error.');
+  }
 };
 
 module.exports = {
