@@ -1,5 +1,6 @@
 const { validationResult } = require('express-validator');
 
+// Utility function used for sending errors from express-validator to controller
 const validationError = (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
