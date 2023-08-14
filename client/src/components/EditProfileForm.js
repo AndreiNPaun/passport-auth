@@ -12,7 +12,6 @@ const EditProfileForm = ({
   emailInputRef,
   submitHandler,
 }) => {
-  // console.log(userData.provider);
   return (
     <Center h="95vh">
       <Card p="2rem">
