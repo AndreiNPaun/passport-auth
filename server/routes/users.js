@@ -7,7 +7,7 @@ const {
   getEditProfile,
   postEditProfile,
 } = require('../controllers/users');
-const { refreshExpiredToken } = require('../controllers/token');
+const { refreshTokenCheck } = require('../controllers/token');
 const authenticate = require('../middleware/authenticate');
 const userRedirect = require('../utils/userRedirect');
 const { nameValidation, emailValidation } = require('../utils/validationUtils');
@@ -82,21 +82,23 @@ router.get(
   }
 );
 
+// Route for setting up account in case fields are empty
 router.post(
   '/user-data',
   [
-    nameValidation('userInputData.givenName', 'First name'),
+    nameValidation('userInputData.givenName', 'First name'), // Reusable express-validator
     nameValidation('userInputData.familyName', 'Family Name'),
     emailValidation('userInputData.email'),
   ],
   userData
 );
 
+// Edit account details
 router.get('/edit-profile', authenticate, getEditProfile);
 router.post(
   '/edit-profile',
   [
-    nameValidation('userInputData.givenName', 'First name'),
+    nameValidation('userInputData.givenName', 'First name'), // Reusable express-validator
     nameValidation('userInputData.familyName', 'Family Name'),
     emailValidation('userInputData.email'),
   ],
@@ -104,10 +106,13 @@ router.post(
   postEditProfile
 );
 
-router.post('/refresh-token', refreshExpiredToken);
+router.post('/refresh-token', refreshTokenCheck);
 
 router.post('/logout', (req, res) => {
-  res.clearCookie('token').clearCookie('refreshToken').send('Cookies cleared');
+  res
+    .clearCookie('accessToken')
+    .clearCookie('refreshToken')
+    .send('Cookies cleared');
 });
 
 module.exports = router;

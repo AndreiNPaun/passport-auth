@@ -27,7 +27,7 @@ const CreateAccountForm = ({
           fontWeight="bold"
           color="blue.600"
         >
-          User Registration
+          Setup Account
         </Text>
 
         <Center>

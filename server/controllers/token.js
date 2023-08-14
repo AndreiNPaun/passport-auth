@@ -19,7 +19,7 @@ const setToken = (user) => {
 };
 
 // Refresh Token
-const refreshExpiredToken = (req, res, next) => {
+const refreshTokenCheck = (req, res, next) => {
   const refreshToken = req.cookies.refreshToken;
 
   try {
@@ -55,5 +55,5 @@ const refreshExpiredToken = (req, res, next) => {
 
 module.exports = {
   setToken,
-  refreshExpiredToken,
+  refreshTokenCheck,
 };
