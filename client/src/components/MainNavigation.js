@@ -22,16 +22,16 @@ const MainNavigation = () => {
       bg="white"
       color="gray.700"
     >
-      <Flex align="center" mr={5}>
+      <Flex align="center" mr="5rem">
         <Text as={RouterLink} to="" fontSize="xl" fontWeight="bold">
           Auth
         </Text>
       </Flex>
       <Box>
-        <Logout />
-        <Link m="0 1rem" as={RouterLink} to="edit-profile">
-          Edit Profile
+        <Link m="0 1rem" as={RouterLink} to="account-management">
+          My Account
         </Link>
+        <Logout />
       </Box>
     </Flex>
   );
