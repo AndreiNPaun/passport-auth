@@ -1,17 +1,18 @@
 import React from 'react';
-import { FormControl, Center, Text } from '@chakra-ui/react';
+import { FormControl, Center, Text, Box } from '@chakra-ui/react';
 
 import Card from './UI/Card';
 import InputFields from './UI/InputFields';
 import CustomButton from './UI/ButtonUI';
 
 const EditProfileForm = ({
-  userData,
+  userData = null,
   givenNameInputRef,
   familyNameInputRef,
   emailInputRef,
   submitHandler,
 }) => {
+  // console.log(userData.provider);
   return (
     <Center h="95vh">
       <Card p="2rem">
@@ -30,7 +31,6 @@ const EditProfileForm = ({
             Edit your account
           </Text>
         </Center>
-
         <FormControl>
           <InputFields
             htmlFor="givenName"

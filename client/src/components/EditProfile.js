@@ -30,6 +30,7 @@ const EditProfile = () => {
 
       const userData = await CheckTokenValidity(getData, navigate, dispatch);
       console.log('userData', userData);
+
       setUserData(userData);
     })();
   }, []);
