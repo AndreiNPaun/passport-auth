@@ -9,7 +9,7 @@ const userRedirect = (req, res) => {
   const errorMessage = req.user.error;
 
   if (errorMessage) {
-    console.log('taking user to form');
+    console.log('Redirecting user to setup form.');
     // Pull out user fields
 
     const {
