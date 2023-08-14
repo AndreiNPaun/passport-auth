@@ -35,7 +35,7 @@ const CreateAccount = () => {
 
     // Data which is already set in the URL will replace the one which is supposed to be from the user input
     // Input fields will be hidden if the user data can be retrieved from the URL
-    const userData = {
+    const userInputData = {
       givenName: givenNameInputRef.current?.value || givenName,
       familyName: familyNameInputRef.current?.value || familyName,
       email: emailInputRef.current?.value || email,
@@ -45,11 +45,11 @@ const CreateAccount = () => {
     };
 
     try {
-      console.log(userData);
+      console.log(userInputData);
       const response = await httpRequest(
         'post',
         `${process.env.REACT_APP_SERVER_URL}/user-data`,
-        { userData }
+        { userInputData }
       );
 
       if (response.status === 200) {

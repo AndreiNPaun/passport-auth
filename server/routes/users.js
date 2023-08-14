@@ -85,9 +85,9 @@ router.get(
 router.post(
   '/user-data',
   [
-    nameValidation('userData.givenName', 'First name'),
-    nameValidation('userData.familyName', 'Family Name'),
-    emailValidation('userData.email'),
+    nameValidation('userInputData.givenName', 'First name'),
+    nameValidation('userInputData.familyName', 'Family Name'),
+    emailValidation('userInputData.email'),
   ],
   userData
 );
@@ -96,9 +96,9 @@ router.get('/edit-profile', authenticate, getEditProfile);
 router.post(
   '/edit-profile',
   [
-    nameValidation('userData.givenName', 'First name'),
-    nameValidation('userData.familyName', 'Family Name'),
-    emailValidation('userData.email'),
+    nameValidation('userInputData.givenName', 'First name'),
+    nameValidation('userInputData.familyName', 'Family Name'),
+    emailValidation('userInputData.email'),
   ],
   authenticate,
   postEditProfile
