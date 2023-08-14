@@ -132,7 +132,7 @@ const userData = async (req, res, next) => {
     provider: providerType,
     providerID,
     extraParam,
-  } = req.body.userData;
+  } = req.body.userInputData;
 
   // Splitting params value into key value pairs
   const splitParams = extraParam.split(' ');
