@@ -11,7 +11,7 @@ const Modal = ({
   onClickCancel,
   onClickSubmit,
   value,
-  inputRef,
+  fields,
   cardStyle,
   errorText,
 }) => {
@@ -33,7 +33,7 @@ const Modal = ({
   return (
     <Box {...backgroundStyle} onClick={onClickCancel}>
       <Box w="40%" ml="30%" onClick={stopPropagation}>
-        <Card mt="20vh" cardStyle={cardStyle}>
+        <Card mt="20vh" styles={cardStyle}>
           <Text
             p="1rem"
             m="0 auto"
@@ -52,39 +52,19 @@ const Modal = ({
           {/* <Text pl="1.5rem" pb="0.3rem" color="red">
             {errorText}
           </Text> */}
-          <Box ml="2.5rem">
-            <InputFields
-              htmlFor="givenName"
-              labelText="First Name"
-              id="givenName"
-              defaultValue={value?.givenName || ''}
-              ref={inputRef.givenNameInputRef}
-              inputStyle={{ w: '90%' }}
-              required
-            />
-          </Box>
-          <Box ml="2.5rem">
-            <InputFields
-              htmlFor="givenName"
-              labelText="First Name"
-              id="givenName"
-              defaultValue={value?.familyName || ''}
-              ref={inputRef.familyNameInputRef}
-              inputStyle={{ w: '90%' }}
-              required
-            />
-          </Box>
-          <Box ml="2.5rem">
-            <InputFields
-              htmlFor="givenName"
-              labelText="First Name"
-              id="givenName"
-              defaultValue={value?.email || ''}
-              ref={inputRef.emailInputRef}
-              inputStyle={{ w: '90%' }}
-              required
-            />
-          </Box>
+          {fields.map((field) => (
+            <Box key={field.id} ml="2.5rem">
+              <InputFields
+                htmlFor={field.htmlFor}
+                labelText={field.labelText}
+                id={field.id}
+                defaultValue={value?.[field.value] || ''}
+                ref={field.ref}
+                inputStyle={{ w: '90%' }}
+                required
+              />
+            </Box>
+          ))}
           <Center mt="1rem">
             <CustomButton m="1rem" type="submit" onClick={onClickSubmit}>
               Submit
