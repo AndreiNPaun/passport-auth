@@ -4,7 +4,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { Text, Center, Box, FormControl, Link } from '@chakra-ui/react';
 import Card from '../UI/Card';
 import InputFields from '../UI/InputFields';
-import CustomButton from '../UI/ButtonUI';
+import CustomButton from '../UI/CustomButton';
 
 const CreateAccountForm = ({
   providerText,

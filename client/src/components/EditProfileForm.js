@@ -3,7 +3,7 @@ import { FormControl, Center, Text, Box } from '@chakra-ui/react';
 
 import Card from './UI/Card';
 import InputFields from './UI/InputFields';
-import CustomButton from './UI/ButtonUI';
+import CustomButton from './UI/CustomButton';
 
 const EditProfileForm = ({
   userData = null,
