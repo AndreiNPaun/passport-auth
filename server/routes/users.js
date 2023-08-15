@@ -16,6 +16,40 @@ router.get('/', () => {
   console.log('homepage');
 });
 
+// Microsoft
+router.get(
+  '/auth/microsoft',
+  passport.authenticate('microsoft', {
+    prompt: 'select_account',
+  })
+);
+
+router.get(
+  '/auth/microsoft/callback',
+  passport.authenticate('microsoft', {
+    session: false,
+  }),
+  (req, res) => {
+    userRedirect(req, res);
+  }
+);
+
+// Google
+router.get(
+  '/auth/google',
+  passport.authenticate('google', { scope: ['profile'] })
+);
+
+router.get(
+  '/auth/google/callback',
+  passport.authenticate('google', {
+    session: false,
+  }),
+  (req, res) => {
+    userRedirect(req, res);
+  }
+);
+
 // GitHub
 router.get(
   '/auth/github',
@@ -41,40 +75,6 @@ router.get(
 router.get(
   '/auth/linkedin/callback',
   passport.authenticate('linkedin', {
-    session: false,
-  }),
-  (req, res) => {
-    userRedirect(req, res);
-  }
-);
-
-// Google
-router.get(
-  '/auth/google',
-  passport.authenticate('google', { scope: ['profile'] })
-);
-
-router.get(
-  '/auth/google/callback',
-  passport.authenticate('google', {
-    session: false,
-  }),
-  (req, res) => {
-    userRedirect(req, res);
-  }
-);
-
-// Microsoft
-router.get(
-  '/auth/microsoft',
-  passport.authenticate('microsoft', {
-    prompt: 'select_account',
-  })
-);
-
-router.get(
-  '/auth/microsoft/callback',
-  passport.authenticate('microsoft', {
     session: false,
   }),
   (req, res) => {

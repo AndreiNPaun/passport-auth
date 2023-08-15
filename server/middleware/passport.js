@@ -9,6 +9,99 @@ const LinkedInStrategy = require('passport-linkedin-oauth2').Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const MicrosoftStrategy = require('passport-microsoft').Strategy;
 
+// Microsoft
+passport.use(
+  new MicrosoftStrategy(
+    {
+      clientID: process.env.MICROSOFT_CLIENT_ID,
+      clientSecret: process.env.MICROSOFT_CLIENT_SECRET,
+      callbackURL: process.env.MICROSOFT_CALLBACK,
+      scope: ['user.read'],
+      tenant: 'common',
+      userAudience: 'All',
+      authorizationURL:
+        'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+      tokenURL: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+      passReqToCallback: true,
+    },
+    async (req, accessToken, refreshToken, profile, done) => {
+      console.log('Microsoft Profile', profile);
+
+      // User details
+      const givenName = profile.name.givenName || null;
+      const familyName = profile.name.familyName || null;
+      const email = profile.emails[0].value || null;
+
+      // Stores the provider details (e.g. google)
+      const providerType = profile.provider;
+      const providerID = profile.id;
+
+      // Checks if state is set used for syncing accounts
+      const urlObj = new URL(req.originalUrl, 'https://www.justaparam.com'); // Dummy URL which needs to be included
+      const state = urlObj.searchParams.get('state');
+
+      if (state === 'sync') {
+        console.log('State:', state);
+      }
+
+      // Controller registration function
+      const response = await users.authentication(
+        givenName,
+        familyName,
+        email,
+        providerType,
+        providerID
+      );
+
+      done(null, response);
+    }
+  )
+);
+
+// Google
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: process.env.GOOGLE_CALLBACK,
+      scope: ['profile', 'email'],
+      passReqToCallback: true,
+    },
+    async (req, accessToken, refreshToken, profile, done) => {
+      console.log('Google Profile:', profile);
+
+      // User details
+      const givenName = profile.name.givenName;
+      const familyName = profile.name.familyName;
+      const email = profile.emails[0].value;
+
+      // Stores the provider details (e.g. google)
+      const providerType = profile.provider;
+      const providerID = profile.id;
+
+      // Checks if state is set used for syncing accounts
+      const urlObj = new URL(req.originalUrl, 'https://www.justaparam.com'); // Dummy URL which needs to be included
+      const state = urlObj.searchParams.get('state');
+
+      if (state === 'sync') {
+        console.log('State:', state);
+      }
+
+      // Controller registration function which returns the jwt tokens
+      const response = await users.authentication(
+        givenName,
+        familyName,
+        email,
+        providerType,
+        providerID
+      );
+
+      done(null, response);
+    }
+  )
+);
+
 // GitHub
 passport.use(
   new GitHubStrategy(
@@ -16,8 +109,9 @@ passport.use(
       clientID: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
       callbackURL: process.env.GITHUB_CALLBACK,
+      passReqToCallback: true,
     },
-    async (accessToken, refreshToken, profile, done) => {
+    async (req, accessToken, refreshToken, profile, done) => {
       console.log('GitHub Profile:', profile);
 
       // User details
@@ -30,6 +124,14 @@ passport.use(
       const providerType = profile.provider;
       const providerID = profile.id;
       const username = profile.username;
+
+      // Checks if state is set used for syncing accounts
+      const urlObj = new URL(req.originalUrl, 'https://www.justaparam.com'); // Dummy URL which needs to be included
+      const state = urlObj.searchParams.get('state');
+
+      if (state === 'sync') {
+        console.log('State:', state);
+      }
 
       const gitHubUser = await User.findOne({
         'provider.github.username': username,
@@ -66,8 +168,9 @@ passport.use(
       clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
       callbackURL: process.env.LINKEDIN_CALLBACK,
       scope: ['r_emailaddress', 'r_liteprofile'],
+      passReqToCallback: true,
     },
-    async (accessToken, refreshToken, profile, done) => {
+    async (req, accessToken, refreshToken, profile, done) => {
       console.log('LinkedIn Profile:', profile);
 
       // User details
@@ -79,82 +182,13 @@ passport.use(
       const providerType = profile.provider;
       const providerID = profile.id;
 
-      // Controller registration function
-      const response = await users.authentication(
-        givenName,
-        familyName,
-        email,
-        providerType,
-        providerID
-      );
+      // Checks if state is set used for syncing accounts
+      const urlObj = new URL(req.originalUrl, 'https://www.justaparam.com'); // Dummy URL which needs to be included
+      const state = urlObj.searchParams.get('state');
 
-      done(null, response);
-    }
-  )
-);
-
-// Google
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK,
-      scope: ['profile', 'email'],
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      console.log('Google Profile:', profile);
-
-      // User details
-      const givenName = profile.name.givenName;
-      const familyName = profile.name.familyName;
-      const email = profile.emails[0].value;
-
-      // Stores the provider details (e.g. google)
-      const providerType = profile.provider;
-      const providerID = profile.id;
-
-      // Controller registration function which returns the jwt tokens
-      const response = await users.authentication(
-        givenName,
-        familyName,
-        email,
-        providerType,
-        providerID
-      );
-
-      done(null, response);
-    }
-  )
-);
-
-// Microsoft
-passport.use(
-  new MicrosoftStrategy(
-    {
-      clientID: process.env.MICROSOFT_CLIENT_ID,
-      clientSecret: process.env.MICROSOFT_CLIENT_SECRET,
-      callbackURL: process.env.MICROSOFT_CALLBACK,
-      scope: ['user.read'],
-      tenant: 'common',
-      userAudience: 'All',
-      authorizationURL:
-        'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
-      tokenURL: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      console.log('Microsoft Profile', profile);
-
-      // User details
-      const givenName = profile.name.givenName || null;
-      const familyName = profile.name.familyName || null;
-      const email = profile.emails[0].value || null;
-
-      // Stores the provider details (e.g. google)
-      const providerType = profile.provider;
-      const providerID = profile.id;
-
-      console.log('microsoft', givenName);
+      if (state === 'sync') {
+        console.log('State:', state);
+      }
 
       // Controller registration function
       const response = await users.authentication(

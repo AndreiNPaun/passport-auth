@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text, Center, Grid, GridItem, Box } from '@chakra-ui/react';
+import { FaGithub, FaLinkedin, FaGoogle, FaMicrosoft } from 'react-icons/fa';
 
 import {
   GithubAuthorisation,
@@ -7,6 +8,7 @@ import {
   GoogleAuthorisation,
   MicrosoftAuthorisation,
 } from '../../utils/authorizationLinks';
+import CustomButton from '../UI/CustomButton';
 
 import Card from '../UI/Card';
 
@@ -36,21 +38,50 @@ const Login = () => {
           alignItems="center"
           justifyContent="center"
         >
-          <GridItem m="0">
-            <MicrosoftAuthorisation />
-          </GridItem>
-
-          <GridItem m="0">
-            <GoogleAuthorisation />
-          </GridItem>
-
-          <GridItem m="0">
-            <GithubAuthorisation />
-          </GridItem>
-
-          <GridItem m="0">
-            <LinkedInAuthorisation />
-          </GridItem>
+          {[
+            {
+              authorizationFunction: MicrosoftAuthorisation,
+              Icon: FaMicrosoft,
+              color: '#0078D4',
+              name: 'Microsoft',
+            },
+            {
+              authorizationFunction: GoogleAuthorisation,
+              Icon: FaGoogle,
+              color: '#DB4437',
+              name: 'Google',
+            },
+            {
+              authorizationFunction: GithubAuthorisation,
+              Icon: FaGithub,
+              color: '#181717',
+              name: 'GitHub',
+            },
+            {
+              authorizationFunction: LinkedInAuthorisation,
+              Icon: FaLinkedin,
+              color: '#0A66C2',
+              name: 'LinkedIn',
+            },
+          ].map(({ authorizationFunction, Icon, color, name }) => (
+            <GridItem key={name} m="0">
+              <CustomButton
+                onClick={() => authorizationFunction()}
+                leftIcon={<Icon />}
+                bg={color}
+                w="85%"
+                m="0.5rem 2rem"
+                _hover={{
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0px 5px 10px rgba(0, 0, 0, 0.2)',
+                }}
+                _active={{ transform: 'none' }}
+                transition="all 0.2s"
+              >
+                {name}
+              </CustomButton>
+            </GridItem>
+          ))}
         </Grid>
       </Card>
     </Center>

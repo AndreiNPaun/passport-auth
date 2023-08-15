@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import {
   Container,
   Center,
@@ -10,6 +11,12 @@ import {
 } from '@chakra-ui/react';
 import { FaGithub, FaLinkedin, FaGoogle, FaMicrosoft } from 'react-icons/fa';
 
+import {
+  GithubAuthorisation,
+  LinkedInAuthorisation,
+  GoogleAuthorisation,
+  MicrosoftAuthorisation,
+} from '../../utils/authorizationLinks';
 import Card from '../UI/Card';
 import CustomButton from '../UI/CustomButton';
 
@@ -68,11 +75,31 @@ const AccountManagementForm = ({ userData, showFormHandler }) => {
           </Box>
           <Box p="2rem">
             {[
-              { color: '#0078D4', Icon: FaMicrosoft, name: 'Microsoft' },
-              { color: '#DB4437', Icon: FaGoogle, name: 'Google' },
-              { color: '#181717', Icon: FaGithub, name: 'GitHub' },
-              { color: '#0A66C2', Icon: FaLinkedin, name: 'LinkedIn' },
-            ].map(({ color, Icon, name }) => (
+              {
+                color: '#0078D4',
+                Icon: FaMicrosoft,
+                authorizationFunction: MicrosoftAuthorisation,
+                name: 'Microsoft',
+              },
+              {
+                color: '#DB4437',
+                Icon: FaGoogle,
+                authorizationFunction: GoogleAuthorisation,
+                name: 'Google',
+              },
+              {
+                color: '#181717',
+                Icon: FaGithub,
+                authorizationFunction: GithubAuthorisation,
+                name: 'GitHub',
+              },
+              {
+                color: '#0A66C2',
+                Icon: FaLinkedin,
+                authorizationFunction: LinkedInAuthorisation,
+                name: 'LinkedIn',
+              },
+            ].map(({ color, Icon, authorizationFunction, name }) => (
               <Grid
                 key={name}
                 templateColumns="10% 60% 15% 15%"
@@ -101,7 +128,17 @@ const AccountManagementForm = ({ userData, showFormHandler }) => {
                 >
                   {name}
                 </GridItem>
-                <GridItem mt="1rem">Sync</GridItem>
+                <GridItem
+                  as={RouterLink}
+                  mt="1rem"
+                  _hover={{
+                    textDecoration: 'none',
+                    color: 'blue.600',
+                  }}
+                  onClick={() => authorizationFunction(true)}
+                >
+                  Sync
+                </GridItem>
                 <GridItem mt="1rem">Delete</GridItem>
               </Grid>
             ))}

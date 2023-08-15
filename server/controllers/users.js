@@ -245,9 +245,12 @@ const postEditProfile = async (req, res, next) => {
   }
 };
 
+const sync = () => {};
+
 module.exports = {
   authentication,
   userData,
   getEditProfile,
   postEditProfile,
+  sync,
 };
