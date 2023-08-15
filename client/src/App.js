@@ -10,7 +10,6 @@ import HomePage from './pages/Home';
 import LoginCheck from './pages/LoginCheck';
 import CreateAccountPage from './pages/CreateAccount';
 import AccountManagementPage from './pages/AccountManagement.js';
-import EditProfilePage from './pages/EditProfile.js';
 
 const router = createBrowserRouter([
   {
@@ -25,10 +24,6 @@ const router = createBrowserRouter([
         element: <CreateAccountPage />,
       },
       { path: '/account-management', element: <AccountManagementPage /> },
-      {
-        path: 'edit-profile',
-        element: <EditProfilePage />,
-      },
     ],
   },
 ]);
