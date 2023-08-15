@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import {
   Container,
   Center,
@@ -10,44 +12,46 @@ import {
 } from '@chakra-ui/react';
 import { FaGithub, FaLinkedin, FaGoogle, FaMicrosoft } from 'react-icons/fa';
 
-import Card from './UI/Card';
-import Modal from './UI/Modal';
-import CustomButton from './UI/CustomButton';
+import { setFormOpen } from '../../store/action/form';
+import CheckTokenValidity from '../../utils/CheckTokenValidity';
+import httpRequest from '../../utils/httpRequest';
+import EditProfile from './EditProfile';
+
+import Card from '../UI/Card';
+import CustomButton from '../UI/CustomButton';
 
 const MyProfile = () => {
-  const [editAccount, setEditAccount] = useState(false);
+  const [userData, setUserData] = useState(); // Used to get data out of useEffect hook
 
-  const editAccountHandler = () => {
-    setEditAccount(true);
-  };
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const formCheck = useSelector((state) => state.form.formCheck);
 
-  const closeAccountHandler = () => {
-    setEditAccount(false);
-  };
+  // Once page renders populate fields with user data
+  useEffect(() => {
+    (async () => {
+      const getData = async () => {
+        const response = await httpRequest(
+          'get',
+          `${process.env.REACT_APP_SERVER_URL}/edit-profile`
+        );
+        return response;
+      };
 
-  const cardModalStyle = {
-    maxW: '50rem',
-    m: '10rem auto',
-  };
+      const userData = await CheckTokenValidity(getData, navigate, dispatch);
+      console.log('userData', userData);
 
-  const propagationBoxStyle = {
-    w: '40%',
-    ml: '30%',
+      setUserData(userData);
+    })();
+  }, []);
+
+  const showFormHandler = () => {
+    dispatch(setFormOpen());
   };
 
   return (
     <>
-      {editAccount && (
-        <Modal
-          cardStyle={cardModalStyle}
-          propagationBox={propagationBoxStyle}
-          modelText="Write your note in the field below"
-          // errorText={errorMessage}
-          // inputNoteRef={inputNoteRef}
-          onClickCancel={closeAccountHandler}
-          // onClickSubmit={submitNoteHandler}
-        />
-      )}
+      {formCheck && <EditProfile userData={userData} />}
       <Container mt="4rem" maxW="60%">
         <Card mb="1rem" overflow="hidden">
           <Grid templateColumns="30% 70%" gap="1rem">
@@ -67,9 +71,9 @@ const MyProfile = () => {
                 m="1rem 0 0 1rem"
               >
                 {[
-                  { label: 'First Name', value: 'Andrei' },
-                  { label: 'Last Name', value: 'Paun' },
-                  { label: 'Email', value: 'Email' },
+                  { label: 'First Name', value: userData?.givenName },
+                  { label: 'Last Name', value: userData?.familyName },
+                  { label: 'Email', value: userData?.email },
                 ].map(({ label, value }) => (
                   <GridItem key={label}>
                     <Text fontSize="xl" color="blue.500">
@@ -79,8 +83,8 @@ const MyProfile = () => {
                   </GridItem>
                 ))}
               </Grid>
-              <Flex justify="end" m="0.3rem 3.2rem 0 0">
-                <CustomButton onClick={editAccountHandler}>
+              <Flex justify="end" m="1rem 3.2rem 0 0">
+                <CustomButton onClick={showFormHandler}>
                   Edit Information
                 </CustomButton>
               </Flex>
@@ -111,6 +115,7 @@ const MyProfile = () => {
                 { color: '#0A66C2', Icon: FaLinkedin, name: 'LinkedIn' },
               ].map(({ color, Icon, name }) => (
                 <Grid
+                  key={name}
                   templateColumns="10% 60% 15% 15%"
                   mb="0.5rem"
                   minH="3.5rem"
@@ -121,7 +126,6 @@ const MyProfile = () => {
                   borderRadius="5px"
                 >
                   <GridItem
-                    key={name}
                     bg={color}
                     borderTopLeftRadius="5px"
                     borderBottomLeftRadius="5px"
