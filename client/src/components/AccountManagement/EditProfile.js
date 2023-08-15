@@ -47,6 +47,30 @@ const EditProfile = (props) => {
     dispatch(setFormClose());
   };
 
+  const fields = [
+    {
+      htmlFor: 'givenName',
+      labelText: 'First Name',
+      id: 'givenName',
+      ref: givenNameInputRef,
+      value: 'givenName',
+    },
+    {
+      htmlFor: 'familyName',
+      labelText: 'Family Name',
+      id: 'familyName',
+      ref: familyNameInputRef,
+      value: 'familyName',
+    },
+    {
+      htmlFor: 'email',
+      labelText: 'Email',
+      id: 'email',
+      ref: emailInputRef,
+      value: 'email',
+    },
+  ];
+
   return (
     <Modal
       modalTitle="Edit Account"
@@ -54,7 +78,7 @@ const EditProfile = (props) => {
       onClickCancel={closeFormHandler}
       onClickSubmit={submitHandler}
       value={props.userData}
-      inputRef={{ givenNameInputRef, familyNameInputRef, emailInputRef }}
+      fields={fields}
       // errorText={errorMessage}
     />
   );
