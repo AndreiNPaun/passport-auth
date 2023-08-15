@@ -1,5 +1,5 @@
 import { FaGithub, FaLinkedin, FaGoogle, FaMicrosoft } from 'react-icons/fa';
-import CustomButton from '../components/UI/ButtonUI';
+import CustomButton from '../components/UI/CustomButton';
 
 // Styles applied to the custom button
 const buttonStyle = {
