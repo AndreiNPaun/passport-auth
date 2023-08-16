@@ -1,7 +1,7 @@
 const passport = require('passport');
 const User = require('../models/users');
 
-const users = require('../controllers/users');
+const { authentication, sync } = require('../controllers/users');
 
 // Strategies
 const GitHubStrategy = require('passport-github2').Strategy;
@@ -41,11 +41,20 @@ passport.use(
       const state = urlObj.searchParams.get('state');
 
       if (state === 'sync') {
+        const cookieAccessToken = req.cookies.accessToken;
         console.log('State:', state);
+        sync(
+          cookieAccessToken,
+          givenName,
+          familyName,
+          email,
+          providerType,
+          providerID
+        );
       }
 
       // Controller registration function
-      const response = await users.authentication(
+      const response = await authentication(
         givenName,
         familyName,
         email,
@@ -84,18 +93,22 @@ passport.use(
       const urlObj = new URL(req.originalUrl, 'https://www.justaparam.com'); // Dummy URL which needs to be included
       const state = urlObj.searchParams.get('state');
 
-      if (state === 'sync') {
-        console.log('State:', state);
-      }
-
-      // Controller registration function which returns the jwt tokens
-      const response = await users.authentication(
+      const userData = {
         givenName,
         familyName,
         email,
         providerType,
-        providerID
-      );
+        providerID,
+      };
+
+      if (state === 'sync') {
+        const cookieAccessToken = req.cookies.accessToken;
+        console.log('State:', state);
+        sync(cookieAccessToken, userData);
+      }
+
+      // Controller registration function which returns the jwt tokens
+      const response = await authentication(userData);
 
       done(null, response);
     }
@@ -129,10 +142,7 @@ passport.use(
       const urlObj = new URL(req.originalUrl, 'https://www.justaparam.com'); // Dummy URL which needs to be included
       const state = urlObj.searchParams.get('state');
 
-      if (state === 'sync') {
-        console.log('State:', state);
-      }
-
+      // Check if there is an existing record using username
       const gitHubUser = await User.findOne({
         'provider.github.username': username,
       });
@@ -145,15 +155,23 @@ passport.use(
         email = email ? email : gitHubUser.email;
       }
 
-      // Controller registration function
-      const response = await users.authentication(
+      const userData = {
         givenName,
         familyName,
         email,
         providerType,
         providerID,
-        ['username', username] // needed by GitHub Passport to validate user in case email is missing from API call
-      );
+        extraParam: ['username', username], // needed by GitHub Passport to validate user in case email is missing from API call
+      };
+
+      if (state === 'sync') {
+        const cookieAccessToken = req.cookies.accessToken;
+        console.log('State:', state);
+        sync(cookieAccessToken, userData);
+      }
+
+      // Controller registration function
+      const response = await authentication(userData);
 
       done(null, response);
     }
@@ -187,11 +205,19 @@ passport.use(
       const state = urlObj.searchParams.get('state');
 
       if (state === 'sync') {
-        console.log('State:', state);
+        const cookieAccessToken = req.cookies.accessToken;
+        sync(
+          cookieAccessToken,
+          givenName,
+          familyName,
+          email,
+          providerType,
+          providerID
+        );
       }
 
       // Controller registration function
-      const response = await users.authentication(
+      const response = await authentication(
         givenName,
         familyName,
         email,
