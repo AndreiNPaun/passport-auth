@@ -9,7 +9,7 @@ const {
 } = require('../controllers/users');
 const { refreshTokenCheck } = require('../controllers/token');
 const authenticate = require('../middleware/authenticate');
-const userRedirect = require('../utils/userRedirect');
+const { userRedirect, userRedirectSync } = require('../utils/userRedirect');
 const { nameValidation, emailValidation } = require('../utils/validationUtils');
 
 router.get('/', () => {
@@ -30,7 +30,12 @@ router.get(
     session: false,
   }),
   (req, res) => {
-    userRedirect(req, res);
+    if (req.user.sync) {
+      console.log('SYNCHGINC');
+      userRedirectSync(req, res);
+    } else {
+      userRedirect(req, res);
+    }
   }
 );
 
@@ -46,7 +51,7 @@ router.get(
     session: false,
   }),
   (req, res) => {
-    userRedirect(req, res);
+    userRedirect(req, res, req.user.sync);
   }
 );
 

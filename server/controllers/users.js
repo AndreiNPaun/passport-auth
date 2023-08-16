@@ -6,14 +6,14 @@ const decodeTokenUserID = require('../utils/decodeTokenUserID');
 const validationError = require('../utils/validationError');
 
 // Passport user registration function
-const authentication = async (
+const authentication = async ({
   givenName,
   familyName,
   email,
   providerType,
   providerID,
-  extraParam
-) => {
+  extraParam,
+}) => {
   try {
     const checkUser = await User.findOne({
       email: email,
@@ -163,6 +163,25 @@ const userData = async (req, res, next) => {
       return res.status(200).send('Account synchronized.');
     }
 
+    // Checks for user's both names and if they match with another account but has a different email address store records together
+    const userNames = await User.findOne({ givenName, familyName });
+
+    if (userNames) {
+      await User.updateOne(
+        { givenName, familyName },
+        {
+          $set: {
+            [`provider.${providerType}.id`]: providerID,
+            [`provider.${providerType}.givenName`]: givenName,
+            [`provider.${providerType}.familyName`]: familyName,
+            [`provider.${providerType}.email`]: email,
+          },
+        }
+      );
+
+      return res.status(200).send('Account synchronized.');
+    }
+
     // If no account has this email, create a new record
     const newUserAccount = new User({
       givenName,
@@ -194,11 +213,11 @@ const getEditProfile = async (req, res, next) => {
 
   const userID = decodeTokenUserID(accessToken, 'ACCESS');
   // Convert id to ObjectId
-  const id = new ObjectId(userID);
+  const _id = new ObjectId(userID);
 
   try {
     const user = await User.findOne({
-      _id: id,
+      _id,
     });
 
     const userData = {
@@ -225,10 +244,10 @@ const postEditProfile = async (req, res, next) => {
 
     const userID = decodeTokenUserID(accessToken, 'ACCESS');
     // Convert id to ObjectId
-    const id = new ObjectId(userID);
+    const _id = new ObjectId(userID);
 
     await User.updateOne(
-      { _id: id },
+      { _id },
       {
         $set: {
           givenName,
@@ -245,7 +264,51 @@ const postEditProfile = async (req, res, next) => {
   }
 };
 
-const sync = () => {};
+const sync = async (
+  accessToken,
+  givenName,
+  familyName,
+  email,
+  providerType,
+  providerID,
+  extraParam
+) => {
+  try {
+    if (!givenName || !familyName || !email) {
+      console.log('User account fields are empty.');
+
+      return {
+        error: 'User account fields are empty.',
+        sync: 'sync',
+        givenName,
+        familyName,
+        email,
+        providerType,
+        providerID,
+        extraParam,
+      };
+    }
+
+    const userID = decodeTokenUserID(accessToken, 'ACCESS');
+
+    const _id = new ObjectId(userID);
+
+    await User.updateOne(
+      { _id },
+      {
+        $set: {
+          [`provider.${providerType}.id`]: providerID,
+          [`provider.${providerType}.givenName`]: givenName,
+          [`provider.${providerType}.familyName`]: familyName,
+          [`provider.${providerType}.email`]: email,
+        },
+      }
+    );
+  } catch (error) {
+    console.log('Error', error);
+    res.status(500).send('Server error.');
+  }
+};
 
 module.exports = {
   authentication,
