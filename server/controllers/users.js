@@ -1,9 +1,9 @@
-const User = require('../models/users');
-const { ObjectId } = require('mongodb');
+const User = require("../models/users");
+const { ObjectId } = require("mongodb");
 
-const { setToken } = require('./token');
-const decodeTokenUserID = require('../utils/decodeTokenUserID');
-const validationError = require('../utils/validationError');
+const { setToken } = require("./token");
+const decodeTokenUserID = require("../utils/decodeTokenUserID");
+const validationError = require("../utils/validationError");
 
 // Passport user registration function
 const authentication = async ({
@@ -26,14 +26,14 @@ const authentication = async ({
 
     // If user does not exist, create account
     if (!checkUser) {
-      console.log('No user account found.');
+      console.log("No user account found.");
 
       // Check if either field is empty and redirect the user to form to complete missing fields
-      if (!givenName || !familyName || !email) {
-        console.log('User account fields are empty.');
+      if (givenName === "" || familyName === "" || email === "") {
+        console.log("User account fields are empty.");
 
         return {
-          error: 'User account fields are empty.',
+          error: "User account fields are empty.",
           givenName,
           familyName,
           email,
@@ -61,7 +61,7 @@ const authentication = async ({
 
         // Set tokens
         const jwtToken = setToken(userNames);
-        console.log('tokens', jwtToken);
+        console.log("tokens", jwtToken);
 
         return jwtToken;
       }
@@ -84,14 +84,14 @@ const authentication = async ({
 
       // Set Authentication Token and Refresh Token
       const jwtToken = setToken(newUserAccount);
-      console.log('tokens', jwtToken);
+      console.log("tokens", jwtToken);
 
       return jwtToken;
     }
 
     // Checks if user is registered but the chosen login provider details are not stored
     if (checkUser && !checkProvider) {
-      console.log('Provider not registered.');
+      console.log("Provider not registered.");
 
       await User.updateOne(
         { email },
@@ -108,8 +108,8 @@ const authentication = async ({
 
     // Set Authentication Token and Refresh Token
     const jwtToken = setToken(checkUser);
-    console.log('accessToken', jwtToken.accessToken);
-    console.log('refreshToken', jwtToken.refreshToken);
+    console.log("accessToken", jwtToken.accessToken);
+    console.log("refreshToken", jwtToken.refreshToken);
 
     return jwtToken;
   } catch (error) {
@@ -119,7 +119,7 @@ const authentication = async ({
 
 // Controller which will amend user record based on user input
 const userData = async (req, res, next) => {
-  console.log('User Data:', req.body.userData);
+  console.log("User Data:", req.body.userData);
   // Check for validation errors
   if (validationError(req, res)) {
     return;
@@ -135,7 +135,7 @@ const userData = async (req, res, next) => {
   } = req.body.userInputData;
 
   // Splitting params value into key value pairs
-  const splitParams = extraParam.split(' ');
+  const splitParams = extraParam.split(" ");
   const key = splitParams[0];
   const value = splitParams[1];
 
@@ -145,7 +145,7 @@ const userData = async (req, res, next) => {
 
     // If same email account exists update record
     if (response) {
-      console.log('Synchronizing existing accounts.');
+      console.log("Synchronizing existing accounts.");
 
       await User.updateOne(
         { email },
@@ -160,7 +160,7 @@ const userData = async (req, res, next) => {
         }
       );
 
-      return res.status(200).send('Account synchronized.');
+      return res.status(200).send("Account synchronized.");
     }
 
     // Checks for user's both names and if they match with another account but has a different email address store records together
@@ -179,7 +179,7 @@ const userData = async (req, res, next) => {
         }
       );
 
-      return res.status(200).send('Account synchronized.');
+      return res.status(200).send("Account synchronized.");
     }
 
     // If no account has this email, create a new record
@@ -199,19 +199,19 @@ const userData = async (req, res, next) => {
     });
 
     await newUserAccount.save();
-    console.log('User created.');
+    console.log("User created.");
 
-    res.status(200).send('Account created.');
+    res.status(200).send("Account created.");
   } catch (error) {
-    console.log('Error:', error);
-    res.status(500).send('Server Error.');
+    console.log("Error:", error);
+    res.status(500).send("Server Error.");
   }
 };
 
 const getEditProfile = async (req, res, next) => {
   const accessToken = req.cookies.accessToken;
 
-  const userID = decodeTokenUserID(accessToken, 'ACCESS');
+  const userID = decodeTokenUserID(accessToken, "ACCESS");
   // Convert id to ObjectId
   const _id = new ObjectId(userID);
 
@@ -228,8 +228,8 @@ const getEditProfile = async (req, res, next) => {
 
     res.status(200).send(userData);
   } catch (error) {
-    console.log('Error:', error);
-    res.status(500).send('Server Error.');
+    console.log("Error:", error);
+    res.status(500).send("Server Error.");
   }
 };
 
@@ -242,7 +242,7 @@ const postEditProfile = async (req, res, next) => {
     const { givenName, familyName, email } = req.body.userInputData;
     const accessToken = req.cookies.accessToken;
 
-    const userID = decodeTokenUserID(accessToken, 'ACCESS');
+    const userID = decodeTokenUserID(accessToken, "ACCESS");
     // Convert id to ObjectId
     const _id = new ObjectId(userID);
 
@@ -257,29 +257,24 @@ const postEditProfile = async (req, res, next) => {
       }
     );
 
-    res.status(200).send('Account updated.');
+    res.status(200).send("Account updated.");
   } catch (error) {
-    console.log('Error:', error);
-    res.status(500).send('Server Error.');
+    console.log("Error:", error);
+    res.status(500).send("Server Error.");
   }
 };
 
 const sync = async (
   accessToken,
-  givenName,
-  familyName,
-  email,
-  providerType,
-  providerID,
-  extraParam
+  { givenName, familyName, email, providerType, providerID, extraParam }
 ) => {
   try {
-    if (!givenName || !familyName || !email) {
-      console.log('User account fields are empty.');
+    if (givenName === "" || familyName === "" || email === "") {
+      console.log("User account fields are empty.");
 
       return {
-        error: 'User account fields are empty.',
-        sync: 'sync',
+        error: "User account fields are empty.",
+        sync: "sync",
         givenName,
         familyName,
         email,
@@ -289,7 +284,9 @@ const sync = async (
       };
     }
 
-    const userID = decodeTokenUserID(accessToken, 'ACCESS');
+    console.log("SJUNGE AICI");
+
+    const userID = decodeTokenUserID(accessToken, "ACCESS");
 
     const _id = new ObjectId(userID);
 
@@ -305,8 +302,8 @@ const sync = async (
       }
     );
   } catch (error) {
-    console.log('Error', error);
-    res.status(500).send('Server error.');
+    console.log("Error", error);
+    // res.status(500).send('Server error.');
   }
 };
 
