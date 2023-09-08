@@ -1,7 +1,9 @@
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
 import httpRequest from '../../utils/httpRequest';
+import CheckTokenValidity from '../../utils/CheckTokenValidity';
 import CreateAccountForm from './CreateAccountForm';
 
 const CreateAccount = () => {
@@ -10,6 +12,7 @@ const CreateAccount = () => {
   const emailInputRef = useRef();
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // URL data
   const urlParams = new URLSearchParams(window.location.search);
@@ -29,6 +32,8 @@ const CreateAccount = () => {
   // Extra param which will be slit into key value pair
   const extraParam = urlParams.get('extraParam') || '';
 
+  const sync = urlParams.get('sync') || '';
+
   // Send updated user data to server
   const submitUserData = async (event) => {
     event.preventDefault();
@@ -44,22 +49,34 @@ const CreateAccount = () => {
       extraParam: extraParam,
     };
 
-    try {
-      console.log(userInputData);
+    console.log(userInputData);
+
+    let pathAPI = 'user-data';
+    let pathRedirect = '/';
+    if (sync) {
+      pathAPI = 'sync-account';
+      pathRedirect = '/account-management';
+    }
+
+    const postUserInput = async (pathAPI) => {
       const response = await httpRequest(
         'post',
-        `${process.env.REACT_APP_SERVER_URL}/user-data`,
-        { userInputData }
+        `${process.env.REACT_APP_SERVER_URL}/${pathAPI}`,
+        {
+          userInputData,
+        }
       );
+      return response;
+    };
 
-      if (response.status === 200) {
-        console.log('Success.');
-        navigate('/');
-      } else {
-        console.log('Error');
-      }
+    try {
+      await postUserInput(pathAPI);
+      console.log('Success.');
+      navigate(pathRedirect);
     } catch (error) {
       console.log('Error:', error);
+      CheckTokenValidity(() => postUserInput(pathAPI), navigate, dispatch);
+      navigate(pathRedirect);
     }
   };
 

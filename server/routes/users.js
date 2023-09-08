@@ -6,6 +6,7 @@ const {
   userData,
   getEditProfile,
   postEditProfile,
+  synchronizingAccount,
 } = require('../controllers/users');
 const { refreshTokenCheck } = require('../controllers/token');
 const authenticate = require('../middleware/authenticate');
@@ -104,6 +105,17 @@ router.post(
   ],
   authenticate,
   postEditProfile
+);
+
+router.post(
+  '/sync-account',
+  [
+    nameValidation('userInputData.givenName', 'First name'),
+    nameValidation('userInputData.familyName', 'Family Name'),
+    emailValidation('userInputData.email'),
+  ],
+  authenticate,
+  synchronizingAccount
 );
 
 router.post('/refresh-token', refreshTokenCheck);

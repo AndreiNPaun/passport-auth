@@ -1,7 +1,10 @@
 const passport = require('passport');
 const User = require('../models/users');
 
-const { authentication, sync } = require('../controllers/users');
+const {
+  authentication,
+  synchronizationRequest,
+} = require('../controllers/users');
 
 // Strategies
 const GitHubStrategy = require('passport-github2').Strategy;
@@ -49,7 +52,7 @@ passport.use(
       };
 
       if (state === 'sync') {
-        const respone = await sync(userData);
+        const respone = await synchronizationRequest(userData);
         return done(null, respone);
       }
 
@@ -95,7 +98,7 @@ passport.use(
       };
 
       if (state === 'sync') {
-        const respone = await sync(res, userData);
+        const respone = await synchronizationRequest(res, userData);
         return done(null, respone);
       }
 
@@ -157,7 +160,7 @@ passport.use(
       };
 
       if (state === 'sync') {
-        const respone = await sync(userData);
+        const respone = await synchronizationRequest(userData);
         return done(null, respone);
       }
 
@@ -204,7 +207,7 @@ passport.use(
       };
 
       if (state === 'sync') {
-        const respone = await sync(userData);
+        const respone = await synchronizationRequest(userData);
         return done(null, respone);
       }
 

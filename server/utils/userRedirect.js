@@ -17,6 +17,7 @@ const userRedirect = (req, res) => {
       providerType,
       providerID,
       extraParam,
+      sync,
     } = req.user;
 
     // Generate URL, if value is null or false unset url
@@ -29,8 +30,10 @@ const userRedirect = (req, res) => {
       ? `&extraParam=${extraParam[0]}+${extraParam[1]}`
       : '';
 
+    const syncUrl = sync ? `&sync=${sync}` : '';
+
     return res.redirect(
-      `${process.env.CLIENT_URL}/create-account?provider=${providerType}&providerID=${providerID}${givenNameUrl}${familyNameUrl}${emailUrl}${extraParamUrl}`
+      `${process.env.CLIENT_URL}/create-account?provider=${providerType}&providerID=${providerID}${givenNameUrl}${familyNameUrl}${emailUrl}${extraParamUrl}${syncUrl}`
     );
   }
 

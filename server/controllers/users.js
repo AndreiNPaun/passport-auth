@@ -43,29 +43,6 @@ const authentication = async ({
         };
       }
 
-      // Checks for user's both names and if they match with another account but has a different email address store records together
-      const userNames = await User.findOne({ givenName, familyName });
-
-      if (userNames) {
-        await User.updateOne(
-          { givenName, familyName },
-          {
-            $set: {
-              [`provider.${providerType}.id`]: providerID,
-              [`provider.${providerType}.givenName`]: givenName,
-              [`provider.${providerType}.familyName`]: familyName,
-              [`provider.${providerType}.email`]: email,
-            },
-          }
-        );
-
-        // Set tokens
-        const jwtToken = setToken(userNames);
-        console.log('tokens', jwtToken);
-
-        return jwtToken;
-      }
-
       const newUserAccount = new User({
         givenName,
         familyName,
@@ -119,7 +96,6 @@ const authentication = async ({
 
 // Controller which will amend user record based on user input
 const userData = async (req, res, next) => {
-  console.log('User Data:', req.body.userData);
   // Check for validation errors
   if (validationError(req, res)) {
     return;
@@ -156,25 +132,6 @@ const userData = async (req, res, next) => {
             [`provider.${providerType}.familyName`]: familyName,
             [`provider.${providerType}.email`]: email,
             [`provider.${providerType}.${key}`]: value,
-          },
-        }
-      );
-
-      return res.status(200).send('Account synchronized.');
-    }
-
-    // Checks for user's both names and if they match with another account but has a different email address store records together
-    const userNames = await User.findOne({ givenName, familyName });
-
-    if (userNames) {
-      await User.updateOne(
-        { givenName, familyName },
-        {
-          $set: {
-            [`provider.${providerType}.id`]: providerID,
-            [`provider.${providerType}.givenName`]: givenName,
-            [`provider.${providerType}.familyName`]: familyName,
-            [`provider.${providerType}.email`]: email,
           },
         }
       );
@@ -264,7 +221,7 @@ const postEditProfile = async (req, res, next) => {
   }
 };
 
-const sync = async ({
+const synchronizationRequest = async ({
   givenName,
   familyName,
   email,
@@ -272,14 +229,13 @@ const sync = async ({
   providerID,
   extraParam,
 }) => {
-  console.log('micro controller');
   try {
     if (givenName === '' || familyName === '' || email === '') {
       console.log('User account fields are empty.');
 
       return {
         error: 'User account fields are empty.',
-        sync: 'sync',
+        sync: true,
         givenName,
         familyName,
         email,
@@ -290,8 +246,6 @@ const sync = async ({
     }
 
     console.log('am trecut de return error in sync', email);
-
-    // tokenu o sa fie permanent undefined, nu te poti folosi de userData controller pt account update?
 
     await User.updateOne(
       { email },
@@ -311,10 +265,60 @@ const sync = async ({
   }
 };
 
+const synchronizingAccount = async (req, res, next) => {
+  if (validationError(req, res)) {
+    return;
+  }
+
+  const {
+    givenName,
+    familyName,
+    email,
+    provider: providerType,
+    providerID,
+    extraParam,
+  } = req.body.userInputData;
+
+  const accessToken = req.cookies.accessToken;
+  console.log('synching stuff', accessToken);
+
+  // Splitting params value into key value pairs
+  const splitParams = extraParam.split(' ');
+  const key = splitParams[0];
+  const value = splitParams[1];
+
+  try {
+    console.log('Synchronizing existing accounts.');
+
+    const userID = decodeTokenUserID(accessToken, 'ACCESS');
+    // Convert id to ObjectId
+    const _id = new ObjectId(userID);
+
+    await User.updateOne(
+      { _id },
+      {
+        $set: {
+          [`provider.${providerType}.id`]: providerID,
+          [`provider.${providerType}.givenName`]: givenName,
+          [`provider.${providerType}.familyName`]: familyName,
+          [`provider.${providerType}.email`]: email,
+          [`provider.${providerType}.${key}`]: value,
+        },
+      }
+    );
+
+    return res.status(200).send('Account synchronized.');
+  } catch (error) {
+    console.log('Error:', error);
+    res.status(401).send('Unauthorized access.');
+  }
+};
+
 module.exports = {
   authentication,
   userData,
   getEditProfile,
   postEditProfile,
-  sync,
+  synchronizationRequest,
+  synchronizingAccount,
 };
