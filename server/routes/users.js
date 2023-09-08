@@ -30,7 +30,6 @@ router.get(
     session: false,
   }),
   (req, res) => {
-    console.log('micro route', req.user);
     userRedirect(req, res);
   }
 );

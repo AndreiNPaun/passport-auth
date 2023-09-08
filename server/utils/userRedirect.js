@@ -1,11 +1,8 @@
 // Reusable redirect function which checks for the JWT Token
-const userRedirect = (req, res, sync) => {
+const userRedirect = (req, res) => {
   const accessToken = req.user.accessToken;
   const refreshToken = req.user.refreshToken;
 
-  console.log('accessToken route', accessToken);
-
-  console.log('CHECK SYCN PARAM', req.user);
   // Checks if controller sent an error message
   const errorMessage = req.user.error;
 
@@ -32,15 +29,15 @@ const userRedirect = (req, res, sync) => {
       ? `&extraParam=${extraParam[0]}+${extraParam[1]}`
       : '';
 
-    let syncParam = '';
-
-    if (sync) {
-      syncParam = '&sync=true';
-    }
-
     return res.redirect(
-      `${process.env.CLIENT_URL}/create-account?provider=${providerType}&providerID=${providerID}${givenNameUrl}${familyNameUrl}${emailUrl}${extraParamUrl}${syncParam}`
+      `${process.env.CLIENT_URL}/create-account?provider=${providerType}&providerID=${providerID}${givenNameUrl}${familyNameUrl}${emailUrl}${extraParamUrl}`
     );
+  }
+
+  if (req.user === 'synchronized') {
+    console.log('Accounts synchronized successfully.');
+
+    return res.redirect(`${process.env.CLIENT_URL}/account-management`);
   }
 
   if (accessToken && refreshToken) {
@@ -61,8 +58,8 @@ const userRedirect = (req, res, sync) => {
       })
       .redirect(`${process.env.CLIENT_URL}/login-check?isLoggedIn=true`);
   } else {
-    console.log('Log In failed.');
-    res.status(401).redirect(process.env.CLIENT_URL);
+    console.log('Server error.');
+    res.status(400).redirect(process.env.CLIENT_URL);
   }
 };
 

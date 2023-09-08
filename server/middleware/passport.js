@@ -70,7 +70,7 @@ passport.use(
       scope: ['profile', 'email'],
       passReqToCallback: true,
     },
-    async (req, accessToken, refreshToken, profile, done) => {
+    async (req, res, accessToken, refreshToken, profile, done) => {
       console.log('Google Profile:', profile);
 
       // User details
@@ -95,7 +95,7 @@ passport.use(
       };
 
       if (state === 'sync') {
-        const respone = await sync(userData);
+        const respone = await sync(res, userData);
         return done(null, respone);
       }
 

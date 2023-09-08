@@ -271,7 +271,6 @@ const sync = async ({
   providerType,
   providerID,
   extraParam,
-  accessToken,
 }) => {
   console.log('micro controller');
   try {
@@ -305,9 +304,10 @@ const sync = async ({
         },
       }
     );
+
+    return 'synchronized';
   } catch (error) {
     console.log('Error', error);
-    // res.status(500).send("Server error.");
   }
 };
 
