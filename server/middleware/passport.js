@@ -1,13 +1,13 @@
-const passport = require("passport");
-const User = require("../models/users");
+const passport = require('passport');
+const User = require('../models/users');
 
-const { authentication, sync } = require("../controllers/users");
+const { authentication, sync } = require('../controllers/users');
 
 // Strategies
-const GitHubStrategy = require("passport-github2").Strategy;
-const LinkedInStrategy = require("passport-linkedin-oauth2").Strategy;
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const MicrosoftStrategy = require("passport-microsoft").Strategy;
+const GitHubStrategy = require('passport-github2').Strategy;
+const LinkedInStrategy = require('passport-linkedin-oauth2').Strategy;
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const MicrosoftStrategy = require('passport-microsoft').Strategy;
 
 // Microsoft
 passport.use(
@@ -16,31 +16,31 @@ passport.use(
       clientID: process.env.MICROSOFT_CLIENT_ID,
       clientSecret: process.env.MICROSOFT_CLIENT_SECRET,
       callbackURL: process.env.MICROSOFT_CALLBACK,
-      scope: ["user.read"],
-      tenant: "common",
-      userAudience: "All",
+      scope: ['user.read'],
+      tenant: 'common',
+      userAudience: 'All',
       authorizationURL:
-        "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
-      tokenURL: "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+        'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+      tokenURL: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
       passReqToCallback: true,
     },
     async (req, accessToken, refreshToken, profile, done) => {
-      console.log("Microsoft Profile", profile);
+      console.log('Microsoft Profile', profile);
 
       // User details
-      const givenName = profile.name.givenName || "";
-      const familyName = profile.name.familyName || "";
-      const email = profile.emails[0].value || "";
+      const givenName = profile.name.givenName || '';
+      const familyName = profile.name.familyName || '';
+      const email = profile.emails[0].value || '';
 
       // Stores the provider details (e.g. google)
       const providerType = profile.provider;
       const providerID = profile.id;
 
       // Checks if state is set used for syncing accounts
-      const urlObj = new URL(req.originalUrl, "https://www.justaparam.com"); // Dummy URL which needs to be included
-      const state = urlObj.searchParams.get("state");
+      const urlObj = new URL(req.originalUrl, 'https://www.justaparam.com'); // Dummy URL which needs to be included
+      const state = urlObj.searchParams.get('state');
 
-      const userDate = {
+      const userData = {
         givenName,
         familyName,
         email,
@@ -48,16 +48,13 @@ passport.use(
         providerID,
       };
 
-      // err here
-      if (state === "sync") {
-        const cookieAccessToken = req.cookies.accessToken;
-        console.log("State:", state);
-        sync(cookieAccessToken, userDate);
+      if (state === 'sync') {
+        const respone = await sync(userData);
+        return done(null, respone);
       }
 
       // Controller registration function
-      const response = await authentication(userDate);
-
+      const response = await authentication(userData);
       done(null, response);
     }
   )
@@ -70,11 +67,11 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: process.env.GOOGLE_CALLBACK,
-      scope: ["profile", "email"],
+      scope: ['profile', 'email'],
       passReqToCallback: true,
     },
     async (req, accessToken, refreshToken, profile, done) => {
-      console.log("Google Profile:", profile);
+      console.log('Google Profile:', profile);
 
       // User details
       const givenName = profile.name.givenName;
@@ -86,8 +83,8 @@ passport.use(
       const providerID = profile.id;
 
       // Checks if state is set used for syncing accounts
-      const urlObj = new URL(req.originalUrl, "https://www.justaparam.com"); // Dummy URL which needs to be included
-      const state = urlObj.searchParams.get("state");
+      const urlObj = new URL(req.originalUrl, 'https://www.justaparam.com'); // Dummy URL which needs to be included
+      const state = urlObj.searchParams.get('state');
 
       const userData = {
         givenName,
@@ -97,10 +94,9 @@ passport.use(
         providerID,
       };
 
-      if (state === "sync") {
-        const cookieAccessToken = req.cookies.accessToken;
-        console.log("State:", state);
-        sync(cookieAccessToken, userData);
+      if (state === 'sync') {
+        const respone = await sync(userData);
+        return done(null, respone);
       }
 
       // Controller registration function which returns the jwt tokens
@@ -121,13 +117,13 @@ passport.use(
       passReqToCallback: true,
     },
     async (req, accessToken, refreshToken, profile, done) => {
-      console.log("GitHub Profile:", profile);
+      console.log('GitHub Profile:', profile);
 
       // User details
       // GitHub does not return givenName or familyName, set to null to not break the reusable controller
-      let givenName = "";
-      let familyName = "";
-      let email = profile._json.email || "";
+      let givenName = '';
+      let familyName = '';
+      let email = profile._json.email || '';
 
       // Stores the provider details (e.g. google)
       const providerType = profile.provider;
@@ -135,12 +131,12 @@ passport.use(
       const username = profile.username;
 
       // Checks if state is set used for syncing accounts
-      const urlObj = new URL(req.originalUrl, "https://www.justaparam.com"); // Dummy URL which needs to be included
-      const state = urlObj.searchParams.get("state");
+      const urlObj = new URL(req.originalUrl, 'https://www.justaparam.com'); // Dummy URL which needs to be included
+      const state = urlObj.searchParams.get('state');
 
       // Check if there is an existing record using username
       const gitHubUser = await User.findOne({
-        "provider.github.username": username,
+        'provider.github.username': username,
       });
 
       if (gitHubUser) {
@@ -157,13 +153,12 @@ passport.use(
         email,
         providerType,
         providerID,
-        extraParam: ["username", username], // needed by GitHub Passport to validate user in case email is missing from API call
+        extraParam: ['username', username], // needed by GitHub Passport to validate user in case email is missing from API call
       };
 
-      if (state === "sync") {
-        const cookieAccessToken = req.cookies.accessToken;
-        console.log("State:", state);
-        sync(cookieAccessToken, userData);
+      if (state === 'sync') {
+        const respone = await sync(userData);
+        return done(null, respone);
       }
 
       // Controller registration function
@@ -181,24 +176,24 @@ passport.use(
       clientID: process.env.LINKEDIN_CLIENT_ID,
       clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
       callbackURL: process.env.LINKEDIN_CALLBACK,
-      scope: ["r_emailaddress", "r_liteprofile"],
+      scope: ['r_emailaddress', 'r_liteprofile'],
       passReqToCallback: true,
     },
     async (req, accessToken, refreshToken, profile, done) => {
-      console.log("LinkedIn Profile:", profile);
+      console.log('LinkedIn Profile:', profile);
 
       // User details
-      const givenName = profile.name.givenName;
-      const familyName = profile.name.familyName;
-      const email = profile.emails[0].value;
+      const givenName = profile.name.givenName || '';
+      const familyName = profile.name.familyName || '';
+      const email = profile.emails[0].value || '';
 
       // Stores the provider details (e.g. google)
       const providerType = profile.provider;
       const providerID = profile.id;
 
       // Checks if state is set used for syncing accounts
-      const urlObj = new URL(req.originalUrl, "https://www.justaparam.com"); // Dummy URL which needs to be included
-      const state = urlObj.searchParams.get("state");
+      const urlObj = new URL(req.originalUrl, 'https://www.justaparam.com'); // Dummy URL which needs to be included
+      const state = urlObj.searchParams.get('state');
 
       const userData = {
         givenName,
@@ -208,9 +203,9 @@ passport.use(
         providerID,
       };
 
-      if (state === "sync") {
-        const cookieAccessToken = req.cookies.accessToken;
-        sync(cookieAccessToken, userData);
+      if (state === 'sync') {
+        const respone = await sync(userData);
+        return done(null, respone);
       }
 
       // Controller registration function
