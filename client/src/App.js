@@ -8,7 +8,7 @@ import RootLayout from './pages/RootLayout';
 import ErrorPage from './pages/Error';
 import HomePage from './pages/Home';
 import LoginCheck from './pages/LoginCheck';
-import CreateAccountPage from './pages/CreateAccount';
+import SubmitAccountDetailsPage from './pages/SubmitAccountDetails';
 import AccountManagementPage from './pages/AccountManagement.js';
 
 const router = createBrowserRouter([
@@ -21,7 +21,7 @@ const router = createBrowserRouter([
       { path: 'login-check', element: <LoginCheck /> },
       {
         path: 'create-account',
-        element: <CreateAccountPage />,
+        element: <SubmitAccountDetailsPage />,
       },
       { path: '/account-management', element: <AccountManagementPage /> },
     ],

@@ -17,7 +17,6 @@ const AuthCheck = () => {
     try {
       if (isLoggedIn) {
         dispatch(setLogin(isLoggedIn));
-
         navigate('/');
       }
     } catch (Error) {

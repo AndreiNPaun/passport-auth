@@ -6,7 +6,7 @@ import Card from '../UI/Card';
 import InputFields from '../UI/InputFields';
 import CustomButton from '../UI/CustomButton';
 
-const CreateAccountForm = ({
+const SubmitAccountDetailsForm = ({
   providerText,
   givenName,
   familyName,
@@ -112,4 +112,4 @@ const CreateAccountForm = ({
   );
 };
 
-export default CreateAccountForm;
+export default SubmitAccountDetailsForm;

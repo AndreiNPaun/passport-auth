@@ -4,9 +4,9 @@ import { useDispatch } from 'react-redux';
 
 import httpRequest from '../../utils/httpRequest';
 import CheckTokenValidity from '../../utils/CheckTokenValidity';
-import CreateAccountForm from './CreateAccountForm';
+import SubmitAccountDetailsForm from './SubmitAccountDetailsForm';
 
-const CreateAccount = () => {
+const SubmitAccountDetails = () => {
   const givenNameInputRef = useRef();
   const familyNameInputRef = useRef();
   const emailInputRef = useRef();
@@ -66,22 +66,31 @@ const CreateAccount = () => {
           userInputData,
         }
       );
+      console.log(response);
       return response;
     };
 
     try {
-      await postUserInput(pathAPI);
-      console.log('Success.');
-      navigate(pathRedirect);
+      const response = await CheckTokenValidity(
+        () => postUserInput(pathAPI),
+        navigate,
+        dispatch
+      );
+
+      console.log('resp', response);
+
+      if (response === true) {
+        navigate(`/login-check?isLoggedIn=${response}`);
+      } else {
+        navigate('/account-management');
+      }
     } catch (error) {
       console.log('Error:', error);
-      CheckTokenValidity(() => postUserInput(pathAPI), navigate, dispatch);
-      navigate(pathRedirect);
     }
   };
 
   return (
-    <CreateAccountForm
+    <SubmitAccountDetailsForm
       providerText={providerText}
       givenName={givenName}
       familyName={familyName}
@@ -94,4 +103,4 @@ const CreateAccount = () => {
   );
 };
 
-export default CreateAccount;
+export default SubmitAccountDetails;

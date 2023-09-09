@@ -61,8 +61,6 @@ const authentication = async ({
 
       // Set Authentication Token and Refresh Token
       const jwtToken = setToken(newUserAccount);
-      console.log('tokens', jwtToken);
-
       return jwtToken;
     }
 
@@ -85,9 +83,6 @@ const authentication = async ({
 
     // Set Authentication Token and Refresh Token
     const jwtToken = setToken(checkUser);
-    console.log('accessToken', jwtToken.accessToken);
-    console.log('refreshToken', jwtToken.refreshToken);
-
     return jwtToken;
   } catch (error) {
     console.log(`Error: ${error}`);
@@ -117,10 +112,10 @@ const userData = async (req, res, next) => {
 
   try {
     // Check if there is an existing accounts with the same email
-    const response = await User.findOne({ email });
+    const checkIfExistingUser = await User.findOne({ email });
 
     // If same email account exists update record
-    if (response) {
+    if (checkIfExistingUser) {
       console.log('Synchronizing existing accounts.');
 
       await User.updateOne(
@@ -155,10 +150,13 @@ const userData = async (req, res, next) => {
       },
     });
 
-    await newUserAccount.save();
-    console.log('User created.');
+    const getUserDetails = await newUserAccount.save();
 
-    res.status(200).send('Account created.');
+    const { accessToken, refreshToken } = setToken(getUserDetails);
+    const isUserInput = true;
+
+    req.user = { accessToken, refreshToken, isUserInput };
+    next();
   } catch (error) {
     console.log('Error:', error);
     res.status(500).send('Server Error.');
@@ -245,8 +243,6 @@ const synchronizationRequest = async ({
       };
     }
 
-    console.log('am trecut de return error in sync', email);
-
     await User.updateOne(
       { email },
       {
@@ -280,7 +276,6 @@ const synchronizingAccount = async (req, res, next) => {
   } = req.body.userInputData;
 
   const accessToken = req.cookies.accessToken;
-  console.log('synching stuff', accessToken);
 
   // Splitting params value into key value pairs
   const splitParams = extraParam.split(' ');
@@ -307,7 +302,7 @@ const synchronizingAccount = async (req, res, next) => {
       }
     );
 
-    return res.status(200).send('Account synchronized.');
+    res.status(200).send('Accounts synchronized.');
   } catch (error) {
     console.log('Error:', error);
     res.status(401).send('Unauthorized access.');

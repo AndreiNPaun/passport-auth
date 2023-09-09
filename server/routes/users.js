@@ -91,7 +91,10 @@ router.post(
     nameValidation('userInputData.familyName', 'Family Name'),
     emailValidation('userInputData.email'),
   ],
-  userData
+  userData,
+  (req, res) => {
+    userRedirect(req, res);
+  }
 );
 
 // Edit account details

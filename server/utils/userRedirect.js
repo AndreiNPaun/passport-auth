@@ -6,6 +6,8 @@ const userRedirect = (req, res) => {
   // Checks if controller sent an error message
   const errorMessage = req.user.error;
 
+  const isUserInput = req.user.isUserInput;
+
   if (errorMessage) {
     console.log('Redirecting user to setup form.');
     // Pull out user fields
@@ -46,7 +48,6 @@ const userRedirect = (req, res) => {
   if (accessToken && refreshToken) {
     console.log('Log In successful.');
 
-    // Sets tokens as http cookie
     res
       .status(200)
       .cookie('accessToken', accessToken, {
@@ -58,8 +59,14 @@ const userRedirect = (req, res) => {
         httpOnly: true,
         secure: true,
         sameSite: 'Strict',
-      })
-      .redirect(`${process.env.CLIENT_URL}/login-check?isLoggedIn=true`);
+      });
+
+    // If user creates account using input data, client will manage redirect link to AuthCheck
+    if (isUserInput) {
+      return res.send(true);
+    }
+
+    res.redirect(`${process.env.CLIENT_URL}/login-check?isLoggedIn=true`);
   } else {
     console.log('Server error.');
     res.status(400).redirect(process.env.CLIENT_URL);
