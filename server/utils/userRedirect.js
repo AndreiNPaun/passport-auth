@@ -9,9 +9,6 @@ const userRedirect = (req, res) => {
   const isUserInput = req.user.isUserInput;
 
   if (errorMessage) {
-    console.log('Redirecting user to setup form.');
-    // Pull out user fields
-
     const {
       givenName,
       familyName,
@@ -21,6 +18,12 @@ const userRedirect = (req, res) => {
       extraParam,
       sync,
     } = req.user;
+
+    if (email === '') {
+      return res.redirect(
+        `${process.env.CLIENT_URL}/no-email?provider=${providerType}`
+      );
+    }
 
     // Generate URL, if value is null or false unset url
     const givenNameUrl = givenName ? `&givenName=${givenName}` : '';

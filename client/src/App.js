@@ -10,6 +10,7 @@ import HomePage from './pages/Home';
 import LoginCheck from './pages/LoginCheck';
 import SubmitAccountDetailsPage from './pages/SubmitAccountDetails';
 import AccountManagementPage from './pages/AccountManagement.js';
+import NoEmailMessage from './components/Authentication/SubmitAccount/NoEmailMessage.js';
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,7 @@ const router = createBrowserRouter([
         path: 'create-account',
         element: <SubmitAccountDetailsPage />,
       },
+      { path: 'no-email', element: <NoEmailMessage /> },
       { path: '/account-management', element: <AccountManagementPage /> },
     ],
   },

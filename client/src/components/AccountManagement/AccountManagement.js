@@ -8,7 +8,7 @@ import httpRequest from '../../utils/httpRequest';
 import EditProfile from './EditProfile';
 import AccountManagementForm from './AccountManagementForm';
 
-const MyProfile = () => {
+const AccountManagement = () => {
   const [userData, setUserData] = useState(); // Used to get data out of useEffect hook
 
   const dispatch = useDispatch();
@@ -48,4 +48,4 @@ const MyProfile = () => {
   );
 };
 
-export default MyProfile;
+export default AccountManagement;
