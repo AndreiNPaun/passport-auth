@@ -6,7 +6,7 @@ const CheckTokenValidity = async (callback, navigate, dispatch) => {
     const response = await callback();
     console.log('response', response);
 
-    return response.data;
+    return response;
   } catch (error) {
     console.log('error', error);
     if (error.request.status === 401) {
@@ -23,7 +23,7 @@ const CheckTokenValidity = async (callback, navigate, dispatch) => {
         console.log('newResponse', newResponse);
 
         // setData(newResponse.data);
-        return newResponse.data;
+        return newResponse;
       } catch (refreshError) {
         // If token has failed to refresh, send user back to loginpage
         console.log('Token refresh failed:', refreshError);
