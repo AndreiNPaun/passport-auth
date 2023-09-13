@@ -37,9 +37,18 @@ const AccountManagement = () => {
     dispatch(setFormOpen());
   };
 
+  const updateDisplayedUserData = (newUserData) => {
+    setUserData(newUserData);
+  };
+
   return (
     <>
-      {formCheck && <EditProfile userData={userData} />}
+      {formCheck && (
+        <EditProfile
+          userData={userData}
+          updateDisplayedUserData={updateDisplayedUserData}
+        />
+      )}
       <AccountManagementForm
         userData={userData}
         showFormHandler={showFormHandler}

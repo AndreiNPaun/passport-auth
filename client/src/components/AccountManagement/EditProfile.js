@@ -22,7 +22,7 @@ const EditProfile = (props) => {
     dispatch(setFormClose());
   };
 
-  const submitHandler = (event) => {
+  const submitHandler = async (event) => {
     event.preventDefault();
 
     const userInputData = {
@@ -41,7 +41,11 @@ const EditProfile = (props) => {
     };
 
     // Call function which checks for token and if ok sends data
-    CheckTokenValidity(submitData, navigate, dispatch);
+    const response = await CheckTokenValidity(submitData, navigate, dispatch);
+
+    if (response.status === 200) {
+      props.updateDisplayedUserData(userInputData);
+    }
 
     // Change form state to false
     dispatch(setFormClose());
