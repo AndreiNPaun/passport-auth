@@ -19,7 +19,7 @@ const userRedirect = (req, res) => {
       sync,
     } = req.user;
 
-    if (email === '') {
+    if (email === '' && !sync) {
       return res.redirect(
         `${process.env.CLIENT_URL}/no-email?provider=${providerType}`
       );
