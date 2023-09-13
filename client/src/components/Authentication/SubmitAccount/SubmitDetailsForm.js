@@ -91,16 +91,6 @@ const SubmitDetailsForm = ({
             />
           )}
 
-          {!email && (
-            <InputFields
-              htmlFor="email"
-              labelText="Email"
-              id="email"
-              ref={emailInputRef}
-              required
-            />
-          )}
-
           <Center>
             <CustomButton mt="1.5rem" w="8rem" onClick={submitUserData}>
               Submit

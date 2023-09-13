@@ -20,9 +20,9 @@ const SubmitDetails = () => {
   // If URL values are null set them to empty string
   const givenName = urlParams.get('givenName') || '';
   const familyName = urlParams.get('familyName') || '';
-  const email = urlParams.get('email') || '';
 
   // Can't be empty
+  const email = urlParams.get('email');
   const provider = urlParams.get('provider');
   const providerID = urlParams.get('providerID');
 
