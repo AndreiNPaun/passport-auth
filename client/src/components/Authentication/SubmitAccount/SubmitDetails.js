@@ -2,11 +2,11 @@ import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
-import httpRequest from '../../utils/httpRequest';
-import CheckTokenValidity from '../../utils/CheckTokenValidity';
-import SubmitAccountDetailsForm from './SubmitAccountDetailsForm';
+import httpRequest from '../../../utils/httpRequest';
+import CheckTokenValidity from '../../../utils/CheckTokenValidity';
+import SubmitDetailsForm from './SubmitDetailsForm';
 
-const SubmitAccountDetails = () => {
+const SubmitDetails = () => {
   const givenNameInputRef = useRef();
   const familyNameInputRef = useRef();
   const emailInputRef = useRef();
@@ -90,7 +90,7 @@ const SubmitAccountDetails = () => {
   };
 
   return (
-    <SubmitAccountDetailsForm
+    <SubmitDetailsForm
       providerText={providerText}
       givenName={givenName}
       familyName={familyName}
@@ -103,4 +103,4 @@ const SubmitAccountDetails = () => {
   );
 };
 
-export default SubmitAccountDetails;
+export default SubmitDetails;

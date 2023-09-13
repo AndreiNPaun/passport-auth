@@ -28,8 +28,18 @@ const authentication = async ({
     if (!checkUser) {
       console.log('No user account found.');
 
+      if (email === '') {
+        console.log('Email cannot be retrieved.');
+
+        return {
+          error: 'Email cannot be retrieved.',
+          email: '',
+          providerType,
+        };
+      }
+
       // Check if either field is empty and redirect the user to form to complete missing fields
-      if (givenName === '' || familyName === '' || email === '') {
+      if (givenName === '' || familyName === '') {
         console.log('User account fields are empty.');
 
         return {

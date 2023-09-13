@@ -1,9 +1,9 @@
 import React from 'react';
 
-import SubmitAccountDetailsForm from '../components/Authentication/SubmitAccountDetails';
+import SubmitDetailsForm from '../components/Authentication/SubmitAccount/SubmitDetailsForm';
 
 const SubmitAccountDetailsPage = () => {
-  return <SubmitAccountDetailsForm />;
+  return <SubmitDetailsForm />;
 };
 
 export default SubmitAccountDetailsPage;
