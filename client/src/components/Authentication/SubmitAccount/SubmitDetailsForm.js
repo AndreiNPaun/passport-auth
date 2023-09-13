@@ -7,6 +7,7 @@ import InputFields from '../../UI/InputFields';
 import CustomButton from '../../UI/CustomButton';
 
 const SubmitDetailsForm = ({
+
   providerText,
   givenName,
   familyName,
@@ -112,4 +113,6 @@ const SubmitDetailsForm = ({
   );
 };
 
+
 export default SubmitDetailsForm;
+
