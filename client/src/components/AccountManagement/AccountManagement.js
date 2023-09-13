@@ -26,7 +26,8 @@ const AccountManagement = () => {
         return response;
       };
 
-      const userData = await CheckTokenValidity(getData, navigate, dispatch);
+      const response = await CheckTokenValidity(getData, navigate, dispatch);
+      const userData = response.data;
       console.log('userData', userData);
 
       setUserData(userData);

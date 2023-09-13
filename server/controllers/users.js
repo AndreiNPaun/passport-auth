@@ -238,20 +238,21 @@ const synchronizationRequest = async ({
   extraParam,
 }) => {
   try {
-    if (givenName === '' || familyName === '' || email === '') {
-      console.log('User account fields are empty.');
+    // if (givenName === '' || familyName === '' || email === '') {
+    //   console.log('User account fields are empty.');
 
-      return {
-        error: 'User account fields are empty.',
-        sync: true,
-        givenName,
-        familyName,
-        email,
-        providerType,
-        providerID,
-        extraParam,
-      };
-    }
+    //   return {
+    //     error: 'User account fields are empty.',
+    //     sync: true,
+    //     givenName,
+    //     familyName,
+    //     email,
+    //     providerType,
+    //     providerID,
+    //     extraParam,
+    //     sync: true,
+    //   };
+    // }
 
     await User.updateOne(
       { email },
