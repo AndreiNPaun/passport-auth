@@ -10,11 +10,9 @@ const SubmitDetailsForm = ({
   providerText,
   givenName,
   familyName,
-  email,
   submitUserData,
   givenNameInputRef,
   familyNameInputRef,
-  emailInputRef,
 }) => {
   return (
     <Center h="95vh">
@@ -29,7 +27,6 @@ const SubmitDetailsForm = ({
         >
           Setup Account
         </Text>
-
         <Center>
           <Text mb=".5rem" color="#181717">
             Enter your details associated with your&nbsp;
@@ -69,7 +66,6 @@ const SubmitDetailsForm = ({
             &nbsp;to go back and select another platform
           </Text>
         </Center>
-
         <FormControl>
           {!givenName && (
             <InputFields
@@ -80,7 +76,6 @@ const SubmitDetailsForm = ({
               required
             />
           )}
-
           {!familyName && (
             <InputFields
               htmlFor="familyName"
@@ -90,7 +85,6 @@ const SubmitDetailsForm = ({
               required
             />
           )}
-
           <Center>
             <CustomButton mt="1.5rem" w="8rem" onClick={submitUserData}>
               Submit
