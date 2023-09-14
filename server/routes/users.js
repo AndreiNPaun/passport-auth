@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 
 const {
+  authentication,
   userData,
   getEditProfile,
   postEditProfile,
@@ -30,6 +31,7 @@ router.get(
   passport.authenticate('microsoft', {
     session: false,
   }),
+  authentication,
   (req, res) => {
     userRedirect(req, res);
   }
@@ -46,6 +48,7 @@ router.get(
   passport.authenticate('google', {
     session: false,
   }),
+  authentication,
   (req, res) => {
     userRedirect(req, res, req.user.sync);
   }
@@ -62,6 +65,7 @@ router.get(
   passport.authenticate('github', {
     session: false,
   }),
+  authentication,
   (req, res) => {
     userRedirect(req, res);
   }
@@ -78,6 +82,7 @@ router.get(
   passport.authenticate('linkedin', {
     session: false,
   }),
+  authentication,
   (req, res) => {
     userRedirect(req, res);
   }

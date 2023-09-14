@@ -36,6 +36,7 @@ const SubmitDetails = () => {
 
   // Send updated user data to server
   const submitUserData = async (event) => {
+    console.log('start');
     event.preventDefault();
 
     // Data which is already set in the URL will replace the one which is supposed to be from the user input
@@ -79,7 +80,7 @@ const SubmitDetails = () => {
 
       console.log('resp', response);
 
-      if (response === true) {
+      if (response.status === 200) {
         navigate(`/login-check?isLoggedIn=${response}`);
       } else {
         navigate('/account-management');

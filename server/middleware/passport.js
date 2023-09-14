@@ -1,10 +1,4 @@
 const passport = require('passport');
-const User = require('../models/users');
-
-const {
-  authentication,
-  synchronizationRequest,
-} = require('../controllers/users');
 
 // Strategies
 const GitHubStrategy = require('passport-github2').Strategy;
@@ -43,22 +37,16 @@ passport.use(
       const urlObj = new URL(req.originalUrl, 'https://www.justaparam.com'); // Dummy URL which needs to be included
       const state = urlObj.searchParams.get('state');
 
-      const userData = {
+      const passportData = {
         givenName,
         familyName,
         email,
         providerType,
         providerID,
+        state,
       };
 
-      if (state === 'sync') {
-        const respone = await synchronizationRequest(userData);
-        return done(null, respone);
-      }
-
-      // Controller registration function
-      const response = await authentication(userData);
-      done(null, response);
+      done(null, passportData);
     }
   )
 );
@@ -73,7 +61,7 @@ passport.use(
       scope: ['profile', 'email'],
       passReqToCallback: true,
     },
-    async (req, res, accessToken, refreshToken, profile, done) => {
+    async (req, accessToken, refreshToken, profile, done) => {
       console.log('Google Profile:', profile);
 
       // User details
@@ -89,23 +77,16 @@ passport.use(
       const urlObj = new URL(req.originalUrl, 'https://www.justaparam.com'); // Dummy URL which needs to be included
       const state = urlObj.searchParams.get('state');
 
-      const userData = {
+      const passportData = {
         givenName,
         familyName,
         email,
         providerType,
         providerID,
+        state,
       };
 
-      if (state === 'sync') {
-        const respone = await synchronizationRequest(res, userData);
-        return done(null, respone);
-      }
-
-      // Controller registration function which returns the jwt tokens
-      const response = await authentication(userData);
-
-      done(null, response);
+      done(null, passportData);
     }
   )
 );
@@ -137,37 +118,17 @@ passport.use(
       const urlObj = new URL(req.originalUrl, 'https://www.justaparam.com'); // Dummy URL which needs to be included
       const state = urlObj.searchParams.get('state');
 
-      // Check if there is an existing record using username
-      const gitHubUser = await User.findOne({
-        'provider.github.username': username,
-      });
-
-      if (gitHubUser) {
-        givenName = gitHubUser.givenName;
-        familyName = gitHubUser.familyName;
-
-        // Check if email is not already set
-        email = email ? email : gitHubUser.email;
-      }
-
-      const userData = {
+      const passportData = {
         givenName,
         familyName,
         email,
         providerType,
         providerID,
-        extraParam: ['username', username], // needed by GitHub Passport to validate user in case email is missing from API call
+        extraParam: ['username', username], // For storing GitHub username in case email and names cannot be accessed
+        state,
       };
 
-      if (state === 'sync') {
-        const respone = await synchronizationRequest(userData);
-        return done(null, respone);
-      }
-
-      // Controller registration function
-      const response = await authentication(userData);
-
-      done(null, response);
+      done(null, passportData);
     }
   )
 );
@@ -198,23 +159,16 @@ passport.use(
       const urlObj = new URL(req.originalUrl, 'https://www.justaparam.com'); // Dummy URL which needs to be included
       const state = urlObj.searchParams.get('state');
 
-      const userData = {
+      const passportData = {
         givenName,
         familyName,
         email,
         providerType,
         providerID,
+        state,
       };
 
-      if (state === 'sync') {
-        const respone = await synchronizationRequest(userData);
-        return done(null, respone);
-      }
-
-      // Controller registration function
-      const response = await authentication(userData);
-
-      done(null, response);
+      done(null, passportData);
     }
   )
 );

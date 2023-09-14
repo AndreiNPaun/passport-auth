@@ -6,15 +6,17 @@ const decodeTokenUserID = require('../utils/decodeTokenUserID');
 const validationError = require('../utils/validationError');
 
 // Passport user registration function
-const authentication = async ({
-  givenName,
-  familyName,
-  email,
-  providerType,
-  providerID,
-  extraParam,
-}) => {
+const authentication = async (req, res, next) => {
   try {
+    const {
+      givenName,
+      familyName,
+      email,
+      providerType,
+      providerID,
+      extraParam,
+    } = req.user;
+
     const checkUser = await User.findOne({
       email: email,
     });
@@ -31,18 +33,20 @@ const authentication = async ({
       if (email === '') {
         console.log('Email cannot be retrieved.');
 
-        return {
+        req.user.error = {
           error: 'Email cannot be retrieved.',
           email: '',
           providerType,
         };
+
+        return next();
       }
 
       // Check if either field is empty and redirect the user to form to complete missing fields
       if (givenName === '' || familyName === '') {
         console.log('User account fields are empty.');
 
-        return {
+        req.user.error = {
           error: 'User account fields are empty.',
           givenName,
           familyName,
@@ -51,6 +55,8 @@ const authentication = async ({
           providerID,
           extraParam,
         };
+
+        return next();
       }
 
       const newUserAccount = new User({
@@ -68,10 +74,11 @@ const authentication = async ({
       });
 
       await newUserAccount.save();
+      console.log('teting', newUserAccount);
 
       // Set Authentication Token and Refresh Token
-      const jwtToken = setToken(newUserAccount);
-      return jwtToken;
+      req.user.jwtToken = setToken(newUserAccount);
+      return next();
     }
 
     // Checks if user is registered but the chosen login provider details are not stored
@@ -91,9 +98,8 @@ const authentication = async ({
       );
     }
 
-    // Set Authentication Token and Refresh Token
-    const jwtToken = setToken(checkUser);
-    return jwtToken;
+    Object.assign(req.user, setToken(checkUser));
+    next();
   } catch (error) {
     console.log(`Error: ${error}`);
   }
@@ -236,39 +242,30 @@ const synchronizationRequest = async ({
   providerType,
   providerID,
   extraParam,
+  accessToken,
 }) => {
   try {
-    // if (givenName === '' || familyName === '' || email === '') {
-    //   console.log('User account fields are empty.');
+    const userID = decodeTokenUserID(accessToken, 'ACCESS');
+    const _id = new ObjectId(userID);
 
-    //   return {
-    //     error: 'User account fields are empty.',
-    //     sync: true,
-    //     givenName,
-    //     familyName,
-    //     email,
-    //     providerType,
-    //     providerID,
-    //     extraParam,
-    //     sync: true,
-    //   };
-    // }
+    const [key, value] = extraParam;
 
     await User.updateOne(
-      { email },
+      { _id },
       {
         $set: {
           [`provider.${providerType}.id`]: providerID,
           [`provider.${providerType}.givenName`]: givenName,
           [`provider.${providerType}.familyName`]: familyName,
           [`provider.${providerType}.email`]: email,
+          [`provider.${providerType}.${key}`]: value,
         },
       }
     );
-
     return 'synchronized';
   } catch (error) {
     console.log('Error', error);
+    res.status(401).redirect(`${process.env.CLIENT_URL}/account-management`);
   }
 };
 
