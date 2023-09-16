@@ -1,5 +1,6 @@
 // Reusable redirect function which checks for the JWT Token
 const userRedirect = (req, res) => {
+  console.log('reqqqq', req.user);
   const accessToken = req.user.accessToken;
   const refreshToken = req.user.refreshToken;
 
@@ -42,8 +43,12 @@ const userRedirect = (req, res) => {
     );
   }
 
-  if (req.user === 'synchronized') {
+  if (req.user.synchronized === 'synchronized') {
     console.log('Accounts synchronized successfully.');
+
+    if (res.user?.refreshedAccessToken) {
+      return res.cookie('plm', 'pula').redirect(`${process.env.CLIENT_URL}/`);
+    }
 
     return res.redirect(`${process.env.CLIENT_URL}/account-management`);
   }
@@ -56,12 +61,12 @@ const userRedirect = (req, res) => {
       .cookie('accessToken', accessToken, {
         httpOnly: true,
         secure: true,
-        sameSite: 'Strict',
+        sameSite: 'Lax',
       })
       .cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: true,
-        sameSite: 'Strict',
+        sameSite: 'Lax',
       });
 
     // If user creates account using input data, client will manage redirect link to AuthCheck
