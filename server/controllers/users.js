@@ -5,104 +5,108 @@ const { setToken } = require('./token');
 const decodeTokenUserID = require('../utils/decodeTokenUserID');
 const validationError = require('../utils/validationError');
 
+const checkTokenValidity = require('../utils/checkTokenValidity');
+
 // Passport user registration function
 const authentication = async (req, res, next) => {
-  try {
-    const {
-      givenName,
-      familyName,
-      email,
-      providerType,
-      providerID,
-      extraParam,
-    } = req.user;
-
-    const checkUser = await User.findOne({
-      email: email,
-    });
-
-    // Checks if the email is stored in provider document
-    const checkProvider = await User.findOne({
-      [`provider.${providerType}.email`]: email,
-    });
-
-    // If user does not exist, create account
-    if (!checkUser) {
-      console.log('No user account found.');
-
-      if (email === '') {
-        console.log('Email cannot be retrieved.');
-
-        req.user.error = {
-          error: 'Email cannot be retrieved.',
-          email: '',
-          providerType,
-        };
-
-        return next();
-      }
-
-      // Check if either field is empty and redirect the user to form to complete missing fields
-      if (givenName === '' || familyName === '') {
-        console.log('User account fields are empty.');
-
-        req.user.error = {
-          error: 'User account fields are empty.',
-          givenName,
-          familyName,
-          email,
-          providerType,
-          providerID,
-          extraParam,
-        };
-
-        return next();
-      }
-
-      const newUserAccount = new User({
+  if (!req.user.state) {
+    try {
+      const {
         givenName,
         familyName,
         email,
-        provider: {
-          [providerType]: {
-            id: providerID,
+        providerType,
+        providerID,
+        extraParam,
+      } = req.user;
+
+      const checkUser = await User.findOne({
+        email: email,
+      });
+
+      // Checks if the email is stored in provider document
+      const checkProvider = await User.findOne({
+        [`provider.${providerType}.email`]: email,
+      });
+
+      // If user does not exist, create account
+      if (!checkUser) {
+        console.log('No user account found.');
+
+        if (email === '') {
+          console.log('Email cannot be retrieved.');
+
+          req.user.error = {
+            error: 'Email cannot be retrieved.',
+            email: '',
+            providerType,
+          };
+
+          return next();
+        }
+
+        // Check if either field is empty and redirect the user to form to complete missing fields
+        if (givenName === '' || familyName === '') {
+          console.log('User account fields are empty.');
+
+          req.user.error = {
+            error: 'User account fields are empty.',
             givenName,
             familyName,
             email,
-          },
-        },
-      });
+            providerType,
+            providerID,
+            extraParam,
+          };
 
-      await newUserAccount.save();
-      console.log('teting', newUserAccount);
-
-      // Set Authentication Token and Refresh Token
-      req.user.jwtToken = setToken(newUserAccount);
-      return next();
-    }
-
-    // Checks if user is registered but the chosen login provider details are not stored
-    if (checkUser && !checkProvider) {
-      console.log('Provider not registered.');
-
-      await User.updateOne(
-        { email },
-        {
-          $set: {
-            [`provider.${providerType}.id`]: providerID,
-            [`provider.${providerType}.givenName`]: givenName,
-            [`provider.${providerType}.familyName`]: familyName,
-            [`provider.${providerType}.email`]: email,
-          },
+          return next();
         }
-      );
-    }
 
-    Object.assign(req.user, setToken(checkUser));
-    next();
-  } catch (error) {
-    console.log(`Error: ${error}`);
+        const newUserAccount = new User({
+          givenName,
+          familyName,
+          email,
+          provider: {
+            [providerType]: {
+              id: providerID,
+              givenName,
+              familyName,
+              email,
+            },
+          },
+        });
+
+        await newUserAccount.save();
+
+        // Set Authentication Token and Refresh Token
+        req.user = setToken(newUserAccount);
+        return next();
+      }
+
+      // Checks if user is registered but the chosen login provider details are not stored
+      if (checkUser && !checkProvider) {
+        console.log('Provider not registered.');
+
+        await User.updateOne(
+          { email },
+          {
+            $set: {
+              [`provider.${providerType}.id`]: providerID,
+              [`provider.${providerType}.givenName`]: givenName,
+              [`provider.${providerType}.familyName`]: familyName,
+              [`provider.${providerType}.email`]: email,
+            },
+          }
+        );
+      }
+
+      Object.assign(req.user, setToken(checkUser));
+      next();
+    } catch (error) {
+      console.log(`Error: ${error}`);
+    }
   }
+  next();
 };
 
 // Controller which will amend user record based on user input
@@ -235,37 +239,47 @@ const postEditProfile = async (req, res, next) => {
   }
 };
 
-const synchronizationRequest = async ({
-  givenName,
-  familyName,
-  email,
-  providerType,
-  providerID,
-  extraParam,
-  accessToken,
-}) => {
-  try {
-    const userID = decodeTokenUserID(accessToken, 'ACCESS');
-    const _id = new ObjectId(userID);
+const synchronizationRequest = async (req, res, next) => {
+  if (req.user.state) {
+    const {
+      givenName,
+      familyName,
+      email,
+      providerType,
+      providerID,
+      extraParam,
+    } = req.user;
 
-    const [key, value] = extraParam;
+    const accessToken = req.cookies.accessToken;
+    const refreshToken = req.cookies.refreshToken;
 
-    await User.updateOne(
-      { _id },
-      {
-        $set: {
-          [`provider.${providerType}.id`]: providerID,
-          [`provider.${providerType}.givenName`]: givenName,
-          [`provider.${providerType}.familyName`]: familyName,
-          [`provider.${providerType}.email`]: email,
-          [`provider.${providerType}.${key}`]: value,
-        },
+    try {
+      const { userID, refreshedAccessToken } = checkTokenValidity(
+        accessToken,
+        refreshToken,
+        res
+      );
+      const _id = new ObjectId(userID);
+
+      const updateUserObject = {
+        [`provider.${providerType}.id`]: providerID,
+        [`provider.${providerType}.givenName`]: givenName,
+        [`provider.${providerType}.familyName`]: familyName,
+        [`provider.${providerType}.email`]: email,
+      };
+
+      if (Array.isArray(extraParam) && extraParam.length === 2) {
+        const [key, value] = extraParam;
+        updateUserObject[`provider.${providerType}.${key}`] = value;
       }
-    );
-    return 'synchronized';
-  } catch (error) {
-    console.log('Error', error);
-    res.status(401).redirect(`${process.env.CLIENT_URL}/account-management`);
+      await User.updateOne({ _id }, { $set: updateUserObject });
+
+      req.user = { synchronized: 'synchronized', refreshedAccessToken };
+      next();
+    } catch (error) {
+      console.log('Error', error);
+      res.status(401).redirect(`${process.env.CLIENT_URL}/account-management`);
+    }
   }
 };
 

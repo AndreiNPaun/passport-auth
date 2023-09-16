@@ -7,12 +7,19 @@ const {
   userData,
   getEditProfile,
   postEditProfile,
+  synchronizationRequest,
   synchronizingAccount,
 } = require('../controllers/users');
 const { refreshTokenCheck } = require('../controllers/token');
 const authenticate = require('../middleware/authenticate');
 const userRedirect = require('../utils/userRedirect');
 const { nameValidation, emailValidation } = require('../utils/validationUtils');
+
+function captureCookies(req, res, next) {
+  req.customCookies = req.cookies;
+  console.log('checking', req.customCookies);
+  next();
+}
 
 router.get('/', () => {
   console.log('homepage');
@@ -32,6 +39,7 @@ router.get(
     session: false,
   }),
   authentication,
+  synchronizationRequest,
   (req, res) => {
     userRedirect(req, res);
   }
@@ -40,6 +48,7 @@ router.get(
 // Google
 router.get(
   '/auth/google',
+  captureCookies,
   passport.authenticate('google', { scope: ['profile'] })
 );
 
@@ -49,8 +58,9 @@ router.get(
     session: false,
   }),
   authentication,
+  synchronizationRequest,
   (req, res) => {
-    userRedirect(req, res, req.user.sync);
+    userRedirect(req, res);
   }
 );
 
@@ -66,6 +76,7 @@ router.get(
     session: false,
   }),
   authentication,
+  synchronizationRequest,
   (req, res) => {
     userRedirect(req, res);
   }
@@ -83,6 +94,7 @@ router.get(
     session: false,
   }),
   authentication,
+  synchronizationRequest,
   (req, res) => {
     userRedirect(req, res);
   }

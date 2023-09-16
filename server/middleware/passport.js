@@ -24,6 +24,8 @@ passport.use(
     async (req, accessToken, refreshToken, profile, done) => {
       console.log('Microsoft Profile', profile);
 
+      console.log('microsoft', req.cookies);
+
       // User details
       const givenName = profile.name.givenName || '';
       const familyName = profile.name.familyName || '';
@@ -62,7 +64,10 @@ passport.use(
       passReqToCallback: true,
     },
     async (req, accessToken, refreshToken, profile, done) => {
-      console.log('Google Profile:', profile);
+      // console.log('Google Profile:', profile);
+
+      // console.log('google', req.cookies);
+      // return;
 
       // User details
       const givenName = profile.name.givenName;
@@ -102,6 +107,8 @@ passport.use(
     },
     async (req, accessToken, refreshToken, profile, done) => {
       console.log('GitHub Profile:', profile);
+
+      console.log('github', req.cookies);
 
       // User details
       // GitHub does not return givenName or familyName, set to null to not break the reusable controller
