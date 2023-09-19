@@ -11,15 +11,12 @@ const {
   synchronizingAccount,
 } = require('../controllers/users');
 const { refreshTokenCheck } = require('../controllers/token');
+
 const authenticate = require('../middleware/authenticate');
+
 const userRedirect = require('../utils/userRedirect');
 const { nameValidation, emailValidation } = require('../utils/validationUtils');
-
-function captureCookies(req, res, next) {
-  req.customCookies = req.cookies;
-  console.log('checking', req.customCookies);
-  next();
-}
+const { checkIfTokenExists } = require('../utils/checkToken');
 
 router.get('/', () => {
   console.log('homepage');
@@ -38,6 +35,7 @@ router.get(
   passport.authenticate('microsoft', {
     session: false,
   }),
+  checkIfTokenExists,
   authentication,
   synchronizationRequest,
   (req, res) => {
@@ -48,7 +46,6 @@ router.get(
 // Google
 router.get(
   '/auth/google',
-  captureCookies,
   passport.authenticate('google', { scope: ['profile'] })
 );
 
@@ -57,6 +54,7 @@ router.get(
   passport.authenticate('google', {
     session: false,
   }),
+  checkIfTokenExists,
   authentication,
   synchronizationRequest,
   (req, res) => {
@@ -75,6 +73,7 @@ router.get(
   passport.authenticate('github', {
     session: false,
   }),
+  checkIfTokenExists,
   authentication,
   synchronizationRequest,
   (req, res) => {
@@ -93,6 +92,7 @@ router.get(
   passport.authenticate('linkedin', {
     session: false,
   }),
+  checkIfTokenExists,
   authentication,
   synchronizationRequest,
   (req, res) => {

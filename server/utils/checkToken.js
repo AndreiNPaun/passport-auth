@@ -1,19 +1,15 @@
 const { sign } = require('jsonwebtoken');
 const decodeTokenUserID = require('./decodeTokenUserID');
 
-const refreshTokenFunc = (accessToken, refreshToken, res) => {
+const checkTokenValidity = (accessToken, refreshToken, res) => {
   try {
     const userID = decodeTokenUserID(accessToken, 'ACCESS');
 
     if (userID instanceof Error) {
-      console.log('error on decoding token');
       const userIDFromRefreshToken = decodeTokenUserID(refreshToken, 'REFRESH');
-      console.log('REFEREDHS ROKEN', userIDFromRefreshToken);
 
       if (userIDFromRefreshToken instanceof Error) {
-        console.log('Refresh token has expired.');
-        // return res.redirect(process.env.CLIENT_URL);
-        return;
+        return { error: 'Refresh Token has expired.' };
       }
 
       const accessToken = sign(
@@ -26,16 +22,26 @@ const refreshTokenFunc = (accessToken, refreshToken, res) => {
 
       const userID = decodeTokenUserID(accessToken, 'ACCESS');
 
-      console.log('Newly generated accessToken:', accessToken);
-
       return { userID, accessToken };
     }
 
     return userID;
   } catch (error) {
     console.log('Error:', error);
-    // return res.redirect(process.env.CLIENT_URL);
+    return res.redirect(
+      `${process.env.CLIENT_URL}/failed-token-validity?tokenExpired=true`
+    );
   }
 };
 
-module.exports = refreshTokenFunc;
+const checkIfTokenExists = (req, res, next) => {
+  if (!req.cookies.accessToken && !req.cookies.refreshToken) {
+    return res.redirect(
+      `${process.env.CLIENT_URL}/failed-token-validity?tokenExpired=true`
+    );
+  }
+
+  next();
+};
+
+module.exports = { checkTokenValidity, checkIfTokenExists };

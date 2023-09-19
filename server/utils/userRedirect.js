@@ -1,6 +1,5 @@
 // Reusable redirect function which checks for the JWT Token
 const userRedirect = (req, res) => {
-  console.log('reqqqq', req.user);
   const accessToken = req.user.accessToken;
   const refreshToken = req.user.refreshToken;
 

@@ -5,7 +5,7 @@ const { setToken } = require('./token');
 const decodeTokenUserID = require('../utils/decodeTokenUserID');
 const validationError = require('../utils/validationError');
 
-const checkTokenValidity = require('../utils/checkTokenValidity');
+const { checkTokenValidity } = require('../utils/checkToken');
 
 // Passport user registration function
 const authentication = async (req, res, next) => {

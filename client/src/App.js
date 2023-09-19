@@ -11,6 +11,7 @@ import LoginCheck from './pages/LoginCheck';
 import SubmitAccountDetailsPage from './pages/SubmitAccountDetails';
 import AccountManagementPage from './pages/AccountManagement.js';
 import NoEmailMessage from './components/Authentication/SubmitAccount/NoEmailMessage.js';
+import FailedTokenValidityPage from './pages/FailedTokenValidity.js';
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <HomePage /> },
       { path: 'login-check', element: <LoginCheck /> },
+      { path: 'failed-token-validity', element: <FailedTokenValidityPage /> },
       {
         path: 'create-account',
         element: <SubmitAccountDetailsPage />,
