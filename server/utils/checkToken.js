@@ -36,9 +36,9 @@ const checkTokenValidity = (accessToken, refreshToken, res) => {
 
 const checkIfTokenExists = (req, res, next) => {
   if (!req.cookies.accessToken && !req.cookies.refreshToken) {
-    return res.redirect(
-      `${process.env.CLIENT_URL}/failed-token-validity?tokenExpired=true`
-    );
+    // return res.redirect(
+    //   `${process.env.CLIENT_URL}/failed-token-validity?tokenExpired=true`
+    // );
   }
 
   next();

@@ -5,11 +5,9 @@ const { setToken } = require('./token');
 const decodeTokenUserID = require('../utils/decodeTokenUserID');
 const validationError = require('../utils/validationError');
 
-const { checkTokenValidity } = require('../utils/checkToken');
-
 // Passport user registration function
 const authentication = async (req, res, next) => {
-  if (!req.user.state) {
+  if (req.user.state === null) {
     try {
       const {
         givenName,
@@ -101,7 +99,7 @@ const authentication = async (req, res, next) => {
       }
 
       Object.assign(req.user, setToken(checkUser));
-      next();
+      return next();
     } catch (error) {
       console.log(`Error: ${error}`);
     }
@@ -240,7 +238,7 @@ const postEditProfile = async (req, res, next) => {
 };
 
 const synchronizationRequest = async (req, res, next) => {
-  if (req.user.state) {
+  if (req.user.state === 'sync') {
     const {
       givenName,
       familyName,
@@ -251,14 +249,21 @@ const synchronizationRequest = async (req, res, next) => {
     } = req.user;
 
     const accessToken = req.cookies.accessToken;
-    const refreshToken = req.cookies.refreshToken;
+    // const refreshToken = req.cookies.refreshToken;
+
+    console.log('sync accessToken', accessToken);
 
     try {
-      const { userID, refreshedAccessToken } = checkTokenValidity(
-        accessToken,
-        refreshToken,
-        res
-      );
+      // const { userID, refreshedAccessToken } = checkTokenValidity(
+      //   accessToken,
+      //   refreshToken,
+      //   res
+      // );
+
+      console.log('sync in try block');
+      const userID = req.user.userID;
+      console.log('sync userid', userID);
+
       const _id = new ObjectId(userID);
 
       const updateUserObject = {
@@ -274,13 +279,17 @@ const synchronizationRequest = async (req, res, next) => {
       }
       await User.updateOne({ _id }, { $set: updateUserObject });
 
-      req.user = { synchronized: 'synchronized', refreshedAccessToken };
+      req.user = { synchronized: 'synchronized' };
+
+      console.log('synched');
       next();
     } catch (error) {
+      console.log('weird error');
       console.log('Error', error);
       res.status(401).redirect(`${process.env.CLIENT_URL}/account-management`);
     }
   }
+  next();
 };
 
 const synchronizingAccount = async (req, res, next) => {

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
 import { setFormClose } from '../../store/action/form';
-import CheckTokenValidity from '../../utils/CheckTokenValidity';
+import GetAPIResponse from '../../utils/GetAPIResponse';
 import httpRequest from '../../utils/httpRequest';
 
 import Modal from '../UI/ModalForm';
@@ -41,7 +41,7 @@ const EditProfile = (props) => {
     };
 
     // Call function which checks for token and if ok sends data
-    const response = await CheckTokenValidity(submitData, navigate, dispatch);
+    const response = await GetAPIResponse(submitData, navigate, dispatch);
 
     if (response.status === 200) {
       props.updateDisplayedUserData(userInputData);

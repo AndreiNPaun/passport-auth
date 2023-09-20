@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
 import httpRequest from '../../../utils/httpRequest';
-import CheckTokenValidity from '../../../utils/CheckTokenValidity';
+import GetAPIResponse from '../../../utils/GetAPIResponse';
 import SubmitDetailsForm from './SubmitDetailsForm';
 
 const SubmitDetails = () => {
@@ -72,7 +72,7 @@ const SubmitDetails = () => {
     };
 
     try {
-      const response = await CheckTokenValidity(
+      const response = await GetAPIResponse(
         () => postUserInput(pathAPI),
         navigate,
         dispatch

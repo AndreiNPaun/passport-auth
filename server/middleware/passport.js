@@ -22,7 +22,7 @@ passport.use(
       passReqToCallback: true,
     },
     async (req, accessToken, refreshToken, profile, done) => {
-      console.log('Microsoft Profile', profile);
+      // console.log('Microsoft Profile', profile);
 
       console.log('microsoft', req.cookies);
 
@@ -65,9 +65,6 @@ passport.use(
     },
     async (req, accessToken, refreshToken, profile, done) => {
       // console.log('Google Profile:', profile);
-
-      // console.log('google', req.cookies);
-      // return;
 
       // User details
       const givenName = profile.name.givenName;

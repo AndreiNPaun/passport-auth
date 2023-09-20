@@ -10,13 +10,14 @@ const {
   synchronizationRequest,
   synchronizingAccount,
 } = require('../controllers/users');
-const { refreshTokenCheck } = require('../controllers/token');
 
-const authenticate = require('../middleware/authenticate');
+const {
+  authenticate,
+  checkTokenPassport,
+} = require('../middleware/authenticate');
 
 const userRedirect = require('../utils/userRedirect');
 const { nameValidation, emailValidation } = require('../utils/validationUtils');
-const { checkIfTokenExists } = require('../utils/checkToken');
 
 router.get('/', () => {
   console.log('homepage');
@@ -35,7 +36,7 @@ router.get(
   passport.authenticate('microsoft', {
     session: false,
   }),
-  checkIfTokenExists,
+  checkTokenPassport,
   authentication,
   synchronizationRequest,
   (req, res) => {
@@ -54,7 +55,7 @@ router.get(
   passport.authenticate('google', {
     session: false,
   }),
-  checkIfTokenExists,
+  checkTokenPassport,
   authentication,
   synchronizationRequest,
   (req, res) => {
@@ -73,7 +74,7 @@ router.get(
   passport.authenticate('github', {
     session: false,
   }),
-  checkIfTokenExists,
+  checkTokenPassport,
   authentication,
   synchronizationRequest,
   (req, res) => {
@@ -92,7 +93,7 @@ router.get(
   passport.authenticate('linkedin', {
     session: false,
   }),
-  checkIfTokenExists,
+  checkTokenPassport,
   authentication,
   synchronizationRequest,
   (req, res) => {
@@ -137,8 +138,6 @@ router.post(
   authenticate,
   synchronizingAccount
 );
-
-router.post('/refresh-token', refreshTokenCheck);
 
 router.post('/logout', (req, res) => {
   res
