@@ -52,12 +52,7 @@ const SubmitDetails = () => {
 
     console.log(userInputData);
 
-    let pathAPI = 'user-data';
-    let pathRedirect = '/';
-    if (sync) {
-      pathAPI = 'sync-account';
-      pathRedirect = '/account-management';
-    }
+    const pathAPI = 'user-data';
 
     const postUserInput = async (pathAPI) => {
       const response = await httpRequest(

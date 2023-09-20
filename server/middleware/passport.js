@@ -103,7 +103,7 @@ passport.use(
       passReqToCallback: true,
     },
     async (req, accessToken, refreshToken, profile, done) => {
-      console.log('GitHub Profile:', profile);
+      // console.log('GitHub Profile:', profile);
 
       console.log('github', req.cookies);
 
@@ -148,7 +148,7 @@ passport.use(
       passReqToCallback: true,
     },
     async (req, accessToken, refreshToken, profile, done) => {
-      console.log('LinkedIn Profile:', profile);
+      // console.log('LinkedIn Profile:', profile);
 
       // User details
       const givenName = profile.name.givenName || '';

@@ -16,7 +16,6 @@ const {
   checkTokenPassport,
 } = require('../middleware/authenticate');
 
-const userRedirect = require('../utils/userRedirect');
 const { nameValidation, emailValidation } = require('../utils/validationUtils');
 
 router.get('/', () => {
@@ -38,10 +37,7 @@ router.get(
   }),
   checkTokenPassport,
   authentication,
-  synchronizationRequest,
-  (req, res) => {
-    userRedirect(req, res);
-  }
+  synchronizationRequest
 );
 
 // Google
@@ -57,10 +53,7 @@ router.get(
   }),
   checkTokenPassport,
   authentication,
-  synchronizationRequest,
-  (req, res) => {
-    userRedirect(req, res);
-  }
+  synchronizationRequest
 );
 
 // GitHub
@@ -76,10 +69,7 @@ router.get(
   }),
   checkTokenPassport,
   authentication,
-  synchronizationRequest,
-  (req, res) => {
-    userRedirect(req, res);
-  }
+  synchronizationRequest
 );
 
 // LinkedIn
@@ -95,10 +85,7 @@ router.get(
   }),
   checkTokenPassport,
   authentication,
-  synchronizationRequest,
-  (req, res) => {
-    userRedirect(req, res);
-  }
+  synchronizationRequest
 );
 
 // Route for setting up account in case fields are empty
@@ -109,10 +96,7 @@ router.post(
     nameValidation('userInputData.familyName', 'Family Name'),
     emailValidation('userInputData.email'),
   ],
-  userData,
-  (req, res) => {
-    userRedirect(req, res);
-  }
+  userData
 );
 
 // Edit account details
