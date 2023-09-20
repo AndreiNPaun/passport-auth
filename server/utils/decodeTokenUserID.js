@@ -19,7 +19,7 @@ const decodeTokenUserID = (token, tokenType) => {
     return decoded.id;
   } catch (error) {
     console.log('Error:', error);
-    return error;
+    throw error;
   }
 };
 

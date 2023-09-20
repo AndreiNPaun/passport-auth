@@ -10,16 +10,14 @@ const {
   synchronizationRequest,
   synchronizingAccount,
 } = require('../controllers/users');
-const { refreshTokenCheck } = require('../controllers/token');
-const authenticate = require('../middleware/authenticate');
+
+const {
+  authenticate,
+  checkTokenPassport,
+} = require('../middleware/authenticate');
+
 const userRedirect = require('../utils/userRedirect');
 const { nameValidation, emailValidation } = require('../utils/validationUtils');
-
-function captureCookies(req, res, next) {
-  req.customCookies = req.cookies;
-  console.log('checking', req.customCookies);
-  next();
-}
 
 router.get('/', () => {
   console.log('homepage');
@@ -38,6 +36,7 @@ router.get(
   passport.authenticate('microsoft', {
     session: false,
   }),
+  checkTokenPassport,
   authentication,
   synchronizationRequest,
   (req, res) => {
@@ -48,7 +47,6 @@ router.get(
 // Google
 router.get(
   '/auth/google',
-  captureCookies,
   passport.authenticate('google', { scope: ['profile'] })
 );
 
@@ -57,6 +55,7 @@ router.get(
   passport.authenticate('google', {
     session: false,
   }),
+  checkTokenPassport,
   authentication,
   synchronizationRequest,
   (req, res) => {
@@ -75,6 +74,7 @@ router.get(
   passport.authenticate('github', {
     session: false,
   }),
+  checkTokenPassport,
   authentication,
   synchronizationRequest,
   (req, res) => {
@@ -93,6 +93,7 @@ router.get(
   passport.authenticate('linkedin', {
     session: false,
   }),
+  checkTokenPassport,
   authentication,
   synchronizationRequest,
   (req, res) => {
@@ -137,8 +138,6 @@ router.post(
   authenticate,
   synchronizingAccount
 );
-
-router.post('/refresh-token', refreshTokenCheck);
 
 router.post('/logout', (req, res) => {
   res

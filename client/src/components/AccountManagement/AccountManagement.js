@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { setFormOpen } from '../../store/action/form';
-import CheckTokenValidity from '../../utils/CheckTokenValidity';
+import GetAPIResponse from '../../utils/GetAPIResponse';
 import httpRequest from '../../utils/httpRequest';
 import EditProfile from './EditProfile';
 import AccountManagementForm from './AccountManagementForm';
@@ -26,7 +26,7 @@ const AccountManagement = () => {
         return response;
       };
 
-      const response = await CheckTokenValidity(getData, navigate, dispatch);
+      const response = await GetAPIResponse(getData, navigate, dispatch);
       const userData = response.data;
       console.log('userData', userData);
 
