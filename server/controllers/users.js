@@ -4,6 +4,11 @@ const { ObjectId } = require('mongodb');
 const { setToken } = require('./token');
 const decodeTokenUserID = require('../utils/decodeTokenUserID');
 const validationError = require('../utils/validationError');
+const {
+  redirectSetTokens,
+  redirectSync,
+  redirectWithError,
+} = require('../utils/userRedirect');
 
 // Passport user registration function
 const authentication = async (req, res, next) => {
@@ -40,7 +45,7 @@ const authentication = async (req, res, next) => {
             providerType,
           };
 
-          return next();
+          return redirectWithError(req, res);
         }
 
         // Check if either field is empty and redirect the user to form to complete missing fields
@@ -57,7 +62,7 @@ const authentication = async (req, res, next) => {
             extraParam,
           };
 
-          return next();
+          return redirectWithError(req, res);
         }
 
         const newUserAccount = new User({
@@ -78,7 +83,7 @@ const authentication = async (req, res, next) => {
 
         // Set Authentication Token and Refresh Token
         req.user = setToken(newUserAccount);
-        return next();
+        return redirectSetTokens(req, res);
       }
 
       // Checks if user is registered but the chosen login provider details are not stored
@@ -99,7 +104,7 @@ const authentication = async (req, res, next) => {
       }
 
       Object.assign(req.user, setToken(checkUser));
-      return next();
+      return redirectSetTokens(req, res);
     } catch (error) {
       console.log(`Error: ${error}`);
     }
@@ -174,7 +179,7 @@ const userData = async (req, res, next) => {
     const isUserInput = true;
 
     req.user = { accessToken, refreshToken, isUserInput };
-    next();
+    return redirectSetTokens(req, res);
   } catch (error) {
     console.log('Error:', error);
     res.status(500).send('Server Error.');
@@ -182,9 +187,8 @@ const userData = async (req, res, next) => {
 };
 
 const getEditProfile = async (req, res, next) => {
-  const accessToken = req.cookies.accessToken;
+  const userID = req.userID;
 
-  const userID = decodeTokenUserID(accessToken, 'ACCESS');
   // Convert id to ObjectId
   const _id = new ObjectId(userID);
 
@@ -249,17 +253,9 @@ const synchronizationRequest = async (req, res, next) => {
     } = req.user;
 
     const accessToken = req.cookies.accessToken;
-    // const refreshToken = req.cookies.refreshToken;
-
     console.log('sync accessToken', accessToken);
 
     try {
-      // const { userID, refreshedAccessToken } = checkTokenValidity(
-      //   accessToken,
-      //   refreshToken,
-      //   res
-      // );
-
       console.log('sync in try block');
       const userID = req.user.userID;
       console.log('sync userid', userID);
@@ -282,7 +278,7 @@ const synchronizationRequest = async (req, res, next) => {
       req.user = { synchronized: 'synchronized' };
 
       console.log('synched');
-      next();
+      return redirectSync(req, res);
     } catch (error) {
       console.log('weird error');
       console.log('Error', error);

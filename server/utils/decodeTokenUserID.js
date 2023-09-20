@@ -19,6 +19,11 @@ const decodeTokenUserID = (token, tokenType) => {
     return decoded.id;
   } catch (error) {
     console.log('Error:', error);
+    if (error.name === 'TokenExpiredError') {
+      console.log('Token expired');
+      return null;
+    }
+    console.log('Error:', error);
     throw error;
   }
 };
