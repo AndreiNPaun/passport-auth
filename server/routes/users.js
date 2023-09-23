@@ -3,8 +3,8 @@ const router = express.Router();
 const passport = require('passport');
 
 const {
-  authentication,
-  userData,
+  authenticateOrRegisterUser,
+  syncOrCreateRegisterProfile,
   getEditProfile,
   postEditProfile,
   synchronizationRequest,
@@ -36,7 +36,7 @@ router.get(
     session: false,
   }),
   checkTokenPassport,
-  authentication,
+  authenticateOrRegisterUser,
   synchronizationRequest
 );
 
@@ -52,7 +52,7 @@ router.get(
     session: false,
   }),
   checkTokenPassport,
-  authentication,
+  authenticateOrRegisterUser,
   synchronizationRequest
 );
 
@@ -68,7 +68,7 @@ router.get(
     session: false,
   }),
   checkTokenPassport,
-  authentication,
+  authenticateOrRegisterUser,
   synchronizationRequest
 );
 
@@ -84,7 +84,7 @@ router.get(
     session: false,
   }),
   checkTokenPassport,
-  authentication,
+  authenticateOrRegisterUser,
   synchronizationRequest
 );
 
@@ -92,10 +92,10 @@ router.get(
 router.post(
   '/user-data',
   [
-    nameValidation('userInputData.givenName', 'First name'), // Reusable express-validator
+    nameValidation('userInputData.givenName', 'First name'),
     nameValidation('userInputData.familyName', 'Family Name'),
   ],
-  userData
+  syncOrCreateRegisterProfile
 );
 
 // Edit account details
@@ -103,7 +103,7 @@ router.get('/edit-profile', authenticate, getEditProfile);
 router.post(
   '/edit-profile',
   [
-    nameValidation('userInputData.givenName', 'First name'), // Reusable express-validator
+    nameValidation('userInputData.givenName', 'First name'),
     nameValidation('userInputData.familyName', 'Family Name'),
     emailValidation('userInputData.email'),
   ],

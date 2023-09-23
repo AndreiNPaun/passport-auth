@@ -64,6 +64,7 @@ const SubmitDetails = () => {
       }
     } catch (error) {
       console.log('Error:', error);
+      navigate('/');
     }
   };
 

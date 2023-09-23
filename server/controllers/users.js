@@ -11,7 +11,7 @@ const {
 } = require('../utils/userRedirect');
 
 // Passport user registration function
-const authentication = async (req, res, next) => {
+const authenticateOrRegisterUser = async (req, res, next) => {
   if (req.user.state === null) {
     try {
       const {
@@ -22,6 +22,9 @@ const authentication = async (req, res, next) => {
         providerID,
         extraParam,
       } = req.user;
+
+      const key = (Array.isArray(extraParam) && extraParam[0]) || null;
+      const value = (Array.isArray(extraParam) && extraParam[1]) || null;
 
       const checkUser = await User.findOne({
         email: email,
@@ -98,6 +101,7 @@ const authentication = async (req, res, next) => {
               [`provider.${providerType}.givenName`]: givenName,
               [`provider.${providerType}.familyName`]: familyName,
               [`provider.${providerType}.email`]: email,
+              [`provider.${providerType}.${key}`]: value,
             },
           }
         );
@@ -113,7 +117,7 @@ const authentication = async (req, res, next) => {
 };
 
 // Controller which will amend user record based on user input
-const userData = async (req, res, next) => {
+const syncOrCreateRegisterProfile = async (req, res, next) => {
   // Check for validation errors
   if (validationError(req, res)) {
     return;
@@ -123,6 +127,11 @@ const userData = async (req, res, next) => {
 
   const userProfileData = decodeToken(req.cookies.initialSetup, 'SETUP');
   console.log('testing', userProfileData);
+
+  if (!userProfileData) {
+    console.log('Token expired.');
+    return res.status(408).send('Request timed out, please try again.');
+  }
 
   const email = userProfileData.email;
   const providerType = userProfileData.providerType;
@@ -342,8 +351,8 @@ const synchronizingAccount = async (req, res, next) => {
 };
 
 module.exports = {
-  authentication,
-  userData,
+  authenticateOrRegisterUser,
+  syncOrCreateRegisterProfile,
   getEditProfile,
   postEditProfile,
   synchronizationRequest,

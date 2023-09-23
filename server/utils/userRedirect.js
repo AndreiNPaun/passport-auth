@@ -9,6 +9,10 @@ const redirectSetTokens = (req, res) => {
   if (accessToken && refreshToken) {
     console.log('Log In successful.');
 
+    if (req.cookies.initialSetup) {
+      res.clearCookie('initialSetup');
+    }
+
     res
       .status(200)
       .cookie('accessToken', accessToken, {
