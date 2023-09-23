@@ -234,11 +234,10 @@ const postEditProfile = async (req, res, next) => {
   }
   try {
     const { givenName, familyName, email } = req.body.userInputData;
-    const accessToken = req.cookies.accessToken;
 
-    const userProfileData = decodeToken(accessToken, 'ACCESS');
+    const userID = req.userID;
     // Convert id to ObjectId
-    const _id = new ObjectId(userProfileData.id);
+    const _id = new ObjectId(userID);
 
     await User.updateOne(
       { _id },
