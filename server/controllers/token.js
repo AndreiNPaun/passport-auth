@@ -1,5 +1,5 @@
 const { sign, verify } = require('jsonwebtoken');
-const decodeTokenUserID = require('../utils/decodeTokenUserID');
+const decodeToken = require('../utils/decodeToken');
 
 // Creates the JWT Tokens
 const setToken = (user) => {

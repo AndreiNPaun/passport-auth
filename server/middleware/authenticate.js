@@ -1,15 +1,21 @@
 const { sign } = require('jsonwebtoken');
-const decodeTokenUserID = require('../utils/decodeTokenUserID');
+const decodeToken = require('../utils/decodeToken');
 
 const handleToken = (req, res, next) => {
+  let userProfileData;
+  let userID;
   try {
     const accessToken = req.cookies.accessToken;
-    let userID = decodeTokenUserID(accessToken, 'ACCESS');
+    userProfileData = decodeToken(accessToken, 'ACCESS');
+    console.log('testing', userProfileData);
 
-    if (userID === null) {
+    if (userProfileData === null) {
       const refreshToken = req.cookies.refreshToken;
-      userID = decodeTokenUserID(refreshToken, 'REFRESH');
-      if (userID !== null) {
+      userProfileData = decodeToken(refreshToken, 'REFRESH');
+      console.log('tstong', userProfileData);
+
+      if (userProfileData !== null) {
+        userID = userProfileData.id;
         const newAccessToken = sign(
           { id: userID },
           process.env.ACCESS_TOKEN_SECRET,
@@ -28,6 +34,7 @@ const handleToken = (req, res, next) => {
         // );
       }
     }
+    userID = userProfileData.id;
     req.userID = userID;
     next();
   } catch (error) {

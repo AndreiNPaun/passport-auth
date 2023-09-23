@@ -8,8 +8,6 @@ import CustomButton from '../../UI/CustomButton';
 
 const SubmitDetailsForm = ({
   providerText,
-  givenName,
-  familyName,
   submitUserData,
   givenNameInputRef,
   familyNameInputRef,
@@ -67,24 +65,22 @@ const SubmitDetailsForm = ({
           </Text>
         </Center>
         <FormControl>
-          {!givenName && (
-            <InputFields
-              htmlFor="givenName"
-              labelText="First Name"
-              id="givenName"
-              ref={givenNameInputRef}
-              required
-            />
-          )}
-          {!familyName && (
-            <InputFields
-              htmlFor="familyName"
-              labelText="Last Name"
-              id="familyName"
-              ref={familyNameInputRef}
-              required
-            />
-          )}
+          <InputFields
+            htmlFor="givenName"
+            labelText="First Name"
+            id="givenName"
+            ref={givenNameInputRef}
+            required
+          />
+
+          <InputFields
+            htmlFor="familyName"
+            labelText="Last Name"
+            id="familyName"
+            ref={familyNameInputRef}
+            required
+          />
+
           <Center>
             <CustomButton mt="1.5rem" w="8rem" onClick={submitUserData}>
               Submit

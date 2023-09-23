@@ -2,7 +2,7 @@ const User = require('../models/users');
 const { ObjectId } = require('mongodb');
 
 const { setToken } = require('./token');
-const decodeTokenUserID = require('../utils/decodeTokenUserID');
+const decodeToken = require('../utils/decodeToken');
 const validationError = require('../utils/validationError');
 const {
   redirectSetTokens,
@@ -119,19 +119,20 @@ const userData = async (req, res, next) => {
     return;
   }
 
-  const {
-    givenName,
-    familyName,
-    email,
-    provider: providerType,
-    providerID,
-    extraParam,
-  } = req.body.userInputData;
+  const { givenName, familyName } = req.body.userInputData;
 
-  // Splitting params value into key value pairs
-  const splitParams = extraParam.split(' ');
-  const key = splitParams[0];
-  const value = splitParams[1];
+  const userProfileData = decodeToken(req.cookies.initialSetup, 'SETUP');
+  console.log('testing', userProfileData);
+
+  const email = userProfileData.email;
+  const providerType = userProfileData.providerType;
+  const providerID = userProfileData.providerID;
+  const extraParam = userProfileData.extraParam;
+
+  const key = extraParam[0];
+  const value = extraParam[1];
+
+  console.log('key', key);
 
   try {
     // Check if there is an existing accounts with the same email
@@ -141,24 +142,27 @@ const userData = async (req, res, next) => {
     if (checkIfExistingUser) {
       console.log('Synchronizing existing accounts.');
 
-      await User.updateOne(
-        { email },
-        {
-          $set: {
-            [`provider.${providerType}.id`]: providerID,
-            [`provider.${providerType}.givenName`]: givenName,
-            [`provider.${providerType}.familyName`]: familyName,
-            [`provider.${providerType}.email`]: email,
-            [`provider.${providerType}.${key}`]: value,
+      const updateUserObject = {
+        provider: {
+          [providerType]: {
+            id: providerID,
+            givenName,
+            familyName,
+            email,
           },
-        }
-      );
+        },
+      };
+
+      if (key && value) {
+        updateUserObject.provider[providerType][key] = value;
+      }
+      await User.updateOne({ _id }, { $set: updateUserObject });
 
       return res.status(200).send('Account synchronized.');
     }
 
     // If no account has this email, create a new record
-    const newUserAccount = new User({
+    const newUserAccountData = {
       givenName,
       familyName,
       email,
@@ -168,11 +172,15 @@ const userData = async (req, res, next) => {
           givenName,
           familyName,
           email,
-          [key]: value,
         },
       },
-    });
+    };
 
+    if (key && value) {
+      newUserAccountData.provider[providerType][key] = value;
+    }
+
+    const newUserAccount = new User(newUserAccountData);
     const getUserDetails = await newUserAccount.save();
 
     const { accessToken, refreshToken } = setToken(getUserDetails);
@@ -219,9 +227,9 @@ const postEditProfile = async (req, res, next) => {
     const { givenName, familyName, email } = req.body.userInputData;
     const accessToken = req.cookies.accessToken;
 
-    const userID = decodeTokenUserID(accessToken, 'ACCESS');
+    const userProfileData = decodeToken(accessToken, 'ACCESS');
     // Convert id to ObjectId
-    const _id = new ObjectId(userID);
+    const _id = new ObjectId(userProfileData.id);
 
     await User.updateOne(
       { _id },
@@ -252,12 +260,9 @@ const synchronizationRequest = async (req, res, next) => {
       extraParam,
     } = req.user;
 
-    const accessToken = req.cookies.accessToken;
-    console.log('sync accessToken', accessToken);
-
     try {
       console.log('sync in try block');
-      const userID = req.user.userID;
+      const userID = req.userID;
       console.log('sync userid', userID);
 
       const _id = new ObjectId(userID);
@@ -312,9 +317,9 @@ const synchronizingAccount = async (req, res, next) => {
   try {
     console.log('Synchronizing existing accounts.');
 
-    const userID = decodeTokenUserID(accessToken, 'ACCESS');
+    const userProfileData = decodeToken(accessToken, 'ACCESS');
     // Convert id to ObjectId
-    const _id = new ObjectId(userID);
+    const _id = new ObjectId(userProfileData.id);
 
     await User.updateOne(
       { _id },

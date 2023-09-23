@@ -1,4 +1,5 @@
-// Reusable redirect function which checks for the JWT Token
+const { sign } = require('jsonwebtoken');
+
 const redirectSetTokens = (req, res) => {
   const accessToken = req.user.accessToken;
   const refreshToken = req.user.refreshToken;
@@ -70,21 +71,35 @@ const redirectWithError = (req, res) => {
       );
     }
 
-    // Generate URL, if value is null or false unset url
-    const givenNameUrl = givenName ? `&givenName=${givenName}` : '';
-    const familyNameUrl = familyName ? `&familyName=${familyName}` : '';
-    const emailUrl = email ? `&email=${email}` : '';
+    const givenNameCheck = givenName ? givenName : '';
+    const familyNameCheck = familyName ? familyName : '';
 
-    // Extra param will have the syntax key+value and will be sent back to server as an extra db field if set
-    const extraParamUrl = extraParam
-      ? `&extraParam=${extraParam[0]}+${extraParam[1]}`
-      : '';
+    const extraParamFormat = extraParam ? extraParam : '';
 
-    const syncUrl = sync ? `&sync=${sync}` : '';
-
-    return res.redirect(
-      `${process.env.CLIENT_URL}/create-account?provider=${providerType}&providerID=${providerID}${givenNameUrl}${familyNameUrl}${emailUrl}${extraParamUrl}${syncUrl}`
+    const initialSetup = sign(
+      {
+        givenName: givenNameCheck,
+        familyName: familyNameCheck,
+        email,
+        providerType,
+        providerID,
+        extraParam: extraParamFormat,
+      },
+      process.env.SETUP_TOKEN_SECRET,
+      {
+        expiresIn: process.env.SETUP_TOKEN_EXPIRY,
+      }
     );
+
+    return res
+      .cookie('initialSetup', initialSetup, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'Lax',
+      })
+      .redirect(
+        `${process.env.CLIENT_URL}/create-account?provider=${providerType}`
+      );
   }
 };
 

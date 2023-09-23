@@ -94,7 +94,6 @@ router.post(
   [
     nameValidation('userInputData.givenName', 'First name'), // Reusable express-validator
     nameValidation('userInputData.familyName', 'Family Name'),
-    emailValidation('userInputData.email'),
   ],
   userData
 );
