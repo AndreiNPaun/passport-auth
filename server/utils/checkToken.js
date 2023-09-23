@@ -1,9 +1,10 @@
 const { sign } = require('jsonwebtoken');
-const decodeTokenUserID = require('./decodeTokenUserID');
+const decodeToken = require('./decodeTokenUserID');
 
 const checkTokenValidity = (accessToken, refreshToken, res) => {
   try {
-    const userID = decodeTokenUserID(accessToken, 'ACCESS');
+    const userProfileData = decodeToken(accessToken, 'ACCESS');
+    const userID = userProfileData.id;
 
     if (userID instanceof Error) {
       const userIDFromRefreshToken = decodeTokenUserID(refreshToken, 'REFRESH');
@@ -20,7 +21,8 @@ const checkTokenValidity = (accessToken, refreshToken, res) => {
         }
       );
 
-      const userID = decodeTokenUserID(accessToken, 'ACCESS');
+      const userProfileData = decodeToken(accessToken, 'ACCESS');
+      const userID = userProfileData.id;
 
       return { userID, accessToken };
     }
