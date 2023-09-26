@@ -10,6 +10,7 @@ import HomePage from './pages/Home';
 import LoginCheck from './pages/LoginCheck';
 import SubmitAccountDetailsPage from './pages/SubmitAccountDetails';
 import AccountManagementPage from './pages/AccountManagement.js';
+import ProviderListPage from './pages/ProviderList.js';
 import NoEmailMessage from './components/Authentication/SubmitAccount/NoEmailMessage.js';
 import FailedTokenValidityPage from './pages/FailedTokenValidity.js';
 
@@ -27,7 +28,8 @@ const router = createBrowserRouter([
         element: <SubmitAccountDetailsPage />,
       },
       { path: 'no-email', element: <NoEmailMessage /> },
-      { path: '/account-management', element: <AccountManagementPage /> },
+      { path: 'account-management', element: <AccountManagementPage /> },
+      { path: 'provider-list', element: <ProviderListPage /> },
     ],
   },
 ]);

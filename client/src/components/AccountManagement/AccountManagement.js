@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
+
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { Container } from '@chakra-ui/react';
 
 import { setFormOpen } from '../../store/action/form';
 import GetAPIResponse from '../../utils/GetAPIResponse';
 import httpRequest from '../../utils/httpRequest';
 import EditProfile from './EditProfile';
-import AccountManagementForm from './AccountManagementForm';
+import EditArea from './EditArea';
+import ProviderArea from './ProviderArea';
 
 const AccountManagement = () => {
   const [userData, setUserData] = useState(); // Used to get data out of useEffect hook
@@ -50,10 +53,10 @@ const AccountManagement = () => {
           updateDisplayedUserData={updateDisplayedUserData}
         />
       )}
-      <AccountManagementForm
-        userData={userData}
-        showFormHandler={showFormHandler}
-      />
+      <Container mt="4rem" maxW="60%">
+        <EditArea userData={userData} showFormHandler={showFormHandler} />
+        <ProviderArea />
+      </Container>
     </>
   );
 };
