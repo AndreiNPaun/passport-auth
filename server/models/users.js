@@ -5,78 +5,97 @@ const usersSchema = new Schema(
   {
     givenName: {
       type: String,
+      required: true,
     },
     familyName: {
       type: String,
+      required: true,
     },
     email: {
       type: String,
       lowercase: true,
+      required: true,
     },
     provider: {
-      google: {
-        id: {
-          type: String,
+      google: [
+        {
+          _id: false,
+          id: {
+            type: String,
+            required: true,
+          },
+          givenName: {
+            type: String,
+          },
+          familyName: {
+            type: String,
+          },
+          email: {
+            type: String,
+            lowercase: true,
+          },
         },
-        givenName: {
-          type: String,
+      ],
+      github: [
+        {
+          _id: false,
+          id: {
+            type: String,
+            required: true,
+          },
+          givenName: {
+            type: String,
+          },
+          familyName: {
+            type: String,
+          },
+          email: {
+            type: String,
+            lowercase: true,
+          },
+          username: {
+            type: String,
+          },
         },
-        familyName: {
-          type: String,
+      ],
+      microsoft: [
+        {
+          _id: false,
+          id: {
+            type: String,
+            required: true,
+          },
+          givenName: {
+            type: String,
+          },
+          familyName: {
+            type: String,
+          },
+          email: {
+            type: String,
+            lowercase: true,
+          },
         },
-        email: {
-          type: String,
-          lowercase: true,
+      ],
+      linkedin: [
+        {
+          _id: false,
+          id: {
+            type: String,
+            required: true,
+          },
+          givenName: {
+            type: String,
+          },
+          familyName: {
+            type: String,
+          },
+          email: {
+            type: String,
+            lowercase: true,
+          },
         },
-      },
-      github: {
-        id: {
-          type: String,
-        },
-        givenName: {
-          type: String,
-        },
-        familyName: {
-          type: String,
-        },
-        email: {
-          type: String,
-          lowercase: true,
-        },
-        username: {
-          type: String,
-        },
-      },
-      microsoft: {
-        id: {
-          type: String,
-        },
-        givenName: {
-          type: String,
-        },
-        familyName: {
-          type: String,
-        },
-        email: {
-          type: String,
-          lowercase: true,
-        },
-      },
-      linkedin: {
-        id: {
-          type: String,
-        },
-        givenName: {
-          type: String,
-        },
-        familyName: {
-          type: String,
-        },
-        email: {
-          type: String,
-          lowercase: true,
-        },
-      },
+      ],
     },
   },
   { timestamps: true }

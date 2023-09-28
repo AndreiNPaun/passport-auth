@@ -31,13 +31,24 @@ const authenticateOrRegisterUser = async (req, res, next) => {
       });
 
       // Checks if the email is stored in provider document
-      const checkProvider = await User.findOne({
-        [`provider.${providerType}.email`]: email,
+      const checksIfProviderExists = await User.findOne({
+        [`provider.${providerType}`]: { $elemMatch: { id: providerID } },
       });
 
       // If user does not exist, create account
       if (!checkUser) {
         console.log('No user account found.');
+
+        // Check if provider is set linked with another account
+        if (checksIfProviderExists) {
+          console.log('Provider account is already linked to another account.');
+
+          req.user.error = {
+            error: 'Provider account is already linked to another account.',
+          };
+
+          return redirectWithError(req, res);
+        }
 
         if (email === '') {
           console.log('Email cannot be retrieved.');
@@ -56,7 +67,7 @@ const authenticateOrRegisterUser = async (req, res, next) => {
           console.log('User account fields are empty.');
 
           req.user.error = {
-            error: 'User account fields are empty.',
+            error: 'User account name fields are empty.',
             givenName,
             familyName,
             email,
@@ -73,12 +84,14 @@ const authenticateOrRegisterUser = async (req, res, next) => {
           familyName,
           email,
           provider: {
-            [providerType]: {
-              id: providerID,
-              givenName,
-              familyName,
-              email,
-            },
+            [providerType]: [
+              {
+                id: providerID,
+                givenName,
+                familyName,
+                email,
+              },
+            ],
           },
         });
 
@@ -90,18 +103,20 @@ const authenticateOrRegisterUser = async (req, res, next) => {
       }
 
       // Checks if user is registered but the chosen login provider details are not stored
-      if (checkUser && !checkProvider) {
+      if (checkUser && !checksIfProviderExists) {
         console.log('Provider not registered.');
 
         await User.updateOne(
           { email },
           {
-            $set: {
-              [`provider.${providerType}.id`]: providerID,
-              [`provider.${providerType}.givenName`]: givenName,
-              [`provider.${providerType}.familyName`]: familyName,
-              [`provider.${providerType}.email`]: email,
-              [`provider.${providerType}.${key}`]: value,
+            $push: {
+              [`provider.${providerType}`]: {
+                id: providerID,
+                givenName,
+                familyName,
+                email,
+                [key]: value,
+              },
             },
           }
         );
@@ -144,28 +159,34 @@ const syncOrCreateRegisterProfile = async (req, res, next) => {
   console.log('key', key);
 
   try {
-    // Check if there is an existing accounts with the same email
-    const checkIfExistingUser = await User.findOne({ email });
+    // Check if there is an existing accounts with the same id
+    const checkIfExistingUser = await User.findOne({
+      [`provider.${providerType}`]: { $elemMatch: { id: providerID } },
+    });
 
     // If same email account exists update record
     if (checkIfExistingUser) {
       console.log('Synchronizing existing accounts.');
 
       const updateUserObject = {
-        provider: {
-          [providerType]: {
-            id: providerID,
-            givenName,
-            familyName,
-            email,
-          },
-        },
+        [`provider.${providerType}.$.id`]: providerID,
+        [`provider.${providerType}.$.givenName`]: givenName,
+        [`provider.${providerType}.$.familyName`]: familyName,
+        [`provider.${providerType}.$.email`]: email,
       };
 
       if (key && value) {
-        updateUserObject.provider[providerType][key] = value;
+        updateUserObject[`provider.${providerType}.$.${key}`] = value;
       }
-      await User.updateOne({ _id }, { $set: updateUserObject });
+
+      await User.updateOne(
+        {
+          [`provider.${providerType}`]: { $elemMatch: { id: providerID } },
+        },
+        {
+          $set: updateUserObject,
+        }
+      );
 
       return res.status(200).send('Account synchronized.');
     }
@@ -273,20 +294,45 @@ const synchronizationRequest = async (req, res, next) => {
       const userID = req.userID;
       console.log('sync userid', userID);
 
+      // Checks if the email is stored in provider document
+      const checksIfProviderExists = await User.findOne({
+        [`provider.${providerType}`]: { $elemMatch: { id: providerID } },
+      });
+
+      console.log('provbider', checksIfProviderExists);
+
       const _id = new ObjectId(userID);
 
-      const updateUserObject = {
-        [`provider.${providerType}.id`]: providerID,
-        [`provider.${providerType}.givenName`]: givenName,
-        [`provider.${providerType}.familyName`]: familyName,
-        [`provider.${providerType}.email`]: email,
+      console.log('iddd', _id);
+
+      if (
+        checksIfProviderExists &&
+        _id.toString() !== checksIfProviderExists._id.toString()
+      ) {
+        console.log('Provider account is already linked to another account.');
+
+        req.user.error = {
+          error: 'Provider account is already linked to another account.',
+        };
+
+        return redirectWithError(req, res);
+      }
+
+      const newUserRecord = {
+        id: providerID,
+        givenName,
+        familyName,
+        email,
       };
 
       if (Array.isArray(extraParam) && extraParam.length === 2) {
         const [key, value] = extraParam;
-        updateUserObject[`provider.${providerType}.${key}`] = value;
+        newUserRecord[key] = value;
       }
-      await User.updateOne({ _id }, { $set: updateUserObject });
+      await User.updateOne(
+        { _id },
+        { $push: { [`provider.${providerType}`]: newUserRecord } }
+      );
 
       req.user = { synchronized: 'synchronized' };
 

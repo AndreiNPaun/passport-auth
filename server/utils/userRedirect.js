@@ -69,6 +69,14 @@ const redirectWithError = (req, res) => {
       sync,
     } = req.user;
 
+    if (
+      errorMessage.error ===
+      'Provider account is already linked to another account.'
+    ) {
+      console.log('testing');
+      return res.redirect(`${process.env.CLIENT_URL}/`);
+    }
+
     if (email === '' && !sync) {
       return res.redirect(
         `${process.env.CLIENT_URL}/no-email?provider=${providerType}`

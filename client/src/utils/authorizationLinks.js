@@ -19,7 +19,7 @@ export const GoogleAuthorisation = (state) => {
   const REDIRECT_URI = `${process.env.REACT_APP_SERVER_URL}/auth/google/callback`;
   const STATE = state ? '&state=sync' : '';
 
-  const AUTHORIZATION_URL = `https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A//www.googleapis.com/auth/drive.metadata.readonly&include_granted_scopes=true&response_type=code${STATE}&redirect_uri=${encodeURIComponent(
+  const AUTHORIZATION_URL = `https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A//www.googleapis.com/auth/userinfo.profile+https%3A//www.googleapis.com/auth/userinfo.email&include_granted_scopes=true&response_type=code${STATE}&redirect_uri=${encodeURIComponent(
     REDIRECT_URI
   )}&client_id=${CLIENT_ID}`;
 
