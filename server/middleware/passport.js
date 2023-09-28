@@ -67,9 +67,9 @@ passport.use(
       // console.log('Google Profile:', profile);
 
       // User details
-      const givenName = profile.name.givenName;
-      const familyName = profile.name.familyName;
-      const email = profile.emails[0].value;
+      const givenName = profile.name.givenName || '';
+      const familyName = profile.name.familyName || '';
+      const email = profile.emails?.[0].value || '';
 
       // Stores the provider details (e.g. google)
       const providerType = profile.provider;
