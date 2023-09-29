@@ -347,6 +347,7 @@ const synchronizationRequest = async (req, res, next) => {
   next();
 };
 
+// CHECK LATER
 const synchronizingAccount = async (req, res, next) => {
   if (validationError(req, res)) {
     return;
@@ -395,6 +396,25 @@ const synchronizingAccount = async (req, res, next) => {
   }
 };
 
+const listProviders = async (req, res, next) => {
+  console.log('listing providers');
+  console.log('req stucc', req.query);
+
+  const userID = req.userID;
+  const _id = new ObjectId(userID);
+
+  const provider = req.query.provider.toLowerCase();
+
+  try {
+    const user = await User.findById(userID).select(`provider.${provider}`);
+
+    res.status(200).send(user.provider[provider]);
+  } catch (error) {
+    console.log('Error:', error);
+    res.status(500).send('Unexpected error.');
+  }
+};
+
 module.exports = {
   authenticateOrRegisterUser,
   syncOrCreateRegisterProfile,
@@ -402,4 +422,5 @@ module.exports = {
   postEditProfile,
   synchronizationRequest,
   synchronizingAccount,
+  listProviders,
 };

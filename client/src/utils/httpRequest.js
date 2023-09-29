@@ -10,8 +10,10 @@ const httpRequest = async (method, url, values = {}) => {
     withCredentials: true,
   };
 
-  if (method !== 'get') {
+  if (['post', 'put', 'patch'].includes(method)) {
     options.data = values;
+  } else if (method === 'get') {
+    options.params = values;
   }
 
   const response = await axios({ method, url, ...options });

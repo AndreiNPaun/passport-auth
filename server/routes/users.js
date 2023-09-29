@@ -9,6 +9,7 @@ const {
   postEditProfile,
   synchronizationRequest,
   synchronizingAccount,
+  listProviders,
 } = require('../controllers/users');
 
 const {
@@ -128,5 +129,7 @@ router.post('/logout', (req, res) => {
     .clearCookie('refreshToken')
     .send('Cookies cleared');
 });
+
+router.get('/list-providers', authenticate, listProviders);
 
 module.exports = router;
