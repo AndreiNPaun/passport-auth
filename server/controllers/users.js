@@ -408,15 +408,38 @@ const synchronizingAccount = async (req, res, next) => {
 
 const listProviders = async (req, res, next) => {
   const userID = req.userID;
+
   const provider = req.query.provider.toLowerCase();
 
   try {
-    const user = await User.findById(userID).select(`provider.${provider}`);
+    const userProviders = await User.findById(userID).select(
+      `provider.${provider}`
+    );
 
-    res.status(200).send(user.provider[provider]);
+    res.status(200).send(userProviders.provider[provider]);
   } catch (error) {
     console.log('Error:', error);
     res.status(500).send('Unexpected error.');
+  }
+};
+
+const deleteProvider = async (req, res, next) => {
+  const userID = req.userID;
+  const _id = new ObjectId(userID);
+
+  const providerID = req.body.providerID;
+  const providerType = req.body.providerType.toLowerCase();
+
+  try {
+    await User.updateOne(
+      { _id },
+      { $pull: { [`provider.${providerType}`]: { id: providerID } } }
+    );
+
+    res.status(200).send('Provider connection removed successfully.');
+  } catch (error) {
+    console.log('Error:', error);
+    res.status(500).send('Error while removing the provider connection.');
   }
 };
 
@@ -428,4 +451,5 @@ module.exports = {
   synchronizationRequest,
   synchronizingAccount,
   listProviders,
+  deleteProvider,
 };

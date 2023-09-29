@@ -10,6 +10,7 @@ const {
   synchronizationRequest,
   synchronizingAccount,
   listProviders,
+  deleteProvider,
 } = require('../controllers/users');
 
 const {
@@ -131,5 +132,6 @@ router.post('/logout', (req, res) => {
 });
 
 router.get('/list-providers', authenticate, listProviders);
+router.post('/delete-provider', authenticate, deleteProvider);
 
 module.exports = router;
