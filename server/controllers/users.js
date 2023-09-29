@@ -329,10 +329,20 @@ const synchronizationRequest = async (req, res, next) => {
         const [key, value] = extraParam;
         newUserRecord[key] = value;
       }
-      await User.updateOne(
-        { _id },
-        { $push: { [`provider.${providerType}`]: newUserRecord } }
-      );
+
+      if (checksIfProviderExists) {
+        // Update the existing record if it exists
+        await User.updateOne(
+          { _id, [`provider.${providerType}.id`]: providerID },
+          { $set: { [`provider.${providerType}.$`]: newUserRecord } }
+        );
+      } else {
+        // Push a new record if it doesn't exist
+        await User.updateOne(
+          { _id },
+          { $push: { [`provider.${providerType}`]: newUserRecord } }
+        );
+      }
 
       req.user = { synchronized: 'synchronized' };
 
@@ -397,12 +407,7 @@ const synchronizingAccount = async (req, res, next) => {
 };
 
 const listProviders = async (req, res, next) => {
-  console.log('listing providers');
-  console.log('req stucc', req.query);
-
   const userID = req.userID;
-  const _id = new ObjectId(userID);
-
   const provider = req.query.provider.toLowerCase();
 
   try {

@@ -15,7 +15,7 @@ import Card from '../../UI/Card';
 import CustomButton from '../../UI/CustomButton';
 
 const ProviderList = () => {
-  const [userData, setUserData] = useState([]); // Used to get data out of useEffect hook
+  const [userData, setUserData] = useState([]);
 
   const location = useLocation();
   const providerName = location.state?.providerName;
