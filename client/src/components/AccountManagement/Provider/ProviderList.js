@@ -43,9 +43,28 @@ const ProviderList = () => {
         setUserData(response.data);
       })();
     } catch (error) {
-      console.log('Error', error);
+      console.log('Error:', error);
     }
   }, []);
+
+  const deleteConnectionHandler = async (providerID, providerType) => {
+    try {
+      const response = await httpRequest(
+        'post',
+        `${process.env.REACT_APP_SERVER_URL}/delete-provider`,
+        { providerID, providerType }
+      );
+
+      if (response.status === 200) {
+        const updatedUserData = userData.filter(
+          (data) => data.id !== providerID
+        );
+        setUserData(updatedUserData);
+      }
+    } catch (error) {
+      console.log('Error:', error);
+    }
+  };
 
   return (
     <Container mt="4rem" maxW="60%">
@@ -71,7 +90,11 @@ const ProviderList = () => {
                 {data.familyName && <Text>Last name: {data.familyName}</Text>}
                 {data.username && <Text>Username: {data.username}</Text>}
               </Box>
-              <CustomButton h="2rem" m="1rem 0">
+              <CustomButton
+                h="2rem"
+                m="1rem 0"
+                onClick={() => deleteConnectionHandler(data.id, providerName)}
+              >
                 Delete
               </CustomButton>
               <Divider mt="1rem" />
