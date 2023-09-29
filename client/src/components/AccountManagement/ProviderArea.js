@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Link as RouterLink } from 'react-router-dom';
-import { Center, Box, Text, Grid, GridItem, Link } from '@chakra-ui/react';
+import { Center, Box, Text, Grid, GridItem } from '@chakra-ui/react';
 import { FaGithub, FaLinkedin, FaGoogle, FaMicrosoft } from 'react-icons/fa';
 
 import {

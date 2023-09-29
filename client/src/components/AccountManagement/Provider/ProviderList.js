@@ -2,6 +2,13 @@ import React, { useEffect, useState } from 'react';
 
 import { useLocation } from 'react-router-dom';
 
+import {
+  GithubAuthorisation,
+  LinkedInAuthorisation,
+  GoogleAuthorisation,
+  MicrosoftAuthorisation,
+} from '../../../utils/authorizationLinks';
+
 import { Container, Box, Text, Divider } from '@chakra-ui/react';
 import httpRequest from '../../../utils/httpRequest';
 import Card from '../../UI/Card';
@@ -12,6 +19,15 @@ const ProviderList = () => {
 
   const location = useLocation();
   const providerName = location.state?.providerName;
+
+  const authorizationLinks = {
+    Microsoft: MicrosoftAuthorisation,
+    Google: GoogleAuthorisation,
+    GitHub: GithubAuthorisation,
+    LinkedIn: LinkedInAuthorisation,
+  };
+
+  const providerAuthorizationLink = authorizationLinks[providerName];
 
   useEffect(() => {
     try {
@@ -35,7 +51,11 @@ const ProviderList = () => {
     <Container mt="4rem" maxW="60%">
       <Card mt="1rem">
         <Text p="1rem">Provider: {providerName}</Text>
-        <CustomButton h="2rem" m="0 1rem">
+        <CustomButton
+          h="2rem"
+          m="0 1rem"
+          onClick={() => providerAuthorizationLink(true)}
+        >
           Add more
         </CustomButton>
         {userData.length === 0 && (
@@ -44,8 +64,8 @@ const ProviderList = () => {
         {Array.isArray(userData) &&
           userData.length > 0 &&
           userData.map((data) => (
-            <Box p="1rem">
-              <Box key={data.id}>
+            <Box key={data.id} p="1rem">
+              <Box>
                 {data.email && <Text>Email: {data.email}</Text>}
                 {data.givenName && <Text>First name: {data.givenName}</Text>}
                 {data.familyName && <Text>Last name: {data.familyName}</Text>}
