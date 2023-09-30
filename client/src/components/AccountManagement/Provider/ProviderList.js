@@ -14,8 +14,8 @@ import httpRequest from '../../../utils/httpRequest';
 import Card from '../../UI/Card';
 import CustomButton from '../../UI/CustomButton';
 
-const ProviderList = () => {
-  const [userData, setUserData] = useState([]);
+const ProviderList = ({ list }) => {
+  const [userData, setUserData] = useState(list);
 
   const location = useLocation();
   const providerName = location.state?.providerName;
@@ -28,24 +28,6 @@ const ProviderList = () => {
   };
 
   const providerAuthorizationLink = authorizationLinks[providerName];
-
-  useEffect(() => {
-    try {
-      (async () => {
-        const response = await httpRequest(
-          'get',
-          `${process.env.REACT_APP_SERVER_URL}/list-providers`,
-          { provider: providerName }
-        );
-
-        console.log('list resp', response);
-
-        setUserData(response.data);
-      })();
-    } catch (error) {
-      console.log('Error:', error);
-    }
-  }, []);
 
   const deleteConnectionHandler = async (providerID, providerType) => {
     try {

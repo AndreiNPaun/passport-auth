@@ -1,7 +1,27 @@
 import React from 'react';
 
-const Error = () => {
-  return <p>Error</p>;
+import { useRouteError } from 'react-router-dom';
+
+import MainNavigation from '../components/MainNavigation';
+import BasicPageContent from '../components/BasicPageContet';
+
+const ErrorPage = () => {
+  const error = useRouteError();
+
+  let title = 'An error occurred!';
+  let message = 'Something went wrong.';
+
+  if (error.response) {
+    title = error.response.status;
+    message = error.response.data;
+  }
+
+  return (
+    <>
+      <MainNavigation />
+      <BasicPageContent title={title} message={message} />
+    </>
+  );
 };
 
-export default Error;
+export default ErrorPage;
