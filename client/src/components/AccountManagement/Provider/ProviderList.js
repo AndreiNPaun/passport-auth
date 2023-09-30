@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from 'react';
-
-import { useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
 
 import {
   GithubAuthorisation,
@@ -14,11 +12,8 @@ import httpRequest from '../../../utils/httpRequest';
 import Card from '../../UI/Card';
 import CustomButton from '../../UI/CustomButton';
 
-const ProviderList = ({ list }) => {
+const ProviderList = ({ list, providerName }) => {
   const [userData, setUserData] = useState(list);
-
-  const location = useLocation();
-  const providerName = location.state?.providerName;
 
   const authorizationLinks = {
     Microsoft: MicrosoftAuthorisation,

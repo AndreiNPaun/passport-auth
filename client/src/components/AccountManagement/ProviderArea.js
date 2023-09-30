@@ -99,7 +99,7 @@ const ProviderArea = () => {
               </GridItem>
               <GridItem
                 as={RouterLink}
-                to="/provider-list"
+                to={`/provider-list/${name}`}
                 mt="1rem"
                 w="auto"
                 _hover={{
