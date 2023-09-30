@@ -32,7 +32,7 @@ const router = createBrowserRouter([
       { path: 'no-email', element: <NoEmailMessage /> },
       { path: 'account-management', element: <AccountManagementPage /> },
       {
-        path: 'provider-list',
+        path: 'provider-list/:providerName',
         element: <ProviderListPage />,
         loader: providerListLoader,
       },
