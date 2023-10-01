@@ -104,6 +104,10 @@ router.post(
 router.get('/edit-profile', authenticate, getEditProfile);
 router.post(
   '/edit-profile',
+  (req, res, next) => {
+    console.log('body', req.body);
+    next();
+  },
   [
     nameValidation('userInputData.givenName', 'First name'),
     nameValidation('userInputData.familyName', 'Family Name'),

@@ -1,53 +1,48 @@
-import React, { useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useSubmit } from 'react-router-dom';
 
 import { setFormClose } from '../../store/action/form';
-import GetAPIResponse from '../../utils/GetAPIResponse';
-import httpRequest from '../../utils/httpRequest';
 
-import Modal from '../UI/ModalForm';
+import Modal from '../UI/Modal';
+
+import { Center, Box, Text } from '@chakra-ui/react';
+
+import CustomButton from '../UI/CustomButton';
+import Card from '../UI/Card';
+import InputFields from '../UI/InputFields';
 
 const EditProfile = (props) => {
-  // Passed down as arguments for CheckTokenValidity
-  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const submit = useSubmit();
 
-  const givenNameInputRef = useRef();
-  const familyNameInputRef = useRef();
-  const emailInputRef = useRef();
+  const [userDataInput, setUserDataInput] = useState({
+    givenName: props.userData.givenName || '',
+    familyName: props.userData.familyName || '',
+    email: props.userData.email || '',
+  });
 
-  // Change state to false which closes the form
-  const closeFormHandler = () => {
+  const userDataChangeHandler = (event) => {
+    const { name, value } = event.target;
+    setUserDataInput((prevState) => ({ ...prevState, [name]: value }));
+  };
+
+  const submitFormHandler = (event) => {
+    event.preventDefault();
+
+    setUserDataInput(userDataInput);
+
+    props.updateDisplayedUserData(userDataInput);
+
+    const givenName = userDataInput.givenName;
+    const familyName = userDataInput.familyName;
+    const email = userDataInput.email;
+
+    submit({ givenName, familyName, email }, { method: 'post' });
     dispatch(setFormClose());
   };
 
-  const submitHandler = async (event) => {
-    event.preventDefault();
-
-    const userInputData = {
-      givenName: givenNameInputRef.current.value,
-      familyName: familyNameInputRef.current.value,
-      email: emailInputRef.current.value,
-    };
-
-    const submitData = async () => {
-      const response = await httpRequest(
-        'post',
-        `${process.env.REACT_APP_SERVER_URL}/edit-profile`,
-        { userInputData }
-      );
-      return response;
-    };
-
-    // Call function which checks for token and if ok sends data
-    const response = await GetAPIResponse(submitData, navigate, dispatch);
-
-    if (response.status === 200) {
-      props.updateDisplayedUserData(userInputData);
-    }
-
-    // Change form state to false
+  const closeFormHandler = () => {
     dispatch(setFormClose());
   };
 
@@ -56,35 +51,70 @@ const EditProfile = (props) => {
       htmlFor: 'givenName',
       labelText: 'First Name',
       id: 'givenName',
-      ref: givenNameInputRef,
+      name: 'givenName',
       value: 'givenName',
     },
     {
       htmlFor: 'familyName',
       labelText: 'Family Name',
       id: 'familyName',
-      ref: familyNameInputRef,
+      name: 'familyName',
       value: 'familyName',
     },
     {
       htmlFor: 'email',
       labelText: 'Email',
       id: 'email',
-      ref: emailInputRef,
+      name: 'email',
       value: 'email',
     },
   ];
 
   return (
-    <Modal
-      modalTitle="Edit Account"
-      modalText="Edit your account"
-      onClickCancel={closeFormHandler}
-      onClickSubmit={submitHandler}
-      value={props.userData}
-      fields={fields}
-      // errorText={errorMessage}
-    />
+    <Modal>
+      <Card mt="20vh">
+        <Text
+          p="1rem"
+          m="0 auto"
+          textAlign="center"
+          fontSize="2xl"
+          fontWeight="bold"
+          color="blue.600"
+        >
+          Edit Account
+        </Text>
+        <Center>
+          <Text mb=".5rem" color="#181717">
+            Edit your account
+          </Text>
+        </Center>
+        {/* <Text pl="1.5rem" pb="0.3rem" color="red">
+            {errorText}
+          </Text> */}
+        {fields.map((field) => (
+          <Box key={field.id} ml="2.5rem">
+            <InputFields
+              htmlFor={field.htmlFor}
+              labelText={field.labelText}
+              id={field.id}
+              name={field.name}
+              defaultValue={props.userData[field.value] || ''}
+              onChange={userDataChangeHandler}
+              inputStyle={{ w: '90%' }}
+              required
+            />
+          </Box>
+        ))}
+        <Center mt="1rem">
+          <CustomButton m="1rem" type="submit" onClick={submitFormHandler}>
+            Submit
+          </CustomButton>
+          <CustomButton m="1rem" onClick={closeFormHandler}>
+            Close
+          </CustomButton>
+        </Center>
+      </Card>
+    </Modal>
   );
 };
 
