@@ -1,25 +1,54 @@
-import React from 'react';
-
-import { useLoaderData, useParams } from 'react-router-dom';
+import React, { Suspense } from 'react';
+import { useLoaderData, useParams, defer, Await } from 'react-router-dom';
+import { Spinner, Center } from '@chakra-ui/react';
 
 import ProviderList from '../components/AccountManagement/Provider/ProviderList';
 import httpRequest from '../utils/httpRequest';
 
-const ProviderListPage = () => {
-  const data = useLoaderData();
+function ProviderListPage() {
+  const { data } = useLoaderData();
   const params = useParams();
 
-  return <ProviderList list={data.data} providerName={params.providerName} />;
-};
+  return (
+    <Suspense
+      fallback={
+        <Center>
+          <Spinner
+            mt={'20vh'}
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="blue.500"
+            size="xl"
+          />
+        </Center>
+      }
+    >
+      <Await resolve={data}>
+        {(loadedData) => (
+          <ProviderList list={loadedData} providerName={params.providerName} />
+        )}
+      </Await>
+    </Suspense>
+  );
+}
 
 export default ProviderListPage;
 
-export const loader = async ({ request, params }) => {
-  return await httpRequest(
+const loadProviderList = async (providerName) => {
+  const response = await httpRequest(
     'get',
     `${process.env.REACT_APP_SERVER_URL}/list-providers`,
-    { provider: params.providerName }
+    { provider: providerName }
   );
+
+  return response.data;
+};
+
+export const loader = ({ request, params }) => {
+  return defer({
+    data: loadProviderList(params.providerName),
+  });
 };
 
 export const action = async ({ request, params }) => {

@@ -418,9 +418,7 @@ const listProviders = async (req, res, next) => {
       `provider.${provider}`
     );
 
-    setTimeout(() => {
-      res.status(200).send(userProviders.provider[provider]);
-    }, 2000);
+    res.status(200).send(userProviders.provider[provider]);
   } catch (error) {
     console.log('Error:', error);
     res.status(500).send('Unexpected error.');
