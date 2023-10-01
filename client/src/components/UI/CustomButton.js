@@ -1,7 +1,14 @@
 import React from 'react';
 import { Button } from '@chakra-ui/react';
 
-const CustomButton = ({ type, onClick, onBlur, children, ...styles }) => {
+const CustomButton = ({
+  type,
+  onClick,
+  onBlur,
+  disabled,
+  children,
+  ...styles
+}) => {
   return (
     <Button
       type={type || 'button'}
@@ -11,6 +18,7 @@ const CustomButton = ({ type, onClick, onBlur, children, ...styles }) => {
       bg="blue.500"
       _hover={{ bg: 'blue.700' }}
       _active={{ bg: 'blue.800', boxShadow: 'none' }}
+      disabled={disabled}
       {...styles}
     >
       {children}

@@ -271,7 +271,9 @@ const postEditProfile = async (req, res, next) => {
       }
     );
 
-    res.status(200).send('Account updated.');
+    setTimeout(() => {
+      res.status(200).send('Account updated.');
+    }, 1500);
   } catch (error) {
     console.log('Error:', error);
     res.status(500).send('Server Error.');
