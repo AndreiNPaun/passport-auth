@@ -1,13 +1,12 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData, defer, Await } from 'react-router-dom';
 
 import AccountManagement from '../components/AccountManagement/AccountManagement';
 import httpRequest from '../utils/httpRequest';
 
 const AccountManagementPage = () => {
   const data = useLoaderData();
-  console.log('data', data);
   return <AccountManagement userInfo={data.data} />;
 };
 
@@ -22,8 +21,6 @@ export const loader = async () => {
 
 export const action = async ({ request, params }) => {
   const data = await request.formData();
-
-  console.log('abc', data.get('givenName'));
 
   const userInputData = {
     givenName: data.get('givenName'),

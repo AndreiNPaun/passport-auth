@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useSubmit } from 'react-router-dom';
+import { useSubmit, useNavigation } from 'react-router-dom';
 
 import { setFormClose } from '../../store/action/form';
 
@@ -15,12 +15,15 @@ import InputFields from '../UI/InputFields';
 const EditProfile = (props) => {
   const dispatch = useDispatch();
   const submit = useSubmit();
+  const navigation = useNavigation();
 
   const [userDataInput, setUserDataInput] = useState({
     givenName: props.userData.givenName || '',
     familyName: props.userData.familyName || '',
     email: props.userData.email || '',
   });
+
+  const isSubmitting = navigation.state === 'submitting';
 
   const userDataChangeHandler = (event) => {
     const { name, value } = event.target;
@@ -29,8 +32,6 @@ const EditProfile = (props) => {
 
   const submitFormHandler = (event) => {
     event.preventDefault();
-
-    setUserDataInput(userDataInput);
 
     props.updateDisplayedUserData(userDataInput);
 
@@ -106,10 +107,19 @@ const EditProfile = (props) => {
           </Box>
         ))}
         <Center mt="1rem">
-          <CustomButton m="1rem" type="submit" onClick={submitFormHandler}>
-            Submit
+          <CustomButton
+            m="1rem"
+            type="submit"
+            onClick={submitFormHandler}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Submitting...' : 'Submit'}
           </CustomButton>
-          <CustomButton m="1rem" onClick={closeFormHandler}>
+          <CustomButton
+            m="1rem"
+            onClick={closeFormHandler}
+            disabled={isSubmitting}
+          >
             Close
           </CustomButton>
         </Center>
