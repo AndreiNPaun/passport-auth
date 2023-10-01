@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import { useSubmit } from 'react-router-dom';
+
 import {
   GithubAuthorisation,
   LinkedInAuthorisation,
@@ -8,12 +10,13 @@ import {
 } from '../../../utils/authorizationLinks';
 
 import { Container, Box, Text, Divider } from '@chakra-ui/react';
-import httpRequest from '../../../utils/httpRequest';
 import Card from '../../UI/Card';
 import CustomButton from '../../UI/CustomButton';
 
 const ProviderList = ({ list, providerName }) => {
   const [userData, setUserData] = useState(list);
+
+  const submit = useSubmit();
 
   const authorizationLinks = {
     Microsoft: MicrosoftAuthorisation,
@@ -24,22 +27,16 @@ const ProviderList = ({ list, providerName }) => {
 
   const providerAuthorizationLink = authorizationLinks[providerName];
 
-  const deleteConnectionHandler = async (providerID, providerType) => {
-    try {
-      const response = await httpRequest(
-        'post',
-        `${process.env.REACT_APP_SERVER_URL}/delete-provider`,
-        { providerID, providerType }
-      );
+  const deleteConnectionHandler = (providerID, providerType) => {
+    const proceed = window.confirm(
+      'Are you sure you wish to delete this connection?'
+    );
 
-      if (response.status === 200) {
-        const updatedUserData = userData.filter(
-          (data) => data.id !== providerID
-        );
-        setUserData(updatedUserData);
-      }
-    } catch (error) {
-      console.log('Error:', error);
+    if (proceed) {
+      submit({ providerID, providerType }, { method: 'post' });
+
+      const updatedUserData = userData.filter((data) => data.id !== providerID);
+      setUserData(updatedUserData);
     }
   };
 
