@@ -55,8 +55,6 @@ const SubmitDetails = () => {
         dispatch
       );
 
-      console.log('resp', response);
-
       if (response.status === 200) {
         navigate(`/login-check?isLoggedIn=${response}`);
       } else {

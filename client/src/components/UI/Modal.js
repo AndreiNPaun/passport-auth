@@ -1,18 +1,9 @@
 import React from 'react';
 import { Box } from '@chakra-ui/react';
-import { useDispatch } from 'react-redux';
 
-import { setFormClose } from '../../store/action/form';
-
-const Modal = ({ children }) => {
-  const dispatch = useDispatch();
-
+const Modal = ({ children, onClickCancel }) => {
   const stopPropagation = (event) => {
     event.stopPropagation();
-  };
-
-  const onClickCancel = () => {
-    dispatch(setFormClose());
   };
 
   // Background styling
