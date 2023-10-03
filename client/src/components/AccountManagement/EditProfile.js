@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useSubmit, useActionData, useNavigation } from 'react-router-dom';
+
+import httpRequest from '../../utils/httpRequest';
 
 import Modal from '../UI/Modal';
 import { Center, Box, Text, List, ListItem, ListIcon } from '@chakra-ui/react';
@@ -10,41 +11,60 @@ import Card from '../UI/Card';
 import InputFields from '../UI/InputFields';
 
 const EditProfile = (props) => {
-  const submit = useSubmit();
-  const data = useActionData();
-  const navigation = useNavigation();
-
-  const isSubmitting = navigation.state === 'submitting';
-
-  console.log('dataz', data);
-
   const [userDataInput, setUserDataInput] = useState({
     givenName: props.userData.givenName || '',
     familyName: props.userData.familyName || '',
     email: props.userData.email || '',
   });
+  const [isError, setIsError] = useState();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const userDataChangeHandler = (event) => {
     const { name, value } = event.target;
     setUserDataInput((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const submitFormHandler = (event) => {
+  const submitFormHandler = async (event) => {
     event.preventDefault();
 
-    props.updateDisplayedUserData(userDataInput);
+    setIsSubmitting(true);
 
     const givenName = userDataInput.givenName;
     const familyName = userDataInput.familyName;
     const email = userDataInput.email;
 
-    submit({ givenName, familyName, email }, { method: 'post' });
+    const userInputData = { givenName, familyName, email };
 
-    props.updateFormStatus();
+    try {
+      const response = await httpRequest(
+        'post',
+        `${process.env.REACT_APP_SERVER_URL}/edit-profile`,
+        { userInputData }
+      );
+
+      if (response.status === 200) {
+        props.closeFormHandler();
+        setIsSubmitting(false);
+        props.updateDisplayedUserData(userDataInput);
+      }
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        Array.isArray(error.response.data)
+      ) {
+        // if the error response contains an array of error messages, set them in state
+        setIsError(error.response.data);
+      } else {
+        // for any other type of error, just show a generic message
+        setIsError(['An error occurred while updating the profile.']);
+      }
+      setIsSubmitting(false);
+    }
   };
 
   const closeFormHandler = () => {
-    props.updateFormStatus();
+    props.closeFormHandler();
   };
 
   const fields = [
@@ -72,7 +92,7 @@ const EditProfile = (props) => {
   ];
 
   return (
-    <Modal>
+    <Modal onClickCancel={closeFormHandler}>
       <Card mt="20vh">
         <Text
           p="1rem"
@@ -89,9 +109,9 @@ const EditProfile = (props) => {
             Edit your account
           </Text>
         </Center>
-        {data && data.errors && (
+        {isError && (
           <List spacing=".5rem" m="1rem 0 1rem 2.5rem">
-            {data.errors.map((err, index) => (
+            {isError.map((err, index) => (
               <ListItem key={index}>
                 <ListIcon as={WarningIcon} color="red.500" />
                 {err}

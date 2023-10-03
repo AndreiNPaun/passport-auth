@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-
 import { Container } from '@chakra-ui/react';
 
 import EditProfile from './EditProfile';
@@ -11,8 +10,6 @@ const AccountManagement = ({ userInfo }) => {
   const [formStatus, setFormStatus] = useState(false);
 
   const showFormHandler = () => {
-    console.log('Opening form...');
-    // dispatch(setFormOpen());
     setFormStatus(true);
   };
 
@@ -29,7 +26,6 @@ const AccountManagement = ({ userInfo }) => {
       {formStatus && (
         <EditProfile
           userData={userData}
-          formStatus={formStatus}
           updateDisplayedUserData={updateDisplayedUserData}
           closeFormHandler={closeFormHandler}
         />

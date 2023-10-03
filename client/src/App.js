@@ -11,7 +11,6 @@ import LoginCheck from './pages/LoginCheck';
 import SubmitAccountDetailsPage from './pages/SubmitAccountDetails';
 import AccountManagementPage, {
   loader as editProfileLoader,
-  action as editProfileAction,
 } from './pages/AccountManagement.js';
 import ProviderListPage, {
   loader as providerListLoader,
@@ -38,7 +37,6 @@ const router = createBrowserRouter([
         path: 'account-management',
         element: <AccountManagementPage />,
         loader: editProfileLoader,
-        action: editProfileAction,
       },
       {
         path: 'provider-list/:providerName',
