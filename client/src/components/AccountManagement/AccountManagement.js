@@ -1,33 +1,37 @@
 import React, { useState } from 'react';
 
-import { useSelector, useDispatch } from 'react-redux';
 import { Container } from '@chakra-ui/react';
 
-import { setFormOpen } from '../../store/action/form';
 import EditProfile from './EditProfile';
 import EditArea from './EditArea';
 import ProviderArea from './ProviderArea';
 
 const AccountManagement = ({ userInfo }) => {
   const [userData, setUserData] = useState(userInfo);
-
-  const dispatch = useDispatch();
-  const formCheck = useSelector((state) => state.form.formCheck);
+  const [formStatus, setFormStatus] = useState(false);
 
   const showFormHandler = () => {
-    dispatch(setFormOpen());
+    console.log('Opening form...');
+    // dispatch(setFormOpen());
+    setFormStatus(true);
   };
 
   const updateDisplayedUserData = (newUserData) => {
     setUserData(newUserData);
   };
 
+  const closeFormHandler = () => {
+    setFormStatus(false);
+  };
+
   return (
     <>
-      {formCheck && (
+      {formStatus && (
         <EditProfile
           userData={userData}
+          formStatus={formStatus}
           updateDisplayedUserData={updateDisplayedUserData}
+          closeFormHandler={closeFormHandler}
         />
       )}
       <Container mt="4rem" maxW="60%">

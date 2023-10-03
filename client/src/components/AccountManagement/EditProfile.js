@@ -1,29 +1,28 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useSubmit, useNavigation } from 'react-router-dom';
-
-import { setFormClose } from '../../store/action/form';
+import { useSubmit, useActionData, useNavigation } from 'react-router-dom';
 
 import Modal from '../UI/Modal';
-
-import { Center, Box, Text } from '@chakra-ui/react';
+import { Center, Box, Text, List, ListItem, ListIcon } from '@chakra-ui/react';
+import { WarningIcon } from '@chakra-ui/icons';
 
 import CustomButton from '../UI/CustomButton';
 import Card from '../UI/Card';
 import InputFields from '../UI/InputFields';
 
 const EditProfile = (props) => {
-  const dispatch = useDispatch();
   const submit = useSubmit();
+  const data = useActionData();
   const navigation = useNavigation();
+
+  const isSubmitting = navigation.state === 'submitting';
+
+  console.log('dataz', data);
 
   const [userDataInput, setUserDataInput] = useState({
     givenName: props.userData.givenName || '',
     familyName: props.userData.familyName || '',
     email: props.userData.email || '',
   });
-
-  const isSubmitting = navigation.state === 'submitting';
 
   const userDataChangeHandler = (event) => {
     const { name, value } = event.target;
@@ -40,11 +39,12 @@ const EditProfile = (props) => {
     const email = userDataInput.email;
 
     submit({ givenName, familyName, email }, { method: 'post' });
-    dispatch(setFormClose());
+
+    props.updateFormStatus();
   };
 
   const closeFormHandler = () => {
-    dispatch(setFormClose());
+    props.updateFormStatus();
   };
 
   const fields = [
@@ -89,9 +89,17 @@ const EditProfile = (props) => {
             Edit your account
           </Text>
         </Center>
-        {/* <Text pl="1.5rem" pb="0.3rem" color="red">
-            {errorText}
-          </Text> */}
+        {data && data.errors && (
+          <List spacing=".5rem" m="1rem 0 1rem 2.5rem">
+            {data.errors.map((err, index) => (
+              <ListItem key={index}>
+                <ListIcon as={WarningIcon} color="red.500" />
+                {err}
+              </ListItem>
+            ))}
+          </List>
+        )}
+
         {fields.map((field) => (
           <Box key={field.id} ml="2.5rem">
             <InputFields

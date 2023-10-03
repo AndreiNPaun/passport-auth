@@ -8,7 +8,9 @@ import httpRequest from '../utils/httpRequest';
 
 const AccountManagementPage = () => {
   const { data } = useLoaderData();
-  console.log('data', data);
+
+  console.log('acb');
+
   return (
     <Suspense
       fallback={
@@ -39,7 +41,7 @@ const loadedUserData = async () => {
     `${process.env.REACT_APP_SERVER_URL}/edit-profile`
   );
 
-  console.log('response', response.data);
+  console.log('res', response);
 
   return response.data;
 };
@@ -59,9 +61,19 @@ export const action = async ({ request, params }) => {
     email: data.get('email'),
   };
 
-  return await httpRequest(
-    'post',
-    `${process.env.REACT_APP_SERVER_URL}/edit-profile`,
-    { userInputData }
-  );
+  try {
+    const response = await httpRequest(
+      'post',
+      `${process.env.REACT_APP_SERVER_URL}/edit-profile`,
+      { userInputData }
+    );
+
+    return response;
+  } catch (error) {
+    if (error.response.status === 422) {
+      return { errors: error.response.data };
+    }
+
+    throw error;
+  }
 };
