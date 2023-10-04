@@ -53,10 +53,8 @@ const EditProfile = (props) => {
         error.response.data &&
         Array.isArray(error.response.data)
       ) {
-        // if the error response contains an array of error messages, set them in state
         setIsError(error.response.data);
       } else {
-        // for any other type of error, just show a generic message
         setIsError(['An error occurred while updating the profile.']);
       }
       setIsSubmitting(false);

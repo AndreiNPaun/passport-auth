@@ -26,11 +26,6 @@ const redirectSetTokens = (req, res) => {
         sameSite: 'Lax',
       });
 
-    // If user creates account using input data, client will manage redirect link to AuthCheck
-    if (isUserInput) {
-      return res.send(true);
-    }
-
     res.redirect(`${process.env.CLIENT_URL}/login-check?isLoggedIn=true`);
   } else {
     console.log('Server error.');
@@ -43,12 +38,6 @@ const redirectSync = (req, res) => {
 
   if (synchronization === 'synchronized') {
     console.log('Accounts synchronized successfully.');
-
-    // testing
-    if (res.user?.refreshedAccessToken) {
-      return res.cookie('plm', 'pula').redirect(`${process.env.CLIENT_URL}/`);
-    }
-
     return res.redirect(`${process.env.CLIENT_URL}/account-management`);
   }
 };
