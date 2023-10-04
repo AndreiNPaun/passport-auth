@@ -1,6 +1,9 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 
-import { useLoaderData, defer, Await } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { unsetToken } from '../store/action/login';
+
+import { useLoaderData, useNavigate, defer, Await } from 'react-router-dom';
 import { Spinner, Center } from '@chakra-ui/react';
 
 import AccountManagement from '../components/AccountManagement/AccountManagement';
@@ -24,7 +27,7 @@ const AccountManagementPage = () => {
         </Center>
       }
     >
-      <Await resolve={data}>
+      <Await resolve={data} errorElement={<ErrorRedirector />}>
         {(loadedData) => <AccountManagement userInfo={loadedData} />}
       </Await>
     </Suspense>
@@ -34,16 +37,59 @@ const AccountManagementPage = () => {
 export default AccountManagementPage;
 
 const loadedUserData = async () => {
-  const response = await httpRequest(
-    'get',
-    `${process.env.REACT_APP_SERVER_URL}/edit-profile`
-  );
-
-  return response.data;
+  try {
+    const response = await httpRequest(
+      'get',
+      `${process.env.REACT_APP_SERVER_URL}/edit-profile`
+    );
+    console.log('res', response);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    throw error;
+  }
 };
 
 export const loader = () => {
   return defer({
     data: loadedUserData(),
   });
+};
+
+export const action = async ({ request, params }) => {
+  const data = await request.formData();
+
+  const userInputData = {
+    givenName: data.get('givenName'),
+    familyName: data.get('familyName'),
+    email: data.get('email'),
+  };
+
+  try {
+    const response = await httpRequest(
+      'post',
+      `${process.env.REACT_APP_SERVER_URL}/edit-profile`,
+      { userInputData }
+    );
+
+    return response;
+  } catch (error) {
+    if (error.response.status === 422) {
+      return { errors: error.response.data };
+    }
+
+    throw error;
+  }
+};
+
+const ErrorRedirector = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    dispatch(unsetToken());
+    navigate('/');
+  }, [dispatch, navigate]);
+
+  return null;
 };

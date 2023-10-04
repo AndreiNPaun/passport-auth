@@ -28,10 +28,7 @@ const handleToken = (req, res, next) => {
           sameSite: 'Lax',
         });
       } else {
-        console.log('Error');
-        //         return res.redirect(
-        //   `${process.env.CLIENT_URL}/failed-token-validity?tokenExpired=true`
-        // );
+        return res.status(401).send('Access token error.');
       }
     }
     userID = userProfileData.id;
@@ -39,9 +36,7 @@ const handleToken = (req, res, next) => {
     next();
   } catch (error) {
     console.log('Error:', error);
-    //         return res.redirect(
-    //   `${process.env.CLIENT_URL}/failed-token-validity?tokenExpired=true`
-    // );
+    return res.redirect(`${process.env.CLIENT_URL}`);
   }
 };
 

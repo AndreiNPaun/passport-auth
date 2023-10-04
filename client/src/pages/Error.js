@@ -8,6 +8,8 @@ import BasicPageContent from '../components/BasicPageContet';
 const ErrorPage = () => {
   const error = useRouteError();
 
+  console.log('err page', error.response);
+
   let title = 'An error occurred!';
   let message = 'Something went wrong.';
 
