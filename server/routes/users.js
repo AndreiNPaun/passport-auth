@@ -111,17 +111,6 @@ router.post(
   postEditProfile
 );
 
-router.post(
-  '/sync-account',
-  [
-    nameValidation('userInputData.givenName', 'First name'),
-    nameValidation('userInputData.familyName', 'Family Name'),
-    emailValidation('userInputData.email'),
-  ],
-  authenticate,
-  synchronizingAccount
-);
-
 router.post('/logout', (req, res) => {
   res
     .clearCookie('accessToken')

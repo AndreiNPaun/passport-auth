@@ -1,7 +1,7 @@
 const User = require('../models/users');
 const { ObjectId } = require('mongodb');
 
-const { setToken } = require('./token');
+const { setToken } = require('../utils/setToken');
 const decodeToken = require('../utils/decodeToken');
 const validationError = require('../utils/validationError');
 const {
@@ -360,55 +360,6 @@ const synchronizationRequest = async (req, res, next) => {
   next();
 };
 
-// CHECK LATER
-const synchronizingAccount = async (req, res, next) => {
-  if (validationError(req, res)) {
-    return;
-  }
-
-  const {
-    givenName,
-    familyName,
-    email,
-    provider: providerType,
-    providerID,
-    extraParam,
-  } = req.body.userInputData;
-
-  const accessToken = req.cookies.accessToken;
-
-  // Splitting params value into key value pairs
-  const splitParams = extraParam.split(' ');
-  const key = splitParams[0];
-  const value = splitParams[1];
-
-  try {
-    console.log('Synchronizing existing accounts.');
-
-    const userProfileData = decodeToken(accessToken, 'ACCESS');
-    // Convert id to ObjectId
-    const _id = new ObjectId(userProfileData.id);
-
-    await User.updateOne(
-      { _id },
-      {
-        $set: {
-          [`provider.${providerType}.id`]: providerID,
-          [`provider.${providerType}.givenName`]: givenName,
-          [`provider.${providerType}.familyName`]: familyName,
-          [`provider.${providerType}.email`]: email,
-          [`provider.${providerType}.${key}`]: value,
-        },
-      }
-    );
-
-    res.status(200).send('Accounts synchronized.');
-  } catch (error) {
-    console.log('Error:', error);
-    res.status(401).send('Unauthorized access.');
-  }
-};
-
 const listProviders = async (req, res, next) => {
   const userID = req.userID;
 
@@ -452,7 +403,6 @@ module.exports = {
   getEditProfile,
   postEditProfile,
   synchronizationRequest,
-  synchronizingAccount,
   listProviders,
   deleteProvider,
 };
