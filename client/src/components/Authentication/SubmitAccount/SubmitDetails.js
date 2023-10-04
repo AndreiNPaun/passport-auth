@@ -1,79 +1,176 @@
-import React, { useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import React, { useState } from 'react';
 
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
+import {
+  Text,
+  Center,
+  Box,
+  FormControl,
+  Link,
+  List,
+  ListItem,
+  ListIcon,
+} from '@chakra-ui/react';
+import { WarningIcon } from '@chakra-ui/icons';
+import Card from '../../UI/Card';
 import httpRequest from '../../../utils/httpRequest';
-import GetAPIResponse from '../../../utils/GetAPIResponse';
-import SubmitDetailsForm from './SubmitDetailsForm';
+import InputFields from '../../UI/InputFields';
+import CustomButton from '../../UI/CustomButton';
 
 const SubmitDetails = () => {
-  const givenNameInputRef = useRef();
-  const familyNameInputRef = useRef();
-  const emailInputRef = useRef();
-
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
-  // URL data
+  const [userDataInput, setUserDataInput] = useState({
+    givenName: '',
+    familyName: '',
+  });
+  const [isError, setIsError] = useState();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const userDataChangeHandler = (event) => {
+    const { name, value } = event.target;
+    setUserDataInput((prevState) => ({ ...prevState, [name]: value }));
+  };
+
   const urlParams = new URLSearchParams(window.location.search);
 
   const provider = urlParams.get('provider');
 
   const providerText = provider.charAt(0).toUpperCase() + provider.slice(1);
 
-  // Send updated user data to server
-  const submitUserData = async (event) => {
+  const submitFormHandler = async (event) => {
     event.preventDefault();
 
-    // Data which is already set in the URL will replace the one which is supposed to be from the user input
-    // Input fields will be hidden if the user data can be retrieved from the URL
-    const userInputData = {
-      givenName: givenNameInputRef.current?.value,
-      familyName: familyNameInputRef.current?.value,
-    };
+    setIsSubmitting(true);
 
-    console.log(userInputData);
+    const givenName = userDataInput.givenName;
+    const familyName = userDataInput.familyName;
+    const email = userDataInput.email;
 
-    const pathAPI = 'user-data';
-
-    const postUserInput = async (pathAPI) => {
-      const response = await httpRequest(
-        'post',
-        `${process.env.REACT_APP_SERVER_URL}/${pathAPI}`,
-        {
-          userInputData,
-        }
-      );
-      console.log(response);
-      return response;
-    };
+    const userInputData = { givenName, familyName, email };
 
     try {
-      const response = await GetAPIResponse(
-        () => postUserInput(pathAPI),
-        navigate,
-        dispatch
+      const response = await httpRequest(
+        'post',
+        `${process.env.REACT_APP_SERVER_URL}/user-data`,
+        { userInputData }
       );
 
       if (response.status === 200) {
+        setIsSubmitting(false);
         navigate(`/login-check?isLoggedIn=${response}`);
       } else {
         navigate('/account-management');
       }
     } catch (error) {
-      console.log('Error:', error);
-      navigate('/');
+      console.log(error);
+      if (
+        error.response &&
+        error.response.data &&
+        Array.isArray(error.response.data)
+      ) {
+        setIsError(error.response.data);
+      } else {
+        navigate('/');
+      }
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <SubmitDetailsForm
-      providerText={providerText}
-      submitUserData={submitUserData}
-      givenNameInputRef={givenNameInputRef}
-      familyNameInputRef={familyNameInputRef}
-      emailInputRef={emailInputRef}
-    />
+    <Center h="95vh">
+      <Card p="2rem">
+        <Text
+          p="1rem"
+          m="0 auto"
+          textAlign="center"
+          fontSize="2xl"
+          fontWeight="bold"
+          color="blue.600"
+        >
+          Setup Account
+        </Text>
+        <Center>
+          <Text mb=".5rem" color="#181717">
+            Enter your details associated with your&nbsp;
+            <Box as="span" fontWeight="bold" color="blue.600">
+              {providerText}
+            </Box>
+            &nbsp;account
+          </Text>
+        </Center>
+        <Text
+          m=".5rem auto"
+          textAlign="center"
+          fontWeight="bold"
+          color="blue.600"
+        >
+          Or
+        </Text>
+        <Center>
+          <Text mb="2rem" color="#181717">
+            <Link
+              as={RouterLink}
+              to="/"
+              fontWeight="bold"
+              color="blue.600"
+              _hover={{
+                textDecoration: 'underline',
+                color: 'blue.700',
+              }}
+              _active={{
+                color: 'blue.800',
+              }}
+            >
+              Click here
+            </Link>
+            &nbsp;to go back and select another platform
+          </Text>
+        </Center>
+        {isError && (
+          <List spacing=".5rem" m="1rem 0 1rem 2.5rem">
+            {isError.map((err, index) => (
+              <ListItem key={index}>
+                <ListIcon as={WarningIcon} color="red.500" />
+                {err}
+              </ListItem>
+            ))}
+          </List>
+        )}
+        <FormControl>
+          <InputFields
+            htmlFor="givenName"
+            labelText="First Name"
+            id="givenName"
+            name="givenName"
+            required
+            value={userDataInput.givenName}
+            onChange={userDataChangeHandler}
+          />
+
+          <InputFields
+            htmlFor="familyName"
+            labelText="Last Name"
+            id="familyName"
+            name="familyName"
+            required
+            value={userDataInput.familyName}
+            onChange={userDataChangeHandler}
+          />
+
+          <Center>
+            <CustomButton
+              mt="1.5rem"
+              w="8rem"
+              onClick={submitFormHandler}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Submitting...' : 'Submit'}
+            </CustomButton>
+          </Center>
+        </FormControl>
+      </Card>
+    </Center>
   );
 };
 

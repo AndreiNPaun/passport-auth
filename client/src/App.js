@@ -32,7 +32,10 @@ const router = createBrowserRouter([
         path: 'create-account',
         element: <SubmitAccountDetailsPage />,
       },
-      { path: 'no-email', element: <NoEmailMessage /> },
+      {
+        path: 'no-email',
+        element: <NoEmailMessage />,
+      },
       {
         path: 'account-management',
         element: <AccountManagementPage />,

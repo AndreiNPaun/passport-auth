@@ -90,13 +90,8 @@ router.get(
   synchronizationRequest
 );
 
-// Route for setting up account in case fields are empty
 router.post(
   '/user-data',
-
-  (req, res) => {
-    console.log('reqz', req.body.userInputData);
-  },
   [
     nameValidation('userInputData.givenName', 'First name'),
     nameValidation('userInputData.familyName', 'Family Name'),
@@ -104,14 +99,9 @@ router.post(
   syncOrCreateRegisterProfile
 );
 
-// Edit account details
 router.get('/edit-profile', authenticate, getEditProfile);
 router.post(
   '/edit-profile',
-  (req, res, next) => {
-    console.log('body', req.body);
-    next();
-  },
   [
     nameValidation('userInputData.givenName', 'First name'),
     nameValidation('userInputData.familyName', 'Family Name'),

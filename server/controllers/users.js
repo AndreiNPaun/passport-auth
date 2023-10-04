@@ -217,6 +217,7 @@ const syncOrCreateRegisterProfile = async (req, res, next) => {
     const isUserInput = true;
 
     req.user = { accessToken, refreshToken, isUserInput };
+    console.log('redirecting');
     return redirectSetTokens(req, res);
   } catch (error) {
     console.log('Error:', error);
