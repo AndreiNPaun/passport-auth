@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Container } from '@chakra-ui/react';
 
-import EditProfile from './EditProfile';
-import EditArea from './EditArea';
+import EditProfile from './EditProfile/EditProfile';
+import EditArea from './EditProfile/EditArea';
 import ProviderArea from './ProviderArea';
 
 const AccountManagement = ({ userInfo }) => {

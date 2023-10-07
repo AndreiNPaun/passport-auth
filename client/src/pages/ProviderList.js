@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import { useLoaderData, useParams, defer, Await } from 'react-router-dom';
 import { Spinner, Center } from '@chakra-ui/react';
 
+import { TokenErrorComponent } from '../utils/TokenError';
 import ProviderList from '../components/AccountManagement/Provider/ProviderList';
 import httpRequest from '../utils/httpRequest';
 
@@ -24,7 +25,7 @@ function ProviderListPage() {
         </Center>
       }
     >
-      <Await resolve={data}>
+      <Await resolve={data} errorElement={<TokenErrorComponent />}>
         {(loadedData) => (
           <ProviderList list={loadedData} providerName={params.providerName} />
         )}
