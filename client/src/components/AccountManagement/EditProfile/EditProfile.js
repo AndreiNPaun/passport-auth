@@ -1,16 +1,23 @@
 import React, { useState } from 'react';
 
-import httpRequest from '../../utils/httpRequest';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
-import Modal from '../UI/Modal';
+import httpRequest from '../../../utils/httpRequest';
+
+import Modal from '../../UI/Modal';
 import { Center, Box, Text, List, ListItem, ListIcon } from '@chakra-ui/react';
 import { WarningIcon } from '@chakra-ui/icons';
 
-import CustomButton from '../UI/CustomButton';
-import Card from '../UI/Card';
-import InputFields from '../UI/InputFields';
+import { TokenErrorFunction } from '../../../utils/TokenError';
+import CustomButton from '../../UI/CustomButton';
+import Card from '../../UI/Card';
+import InputFields from '../../UI/InputFields';
 
 const EditProfile = (props) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [userDataInput, setUserDataInput] = useState({
     givenName: props.userData.givenName || '',
     familyName: props.userData.familyName || '',
@@ -54,6 +61,8 @@ const EditProfile = (props) => {
         Array.isArray(error.response.data)
       ) {
         setIsError(error.response.data);
+      } else if (error.response.status === 401) {
+        return TokenErrorFunction(dispatch, navigate);
       } else {
         setIsError(['An error occurred while updating the profile.']);
       }

@@ -12,10 +12,6 @@ import SubmitAccountDetailsPage from './pages/SubmitAccountDetails';
 import AccountManagementPage, {
   loader as editProfileLoader,
 } from './pages/AccountManagement.js';
-import ProviderListPage, {
-  loader as providerListLoader,
-  action as providerListAction,
-} from './pages/ProviderList.js';
 import NoEmailMessage from './components/Authentication/SubmitAccount/NoEmailMessage.js';
 import FailedTokenValidityPage from './pages/FailedTokenValidity.js';
 
@@ -40,12 +36,6 @@ const router = createBrowserRouter([
         path: 'account-management',
         element: <AccountManagementPage />,
         loader: editProfileLoader,
-      },
-      {
-        path: 'provider-list/:providerName',
-        element: <ProviderListPage />,
-        loader: providerListLoader,
-        action: providerListAction,
       },
     ],
   },

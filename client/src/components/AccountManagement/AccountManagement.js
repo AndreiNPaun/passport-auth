@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Container } from '@chakra-ui/react';
 
-import EditProfile from './EditProfile';
-import EditArea from './EditArea';
+import EditProfile from './EditProfile/EditProfile';
+import EditArea from './EditProfile/EditArea';
 import ProviderArea from './ProviderArea';
 
 const AccountManagement = ({ userInfo }) => {
   const [userData, setUserData] = useState(userInfo);
-  const [formStatus, setFormStatus] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   const showFormHandler = () => {
-    setFormStatus(true);
+    setIsFormOpen(true);
   };
 
   const updateDisplayedUserData = (newUserData) => {
@@ -18,12 +18,12 @@ const AccountManagement = ({ userInfo }) => {
   };
 
   const closeFormHandler = () => {
-    setFormStatus(false);
+    setIsFormOpen(false);
   };
 
   return (
     <>
-      {formStatus && (
+      {isFormOpen && (
         <EditProfile
           userData={userData}
           updateDisplayedUserData={updateDisplayedUserData}

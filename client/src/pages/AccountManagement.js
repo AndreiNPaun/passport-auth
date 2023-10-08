@@ -1,13 +1,11 @@
-import React, { Suspense, useEffect } from 'react';
+import React, { Suspense } from 'react';
 
-import { useDispatch } from 'react-redux';
-import { unsetToken } from '../store/action/login';
-
-import { useLoaderData, useNavigate, defer, Await } from 'react-router-dom';
+import { useLoaderData, defer, Await } from 'react-router-dom';
 import { Spinner, Center } from '@chakra-ui/react';
 
 import AccountManagement from '../components/AccountManagement/AccountManagement';
 import httpRequest from '../utils/httpRequest';
+import { TokenErrorComponent } from '../utils/TokenError';
 
 const AccountManagementPage = () => {
   const { data } = useLoaderData();
@@ -27,7 +25,7 @@ const AccountManagementPage = () => {
         </Center>
       }
     >
-      <Await resolve={data} errorElement={<ErrorRedirector />}>
+      <Await resolve={data} errorElement={<TokenErrorComponent />}>
         {(loadedData) => <AccountManagement userInfo={loadedData} />}
       </Await>
     </Suspense>
@@ -80,16 +78,4 @@ export const action = async ({ request, params }) => {
 
     throw error;
   }
-};
-
-const ErrorRedirector = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    dispatch(unsetToken());
-    navigate('/');
-  }, [dispatch, navigate]);
-
-  return null;
 };

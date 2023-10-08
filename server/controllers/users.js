@@ -363,12 +363,18 @@ const synchronizationRequest = async (req, res, next) => {
 const listProviders = async (req, res, next) => {
   const userID = req.userID;
 
+  console.log('userID', userID);
+
   const provider = req.query.provider.toLowerCase();
+
+  console.log('provider', provider);
 
   try {
     const userProviders = await User.findById(userID).select(
       `provider.${provider}`
     );
+
+    console.log('result', userProviders);
 
     res.status(200).send(userProviders.provider[provider]);
   } catch (error) {

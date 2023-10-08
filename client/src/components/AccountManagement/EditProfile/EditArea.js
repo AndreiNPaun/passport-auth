@@ -2,8 +2,8 @@ import React from 'react';
 
 import { Box, Text, Flex, Grid, GridItem } from '@chakra-ui/react';
 
-import Card from '../UI/Card';
-import CustomButton from '../UI/CustomButton';
+import Card from '../../UI/Card';
+import CustomButton from '../../UI/CustomButton';
 
 const EditArea = ({ userData, showFormHandler }) => {
   return (
