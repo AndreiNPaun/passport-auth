@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
-
-import { useSubmit } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 
 import {
   GithubAuthorisation,
@@ -9,14 +7,14 @@ import {
   MicrosoftAuthorisation,
 } from '../../../utils/authorizationLinks';
 
-import { Container, Box, Text, Divider } from '@chakra-ui/react';
+import httpRequest from '../../../utils/httpRequest';
+
+import { Flex, Box, Text, Divider } from '@chakra-ui/react';
 import Card from '../../UI/Card';
 import CustomButton from '../../UI/CustomButton';
 
-const ProviderList = ({ list, providerName }) => {
-  const [userData, setUserData] = useState(list);
-
-  const submit = useSubmit();
+const ProviderList = ({ providerName }) => {
+  const [userData, setUserData] = useState([]);
 
   const authorizationLinks = {
     Microsoft: MicrosoftAuthorisation,
@@ -27,13 +25,32 @@ const ProviderList = ({ list, providerName }) => {
 
   const providerAuthorizationLink = authorizationLinks[providerName];
 
-  const deleteConnectionHandler = (providerID, providerType) => {
+  useEffect(() => {
+    (async () => {
+      const response = await httpRequest(
+        'get',
+        `${process.env.REACT_APP_SERVER_URL}/list-providers`,
+        { provider: providerName }
+      );
+      console.log('response', response);
+
+      setUserData(response.data);
+    })();
+
+    console.log('user', userData);
+  }, []);
+
+  const deleteConnectionHandler = async (providerID, providerType) => {
     const proceed = window.confirm(
       'Are you sure you wish to delete this connection?'
     );
 
     if (proceed) {
-      submit({ providerID, providerType }, { method: 'post' });
+      await httpRequest(
+        'post',
+        `${process.env.REACT_APP_SERVER_URL}/delete-provider`,
+        { providerID, providerType }
+      );
 
       const updatedUserData = userData.filter((data) => data.id !== providerID);
       setUserData(updatedUserData);
@@ -41,12 +58,12 @@ const ProviderList = ({ list, providerName }) => {
   };
 
   return (
-    <Container mt="4rem" maxW="60%">
-      <Card mt="1rem">
+    <Flex>
+      <Card p="1rem" w="80vw" mt="10vh">
         <Text p="1rem">Provider: {providerName}</Text>
         <CustomButton
           h="2rem"
-          m="0 1rem"
+          m="0 1rem 1.5rem"
           onClick={() => providerAuthorizationLink(true)}
         >
           Add more
@@ -75,7 +92,7 @@ const ProviderList = ({ list, providerName }) => {
             </Box>
           ))}
       </Card>
-    </Container>
+    </Flex>
   );
 };
 

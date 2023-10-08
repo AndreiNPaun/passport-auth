@@ -7,10 +7,10 @@ import ProviderArea from './ProviderArea';
 
 const AccountManagement = ({ userInfo }) => {
   const [userData, setUserData] = useState(userInfo);
-  const [formStatus, setFormStatus] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   const showFormHandler = () => {
-    setFormStatus(true);
+    setIsFormOpen(true);
   };
 
   const updateDisplayedUserData = (newUserData) => {
@@ -18,12 +18,12 @@ const AccountManagement = ({ userInfo }) => {
   };
 
   const closeFormHandler = () => {
-    setFormStatus(false);
+    setIsFormOpen(false);
   };
 
   return (
     <>
-      {formStatus && (
+      {isFormOpen && (
         <EditProfile
           userData={userData}
           updateDisplayedUserData={updateDisplayedUserData}

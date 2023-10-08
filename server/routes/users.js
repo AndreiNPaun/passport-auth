@@ -8,7 +8,6 @@ const {
   getEditProfile,
   postEditProfile,
   synchronizationRequest,
-  synchronizingAccount,
   listProviders,
   deleteProvider,
 } = require('../controllers/users');
