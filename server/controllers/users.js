@@ -11,7 +11,7 @@ const {
 } = require('../utils/userRedirect');
 
 // Passport user registration function
-const authenticateOrRegisterUser = async (req, res, next) => {
+const authenticateOrCreateUser = async (req, res, next) => {
   if (req.user.state === null) {
     try {
       const {
@@ -27,12 +27,19 @@ const authenticateOrRegisterUser = async (req, res, next) => {
       const value = (Array.isArray(extraParam) && extraParam[1]) || null;
 
       const checkUser = await User.findOne({
-        email: email,
+        [`provider.${providerType}`]: {
+          $elemMatch: { id: providerID, email },
+        },
       });
 
-      // Checks if the email is stored in provider document
+      // Checks if the email is stored in another record
       const checksIfProviderExists = await User.findOne({
-        [`provider.${providerType}`]: { $elemMatch: { id: providerID } },
+        $or: [
+          { 'provider.google': { $elemMatch: { id: providerID, email } } },
+          { 'provider.github': { $elemMatch: { id: providerID, email } } },
+          { 'provider.microsoft': { $elemMatch: { id: providerID, email } } },
+          { 'provider.linkedin': { $elemMatch: { id: providerID, email } } },
+        ],
       });
 
       // If user does not exist, create account
@@ -90,6 +97,7 @@ const authenticateOrRegisterUser = async (req, res, next) => {
                 givenName,
                 familyName,
                 email,
+                [key]: value,
               },
             ],
           },
@@ -102,26 +110,6 @@ const authenticateOrRegisterUser = async (req, res, next) => {
         return redirectSetTokens(req, res);
       }
 
-      // Checks if user is registered but the chosen login provider details are not stored
-      if (checkUser && !checksIfProviderExists) {
-        console.log('Provider not registered.');
-
-        await User.updateOne(
-          { email },
-          {
-            $push: {
-              [`provider.${providerType}`]: {
-                id: providerID,
-                givenName,
-                familyName,
-                email,
-                [key]: value,
-              },
-            },
-          }
-        );
-      }
-
       Object.assign(req.user, setToken(checkUser));
       return redirectSetTokens(req, res);
     } catch (error) {
@@ -132,8 +120,7 @@ const authenticateOrRegisterUser = async (req, res, next) => {
 };
 
 // Controller which will amend user record based on user input
-const syncOrCreateRegisterProfile = async (req, res, next) => {
-  // Check for validation errors
+const syncOrCreateProfile = async (req, res, next) => {
   if (validationError(req, res)) {
     return;
   }
@@ -143,11 +130,6 @@ const syncOrCreateRegisterProfile = async (req, res, next) => {
   const userProfileData = decodeToken(req.cookies.initialSetup, 'SETUP');
   console.log('testing', userProfileData);
 
-  if (!userProfileData) {
-    console.log('Token expired.');
-    return res.status(408).send('Request timed out, please try again.');
-  }
-
   const email = userProfileData.email;
   const providerType = userProfileData.providerType;
   const providerID = userProfileData.providerID;
@@ -156,46 +138,10 @@ const syncOrCreateRegisterProfile = async (req, res, next) => {
   const key = extraParam[0];
   const value = extraParam[1];
 
-  console.log('key', key);
-
   try {
-    // Check if there is an existing accounts with the same id
-    const checkIfExistingUser = await User.findOne({
-      [`provider.${providerType}`]: { $elemMatch: { id: providerID } },
-    });
-
-    // If same email account exists update record
-    if (checkIfExistingUser) {
-      console.log('Synchronizing existing accounts.');
-
-      const updateUserObject = {
-        [`provider.${providerType}.$.id`]: providerID,
-        [`provider.${providerType}.$.givenName`]: givenName,
-        [`provider.${providerType}.$.familyName`]: familyName,
-        [`provider.${providerType}.$.email`]: email,
-      };
-
-      if (key && value) {
-        updateUserObject[`provider.${providerType}.$.${key}`] = value;
-      }
-
-      await User.updateOne(
-        {
-          [`provider.${providerType}`]: { $elemMatch: { id: providerID } },
-        },
-        {
-          $set: updateUserObject,
-        }
-      );
-
-      return res.status(200).send('Account synchronized.');
-    }
-
-    // If no account has this email, create a new record
     const newUserAccountData = {
       givenName,
       familyName,
-      email,
       provider: {
         [providerType]: {
           id: providerID,
@@ -239,7 +185,6 @@ const getEditProfile = async (req, res, next) => {
     const userData = {
       givenName: user.givenName,
       familyName: user.familyName,
-      email: user.email,
     };
 
     res.status(200).send(userData);
@@ -267,7 +212,6 @@ const postEditProfile = async (req, res, next) => {
         $set: {
           givenName,
           familyName,
-          email,
         },
       }
     );
@@ -305,8 +249,6 @@ const synchronizationRequest = async (req, res, next) => {
       console.log('provbider', checksIfProviderExists);
 
       const _id = new ObjectId(userID);
-
-      console.log('iddd', _id);
 
       if (
         checksIfProviderExists &&
@@ -404,8 +346,8 @@ const deleteProvider = async (req, res, next) => {
 };
 
 module.exports = {
-  authenticateOrRegisterUser,
-  syncOrCreateRegisterProfile,
+  authenticateOrCreateUser,
+  syncOrCreateProfile,
   getEditProfile,
   postEditProfile,
   synchronizationRequest,

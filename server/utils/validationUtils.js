@@ -16,18 +16,4 @@ const nameValidation = (data, name) => {
     });
 };
 
-// Email validation
-const emailValidation = (data) => {
-  return body(data)
-    .notEmpty()
-    .withMessage('Email is required.')
-    .bail()
-    .isEmail()
-    .withMessage('Please enter a valid email.')
-    .bail()
-    .isLength({ max: 255 })
-    .withMessage('Email should not exceed 255 characters.')
-    .normalizeEmail();
-};
-
-module.exports = { nameValidation, emailValidation };
+module.exports = nameValidation;

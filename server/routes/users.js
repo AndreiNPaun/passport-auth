@@ -3,8 +3,8 @@ const router = express.Router();
 const passport = require('passport');
 
 const {
-  authenticateOrRegisterUser,
-  syncOrCreateRegisterProfile,
+  authenticateOrCreateUser,
+  syncOrCreateProfile,
   getEditProfile,
   postEditProfile,
   synchronizationRequest,
@@ -17,7 +17,7 @@ const {
   checkTokenPassport,
 } = require('../middleware/authenticate');
 
-const { nameValidation, emailValidation } = require('../utils/validationUtils');
+const nameValidation = require('../utils/validationUtils');
 
 router.get('/', () => {
   console.log('homepage');
@@ -37,7 +37,7 @@ router.get(
     session: false,
   }),
   checkTokenPassport,
-  authenticateOrRegisterUser,
+  authenticateOrCreateUser,
   synchronizationRequest
 );
 
@@ -53,7 +53,7 @@ router.get(
     session: false,
   }),
   checkTokenPassport,
-  authenticateOrRegisterUser,
+  authenticateOrCreateUser,
   synchronizationRequest
 );
 
@@ -69,7 +69,7 @@ router.get(
     session: false,
   }),
   checkTokenPassport,
-  authenticateOrRegisterUser,
+  authenticateOrCreateUser,
   synchronizationRequest
 );
 
@@ -85,7 +85,7 @@ router.get(
     session: false,
   }),
   checkTokenPassport,
-  authenticateOrRegisterUser,
+  authenticateOrCreateUser,
   synchronizationRequest
 );
 
@@ -95,7 +95,7 @@ router.post(
     nameValidation('userInputData.givenName', 'First name'),
     nameValidation('userInputData.familyName', 'Family Name'),
   ],
-  syncOrCreateRegisterProfile
+  syncOrCreateProfile
 );
 
 router.get('/edit-profile', authenticate, getEditProfile);
@@ -104,7 +104,6 @@ router.post(
   [
     nameValidation('userInputData.givenName', 'First name'),
     nameValidation('userInputData.familyName', 'Family Name'),
-    emailValidation('userInputData.email'),
   ],
   authenticate,
   postEditProfile
