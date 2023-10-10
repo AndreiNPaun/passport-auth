@@ -10,8 +10,7 @@ const {
   redirectWithError,
 } = require('../utils/userRedirect');
 
-// Passport user registration function
-const authenticateOrRegisterUser = async (req, res, next) => {
+const authenticateOrCreateAccount = async (req, res, next) => {
   if (req.user.state === null) {
     try {
       const {
@@ -23,24 +22,31 @@ const authenticateOrRegisterUser = async (req, res, next) => {
         extraParam,
       } = req.user;
 
+      // Extra param set in passport middleware
       const key = (Array.isArray(extraParam) && extraParam[0]) || null;
       const value = (Array.isArray(extraParam) && extraParam[1]) || null;
 
-      const checkUser = await User.findOne({
-        email: email,
+      // Looks for existing record stored under a providerType (Microsoft)
+      const existingProvider = await User.findOne({
+        [`provider.${providerType}`]: {
+          $elemMatch: { id: providerID, email },
+        },
       });
 
-      // Checks if the email is stored in provider document
-      const checksIfProviderExists = await User.findOne({
-        [`provider.${providerType}`]: { $elemMatch: { id: providerID } },
+      // Looks for any record matching id and email
+      const existingProviderRecord = await User.findOne({
+        $or: [
+          { 'provider.google': { $elemMatch: { id: providerID, email } } },
+          { 'provider.github': { $elemMatch: { id: providerID, email } } },
+          { 'provider.microsoft': { $elemMatch: { id: providerID, email } } },
+          { 'provider.linkedin': { $elemMatch: { id: providerID, email } } },
+        ],
       });
 
-      // If user does not exist, create account
-      if (!checkUser) {
+      if (!existingProvider) {
         console.log('No user account found.');
 
-        // Check if provider is set linked with another account
-        if (checksIfProviderExists) {
+        if (existingProviderRecord) {
           console.log('Provider account is already linked to another account.');
 
           req.user.error = {
@@ -90,6 +96,7 @@ const authenticateOrRegisterUser = async (req, res, next) => {
                 givenName,
                 familyName,
                 email,
+                [key]: value,
               },
             ],
           },
@@ -97,32 +104,11 @@ const authenticateOrRegisterUser = async (req, res, next) => {
 
         await newUserAccount.save();
 
-        // Set Authentication Token and Refresh Token
         req.user = setToken(newUserAccount);
         return redirectSetTokens(req, res);
       }
 
-      // Checks if user is registered but the chosen login provider details are not stored
-      if (checkUser && !checksIfProviderExists) {
-        console.log('Provider not registered.');
-
-        await User.updateOne(
-          { email },
-          {
-            $push: {
-              [`provider.${providerType}`]: {
-                id: providerID,
-                givenName,
-                familyName,
-                email,
-                [key]: value,
-              },
-            },
-          }
-        );
-      }
-
-      Object.assign(req.user, setToken(checkUser));
+      Object.assign(req.user, setToken(existingProvider));
       return redirectSetTokens(req, res);
     } catch (error) {
       console.log(`Error: ${error}`);
@@ -131,9 +117,7 @@ const authenticateOrRegisterUser = async (req, res, next) => {
   next();
 };
 
-// Controller which will amend user record based on user input
-const syncOrCreateRegisterProfile = async (req, res, next) => {
-  // Check for validation errors
+const completeProfileSetup = async (req, res, next) => {
   if (validationError(req, res)) {
     return;
   }
@@ -143,11 +127,6 @@ const syncOrCreateRegisterProfile = async (req, res, next) => {
   const userProfileData = decodeToken(req.cookies.initialSetup, 'SETUP');
   console.log('testing', userProfileData);
 
-  if (!userProfileData) {
-    console.log('Token expired.');
-    return res.status(408).send('Request timed out, please try again.');
-  }
-
   const email = userProfileData.email;
   const providerType = userProfileData.providerType;
   const providerID = userProfileData.providerID;
@@ -156,46 +135,10 @@ const syncOrCreateRegisterProfile = async (req, res, next) => {
   const key = extraParam[0];
   const value = extraParam[1];
 
-  console.log('key', key);
-
   try {
-    // Check if there is an existing accounts with the same id
-    const checkIfExistingUser = await User.findOne({
-      [`provider.${providerType}`]: { $elemMatch: { id: providerID } },
-    });
-
-    // If same email account exists update record
-    if (checkIfExistingUser) {
-      console.log('Synchronizing existing accounts.');
-
-      const updateUserObject = {
-        [`provider.${providerType}.$.id`]: providerID,
-        [`provider.${providerType}.$.givenName`]: givenName,
-        [`provider.${providerType}.$.familyName`]: familyName,
-        [`provider.${providerType}.$.email`]: email,
-      };
-
-      if (key && value) {
-        updateUserObject[`provider.${providerType}.$.${key}`] = value;
-      }
-
-      await User.updateOne(
-        {
-          [`provider.${providerType}`]: { $elemMatch: { id: providerID } },
-        },
-        {
-          $set: updateUserObject,
-        }
-      );
-
-      return res.status(200).send('Account synchronized.');
-    }
-
-    // If no account has this email, create a new record
-    const newUserAccountData = {
+    const newAccountData = {
       givenName,
       familyName,
-      email,
       provider: {
         [providerType]: {
           id: providerID,
@@ -207,13 +150,15 @@ const syncOrCreateRegisterProfile = async (req, res, next) => {
     };
 
     if (key && value) {
-      newUserAccountData.provider[providerType][key] = value;
+      newAccountData.provider[providerType][key] = value;
     }
 
-    const newUserAccount = new User(newUserAccountData);
-    const getUserDetails = await newUserAccount.save();
+    const newAccount = new User(newAccountData);
+    const createdUser = await newAccount.save();
 
-    const { accessToken, refreshToken } = setToken(getUserDetails);
+    const { accessToken, refreshToken } = setToken(createdUser);
+
+    // isUserInput flags the redirect to navigate to complete-setup page
     const isUserInput = true;
 
     req.user = { accessToken, refreshToken, isUserInput };
@@ -228,7 +173,6 @@ const syncOrCreateRegisterProfile = async (req, res, next) => {
 const getEditProfile = async (req, res, next) => {
   const userID = req.userID;
 
-  // Convert id to ObjectId
   const _id = new ObjectId(userID);
 
   try {
@@ -239,7 +183,6 @@ const getEditProfile = async (req, res, next) => {
     const userData = {
       givenName: user.givenName,
       familyName: user.familyName,
-      email: user.email,
     };
 
     res.status(200).send(userData);
@@ -250,15 +193,14 @@ const getEditProfile = async (req, res, next) => {
 };
 
 const postEditProfile = async (req, res, next) => {
-  // Check for validation errors
   if (validationError(req, res)) {
     return;
   }
   try {
-    const { givenName, familyName, email } = req.body.userInputData;
+    const { givenName, familyName } = req.body.userInputData;
 
     const userID = req.userID;
-    // Convert id to ObjectId
+
     const _id = new ObjectId(userID);
 
     await User.updateOne(
@@ -267,21 +209,18 @@ const postEditProfile = async (req, res, next) => {
         $set: {
           givenName,
           familyName,
-          email,
         },
       }
     );
 
-    setTimeout(() => {
-      res.status(200).send('Account updated.');
-    }, 1500);
+    res.status(200).send('Account updated.');
   } catch (error) {
     console.log('Error:', error);
     res.status(500).send('Server Error.');
   }
 };
 
-const synchronizationRequest = async (req, res, next) => {
+const synchronizeAccount = async (req, res, next) => {
   if (req.user.state === 'sync') {
     const {
       givenName,
@@ -293,24 +232,19 @@ const synchronizationRequest = async (req, res, next) => {
     } = req.user;
 
     try {
-      console.log('sync in try block');
       const userID = req.userID;
-      console.log('sync userid', userID);
 
-      // Checks if the email is stored in provider document
-      const checksIfProviderExists = await User.findOne({
+      // Check if the provider's ID already exists for the specified provider type
+      const existingProvider = await User.findOne({
         [`provider.${providerType}`]: { $elemMatch: { id: providerID } },
       });
 
-      console.log('provbider', checksIfProviderExists);
-
       const _id = new ObjectId(userID);
 
-      console.log('iddd', _id);
-
+      // Ensure that the found provider's account isn't linked with another user
       if (
-        checksIfProviderExists &&
-        _id.toString() !== checksIfProviderExists._id.toString()
+        existingProvider &&
+        _id.toString() !== existingProvider._id.toString()
       ) {
         console.log('Provider account is already linked to another account.');
 
@@ -321,36 +255,34 @@ const synchronizationRequest = async (req, res, next) => {
         return redirectWithError(req, res);
       }
 
-      const newUserRecord = {
+      const providerAccountData = {
         id: providerID,
         givenName,
         familyName,
         email,
       };
 
+      // If extra parameters are provided, add them to the provider account data
       if (Array.isArray(extraParam) && extraParam.length === 2) {
         const [key, value] = extraParam;
-        newUserRecord[key] = value;
+        providerAccountData[key] = value;
       }
 
-      if (checksIfProviderExists) {
-        // Update the existing record if it exists
+      if (existingProvider) {
+        // Update existing provider data
         await User.updateOne(
           { _id, [`provider.${providerType}.id`]: providerID },
-          { $set: { [`provider.${providerType}.$`]: newUserRecord } }
+          { $set: { [`provider.${providerType}.$`]: providerAccountData } }
         );
       } else {
-        // Push a new record if it doesn't exist
+        // Insert new provider data
         await User.updateOne(
           { _id },
-          { $push: { [`provider.${providerType}`]: newUserRecord } }
+          { $push: { [`provider.${providerType}`]: providerAccountData } }
         );
       }
 
-      req.user = { synchronized: 'synchronized' };
-
-      console.log('synched');
-      return redirectSync(req, res);
+      redirectSync(req, res);
     } catch (error) {
       console.log('weird error');
       console.log('Error', error);
@@ -360,14 +292,10 @@ const synchronizationRequest = async (req, res, next) => {
   next();
 };
 
-const listProviders = async (req, res, next) => {
+const listUserProvider = async (req, res, next) => {
   const userID = req.userID;
 
-  console.log('userID', userID);
-
   const provider = req.query.provider.toLowerCase();
-
-  console.log('provider', provider);
 
   try {
     const userProviders = await User.findById(userID).select(
@@ -404,11 +332,11 @@ const deleteProvider = async (req, res, next) => {
 };
 
 module.exports = {
-  authenticateOrRegisterUser,
-  syncOrCreateRegisterProfile,
+  authenticateOrCreateAccount,
+  completeProfileSetup,
   getEditProfile,
   postEditProfile,
-  synchronizationRequest,
-  listProviders,
+  synchronizeAccount,
+  listUserProvider,
   deleteProvider,
 };

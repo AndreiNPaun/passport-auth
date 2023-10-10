@@ -11,11 +11,6 @@ const usersSchema = new Schema(
       type: String,
       required: true,
     },
-    email: {
-      type: String,
-      lowercase: true,
-      required: true,
-    },
     provider: {
       google: [
         {

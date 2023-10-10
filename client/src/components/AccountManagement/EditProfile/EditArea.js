@@ -23,7 +23,6 @@ const EditArea = ({ userData, showFormHandler }) => {
             {[
               { label: 'First Name', value: userData?.givenName },
               { label: 'Last Name', value: userData?.familyName },
-              { label: 'Email', value: userData?.email },
             ].map(({ label, value }) => (
               <GridItem key={label}>
                 <Text fontSize="xl" color="blue.500">

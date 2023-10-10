@@ -21,7 +21,6 @@ const EditProfile = (props) => {
   const [userDataInput, setUserDataInput] = useState({
     givenName: props.userData.givenName || '',
     familyName: props.userData.familyName || '',
-    email: props.userData.email || '',
   });
   const [isError, setIsError] = useState();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,9 +37,8 @@ const EditProfile = (props) => {
 
     const givenName = userDataInput.givenName;
     const familyName = userDataInput.familyName;
-    const email = userDataInput.email;
 
-    const userInputData = { givenName, familyName, email };
+    const userInputData = { givenName, familyName };
 
     try {
       const response = await httpRequest(
@@ -49,11 +47,9 @@ const EditProfile = (props) => {
         { userInputData }
       );
 
-      if (response.status === 200) {
-        props.closeFormHandler();
-        setIsSubmitting(false);
-        props.updateDisplayedUserData(userDataInput);
-      }
+      props.closeFormHandler();
+      setIsSubmitting(false);
+      props.updateDisplayedUserData(userDataInput);
     } catch (error) {
       if (
         error.response &&
@@ -88,13 +84,6 @@ const EditProfile = (props) => {
       id: 'familyName',
       name: 'familyName',
       value: 'familyName',
-    },
-    {
-      htmlFor: 'email',
-      labelText: 'Email',
-      id: 'email',
-      name: 'email',
-      value: 'email',
     },
   ];
 

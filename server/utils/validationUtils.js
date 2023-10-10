@@ -9,25 +9,13 @@ const nameValidation = (data, name) => {
     .isLength({ max: 50 })
     .withMessage(`${name} cannot exceed 50 characters.`)
     .bail()
-    .isAlpha()
-    .withMessage(`${name} should only contain alphabetic characters.`)
+    .matches(/^[a-zA-Z-' ]+$/)
+    .withMessage(
+      `${name} should only contain alphabetic characters, hyphens, apostrophes, or spaces.`
+    )
     .customSanitizer((value) => {
       return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
     });
 };
 
-// Email validation
-const emailValidation = (data) => {
-  return body(data)
-    .notEmpty()
-    .withMessage('Email is required.')
-    .bail()
-    .isEmail()
-    .withMessage('Please enter a valid email.')
-    .bail()
-    .isLength({ max: 255 })
-    .withMessage('Email should not exceed 255 characters.')
-    .normalizeEmail();
-};
-
-module.exports = { nameValidation, emailValidation };
+module.exports = nameValidation;

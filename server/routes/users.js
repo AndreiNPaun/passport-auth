@@ -3,25 +3,21 @@ const router = express.Router();
 const passport = require('passport');
 
 const {
-  authenticateOrRegisterUser,
-  syncOrCreateRegisterProfile,
+  authenticateOrCreateAccount,
+  completeProfileSetup,
   getEditProfile,
   postEditProfile,
-  synchronizationRequest,
-  listProviders,
+  synchronizeAccount,
+  listUserProvider,
   deleteProvider,
 } = require('../controllers/users');
 
 const {
   authenticate,
-  checkTokenPassport,
+  passportStateOrTokenCheck,
 } = require('../middleware/authenticate');
 
-const { nameValidation, emailValidation } = require('../utils/validationUtils');
-
-router.get('/', () => {
-  console.log('homepage');
-});
+const nameValidation = require('../utils/validationUtils');
 
 // Microsoft
 router.get(
@@ -36,9 +32,9 @@ router.get(
   passport.authenticate('microsoft', {
     session: false,
   }),
-  checkTokenPassport,
-  authenticateOrRegisterUser,
-  synchronizationRequest
+  passportStateOrTokenCheck,
+  authenticateOrCreateAccount,
+  synchronizeAccount
 );
 
 // Google
@@ -52,9 +48,9 @@ router.get(
   passport.authenticate('google', {
     session: false,
   }),
-  checkTokenPassport,
-  authenticateOrRegisterUser,
-  synchronizationRequest
+  passportStateOrTokenCheck,
+  authenticateOrCreateAccount,
+  synchronizeAccount
 );
 
 // GitHub
@@ -68,9 +64,9 @@ router.get(
   passport.authenticate('github', {
     session: false,
   }),
-  checkTokenPassport,
-  authenticateOrRegisterUser,
-  synchronizationRequest
+  passportStateOrTokenCheck,
+  authenticateOrCreateAccount,
+  synchronizeAccount
 );
 
 // LinkedIn
@@ -84,18 +80,18 @@ router.get(
   passport.authenticate('linkedin', {
     session: false,
   }),
-  checkTokenPassport,
-  authenticateOrRegisterUser,
-  synchronizationRequest
+  passportStateOrTokenCheck,
+  authenticateOrCreateAccount,
+  synchronizeAccount
 );
 
 router.post(
-  '/user-data',
+  '/complete-setup',
   [
     nameValidation('userInputData.givenName', 'First name'),
     nameValidation('userInputData.familyName', 'Family Name'),
   ],
-  syncOrCreateRegisterProfile
+  completeProfileSetup
 );
 
 router.get('/edit-profile', authenticate, getEditProfile);
@@ -104,7 +100,6 @@ router.post(
   [
     nameValidation('userInputData.givenName', 'First name'),
     nameValidation('userInputData.familyName', 'Family Name'),
-    emailValidation('userInputData.email'),
   ],
   authenticate,
   postEditProfile
@@ -117,7 +112,7 @@ router.post('/logout', (req, res) => {
     .send('Cookies cleared');
 });
 
-router.get('/list-providers', authenticate, listProviders);
+router.get('/list-providers', authenticate, listUserProvider);
 router.post('/delete-provider', authenticate, deleteProvider);
 
 module.exports = router;

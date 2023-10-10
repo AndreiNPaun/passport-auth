@@ -52,12 +52,15 @@ const SubmitDetails = () => {
     try {
       const response = await httpRequest(
         'post',
-        `${process.env.REACT_APP_SERVER_URL}/user-data`,
+        `${process.env.REACT_APP_SERVER_URL}/complete-setup`,
         { userInputData }
       );
 
+      console.log('response', response);
+
       if (response.status === 200) {
         setIsSubmitting(false);
+        console.log('going zoomiez');
         navigate(`/login-check?isLoggedIn=${response}`);
       } else {
         navigate('/account-management');
@@ -71,6 +74,7 @@ const SubmitDetails = () => {
       ) {
         setIsError(error.response.data);
       } else {
+        console.log('KEKZ');
         navigate('/');
       }
       setIsSubmitting(false);

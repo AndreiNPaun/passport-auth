@@ -3,19 +3,16 @@ const { verify } = require('jsonwebtoken');
 // Gets the user id from either the access or the refresh token
 const decodeToken = (token, tokenType) => {
   try {
-    let secret;
-    switch (tokenType) {
-      case 'ACCESS':
-        secret = process.env.ACCESS_TOKEN_SECRET;
-        break;
-      case 'REFRESH':
-        secret = process.env.REFRESH_TOKEN_SECRET;
-        break;
-      case 'SETUP':
-        secret = process.env.SETUP_TOKEN_SECRET;
-        break;
-      default:
-        throw new Error('Invalid token type.');
+    const tokenSecrets = {
+      ACCESS: process.env.ACCESS_TOKEN_SECRET,
+      REFRESH: process.env.REFRESH_TOKEN_SECRET,
+      SETUP: process.env.SETUP_TOKEN_SECRET,
+    };
+
+    const secret = tokenSecrets[tokenType];
+
+    if (!secret) {
+      throw new Error(`Unsupported token type: ${tokenType}`);
     }
 
     const decoded = verify(token, secret);
@@ -23,11 +20,11 @@ const decodeToken = (token, tokenType) => {
   } catch (error) {
     console.log('Error:', error);
     if (error.name === 'TokenExpiredError') {
-      console.log('Token expired');
-      return null;
+      console.log('Token expired.');
+      return;
     }
-    console.log('Error:', error);
-    throw error;
+
+    throw new Error(`Token verification has failed: ${error}`);
   }
 };
 

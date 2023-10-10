@@ -5,7 +5,6 @@ import AuthCheck from '../components/Authentication/AuthCheck';
 const LoginCheck = () => {
   return (
     <>
-      <p>test</p>
       <AuthCheck />
     </>
   );
