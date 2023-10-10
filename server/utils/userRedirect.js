@@ -5,6 +5,7 @@ const redirectSetTokens = (req, res) => {
   const refreshToken = req.user.refreshToken;
 
   const isUserInput = req.user.isUserInput;
+  console.log('checking uinput', isUserInput);
 
   if (accessToken && refreshToken) {
     console.log('Log In successful.');
@@ -25,6 +26,10 @@ const redirectSetTokens = (req, res) => {
         secure: true,
         sameSite: 'Lax',
       });
+
+    if (isUserInput) {
+      return res.end();
+    }
 
     res.redirect(`${process.env.CLIENT_URL}/login-check?isLoggedIn=true`);
   } else {
@@ -99,7 +104,7 @@ const redirectWithError = (req, res) => {
         sameSite: 'Lax',
       })
       .redirect(
-        `${process.env.CLIENT_URL}/create-account?provider=${providerType}`
+        `${process.env.CLIENT_URL}/complete-setup?provider=${providerType}`
       );
   }
 };

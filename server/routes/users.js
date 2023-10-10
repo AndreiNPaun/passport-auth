@@ -3,12 +3,12 @@ const router = express.Router();
 const passport = require('passport');
 
 const {
-  authenticateOrCreateUser,
-  syncOrCreateProfile,
+  authenticateOrCreateAccount,
+  completeProfileSetup,
   getEditProfile,
   postEditProfile,
-  synchronizationRequest,
-  listProviders,
+  synchronizeAccount,
+  listUserProvider,
   deleteProvider,
 } = require('../controllers/users');
 
@@ -18,10 +18,6 @@ const {
 } = require('../middleware/authenticate');
 
 const nameValidation = require('../utils/validationUtils');
-
-router.get('/', () => {
-  console.log('homepage');
-});
 
 // Microsoft
 router.get(
@@ -37,8 +33,8 @@ router.get(
     session: false,
   }),
   checkTokenPassport,
-  authenticateOrCreateUser,
-  synchronizationRequest
+  authenticateOrCreateAccount,
+  synchronizeAccount
 );
 
 // Google
@@ -53,8 +49,8 @@ router.get(
     session: false,
   }),
   checkTokenPassport,
-  authenticateOrCreateUser,
-  synchronizationRequest
+  authenticateOrCreateAccount,
+  synchronizeAccount
 );
 
 // GitHub
@@ -69,8 +65,8 @@ router.get(
     session: false,
   }),
   checkTokenPassport,
-  authenticateOrCreateUser,
-  synchronizationRequest
+  authenticateOrCreateAccount,
+  synchronizeAccount
 );
 
 // LinkedIn
@@ -85,17 +81,17 @@ router.get(
     session: false,
   }),
   checkTokenPassport,
-  authenticateOrCreateUser,
-  synchronizationRequest
+  authenticateOrCreateAccount,
+  synchronizeAccount
 );
 
 router.post(
-  '/user-data',
+  '/complete-setup',
   [
     nameValidation('userInputData.givenName', 'First name'),
     nameValidation('userInputData.familyName', 'Family Name'),
   ],
-  syncOrCreateProfile
+  completeProfileSetup
 );
 
 router.get('/edit-profile', authenticate, getEditProfile);
@@ -116,7 +112,7 @@ router.post('/logout', (req, res) => {
     .send('Cookies cleared');
 });
 
-router.get('/list-providers', authenticate, listProviders);
+router.get('/list-providers', authenticate, listUserProvider);
 router.post('/delete-provider', authenticate, deleteProvider);
 
 module.exports = router;

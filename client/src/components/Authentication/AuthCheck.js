@@ -9,6 +9,8 @@ const AuthCheck = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  console.log('authcheck launched');
+
   // Login check
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);

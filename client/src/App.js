@@ -22,10 +22,10 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <HomePage /> },
-      { path: 'login-check', element: <LoginCheck /> },
+      { path: '/login-check', element: <LoginCheck /> },
       { path: 'failed-token-validity', element: <FailedTokenValidityPage /> },
       {
-        path: 'create-account',
+        path: 'complete-setup',
         element: <SubmitAccountDetailsPage />,
       },
       {
