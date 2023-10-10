@@ -21,7 +21,7 @@ const decodeToken = (token, tokenType) => {
     console.log('Error:', error);
     if (error.name === 'TokenExpiredError') {
       console.log('Token expired.');
-      throw new Error('Token expired.');
+      return;
     }
 
     throw new Error(`Token verification has failed: ${error}`);

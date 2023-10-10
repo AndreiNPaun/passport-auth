@@ -1,23 +1,18 @@
 const { sign } = require('jsonwebtoken');
 const decodeToken = require('../utils/decodeToken');
 
-const handleToken = (req, res, next) => {
-  let userProfileData;
-  let userID;
+const authenticate = (req, res, next) => {
   try {
     const accessToken = req.cookies.accessToken;
-    userProfileData = decodeToken(accessToken, 'ACCESS');
-    console.log('testing', userProfileData);
+    let userProfileData = decodeToken(accessToken, 'ACCESS');
 
-    if (userProfileData === null) {
+    if (!userProfileData) {
       const refreshToken = req.cookies.refreshToken;
       userProfileData = decodeToken(refreshToken, 'REFRESH');
-      console.log('tstong', userProfileData);
 
-      if (userProfileData !== null) {
-        userID = userProfileData.id;
+      if (userProfileData) {
         const newAccessToken = sign(
-          { id: userID },
+          { id: userProfileData.id },
           process.env.ACCESS_TOKEN_SECRET,
           { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
         );
@@ -31,8 +26,9 @@ const handleToken = (req, res, next) => {
         return res.status(401).send('Access token error.');
       }
     }
-    userID = userProfileData.id;
-    req.userID = userID;
+
+    // Make userID available to all controllers
+    req.userID = userProfileData.id;
     next();
   } catch (error) {
     console.log('Error:', error);
@@ -40,16 +36,14 @@ const handleToken = (req, res, next) => {
   }
 };
 
-const authenticate = (req, res, next) => {
-  handleToken(req, res, next);
-};
-
-const checkTokenPassport = (req, res, next) => {
-  if (req.user.state !== null) {
-    handleToken(req, res, next);
+const passportStateOrTokenCheck = (req, res, next) => {
+  // If state is set in Passport.js, skip authenticate middleware
+  console.log();
+  if (req.user.state) {
+    authenticate(req, res, next);
   } else {
     next();
   }
 };
 
-module.exports = { authenticate, checkTokenPassport };
+module.exports = { authenticate, passportStateOrTokenCheck };

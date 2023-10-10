@@ -14,7 +14,7 @@ const {
 
 const {
   authenticate,
-  checkTokenPassport,
+  passportStateOrTokenCheck,
 } = require('../middleware/authenticate');
 
 const nameValidation = require('../utils/validationUtils');
@@ -32,7 +32,7 @@ router.get(
   passport.authenticate('microsoft', {
     session: false,
   }),
-  checkTokenPassport,
+  passportStateOrTokenCheck,
   authenticateOrCreateAccount,
   synchronizeAccount
 );
@@ -48,7 +48,7 @@ router.get(
   passport.authenticate('google', {
     session: false,
   }),
-  checkTokenPassport,
+  passportStateOrTokenCheck,
   authenticateOrCreateAccount,
   synchronizeAccount
 );
@@ -64,7 +64,7 @@ router.get(
   passport.authenticate('github', {
     session: false,
   }),
-  checkTokenPassport,
+  passportStateOrTokenCheck,
   authenticateOrCreateAccount,
   synchronizeAccount
 );
@@ -80,7 +80,7 @@ router.get(
   passport.authenticate('linkedin', {
     session: false,
   }),
-  checkTokenPassport,
+  passportStateOrTokenCheck,
   authenticateOrCreateAccount,
   synchronizeAccount
 );
