@@ -4,8 +4,8 @@ const redirectSetTokens = (req, res) => {
   const accessToken = req.user.accessToken;
   const refreshToken = req.user.refreshToken;
 
+  // This parameter will ensure there will be no redirection
   const isUserInput = req.user.isUserInput;
-  console.log('checking uinput', isUserInput);
 
   if (accessToken && refreshToken) {
     console.log('Log In successful.');
@@ -39,18 +39,13 @@ const redirectSetTokens = (req, res) => {
 };
 
 const redirectSync = (req, res) => {
-  const synchronization = req.user.synchronized;
-
-  if (synchronization === 'synchronized') {
-    console.log('Accounts synchronized successfully.');
-    return res.redirect(`${process.env.CLIENT_URL}/account-management`);
-  }
+  res.redirect(`${process.env.CLIENT_URL}/account-management`);
 };
 
 const redirectWithError = (req, res) => {
-  const errorMessage = req.user.error;
+  const userError = req.user.error;
 
-  if (errorMessage) {
+  if (userError) {
     console.log('Error redirect');
 
     const {
@@ -64,7 +59,7 @@ const redirectWithError = (req, res) => {
     } = req.user;
 
     if (
-      errorMessage.error ===
+      userError.error ===
       'Provider account is already linked to another account.'
     ) {
       console.log('testing');
@@ -106,6 +101,8 @@ const redirectWithError = (req, res) => {
       .redirect(
         `${process.env.CLIENT_URL}/complete-setup?provider=${providerType}`
       );
+  } else {
+    throw new Error('No user error specified.');
   }
 };
 

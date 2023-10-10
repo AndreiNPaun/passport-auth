@@ -282,10 +282,7 @@ const synchronizeAccount = async (req, res, next) => {
         );
       }
 
-      req.user = { synchronized: 'synchronized' };
-
-      console.log('synched');
-      return redirectSync(req, res);
+      redirectSync(req, res);
     } catch (error) {
       console.log('weird error');
       console.log('Error', error);

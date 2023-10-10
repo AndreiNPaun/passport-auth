@@ -109,8 +109,8 @@ passport.use(
 
       // User details
       // GitHub does not return givenName or familyName, set to null to not break the reusable controller
-      let givenName = 'Andrei';
-      let familyName = 'Paun';
+      let givenName = '';
+      let familyName = '';
       let email = profile._json.email || '';
 
       // Stores the provider details (e.g. google)
