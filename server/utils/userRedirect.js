@@ -62,7 +62,6 @@ const redirectWithError = (req, res) => {
       userError.error ===
       'Provider account is already linked to another account.'
     ) {
-      console.log('testing');
       return res.redirect(`${process.env.CLIENT_URL}/`);
     }
 

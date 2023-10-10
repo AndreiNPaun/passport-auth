@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
 import {
   GithubAuthorisation,
   LinkedInAuthorisation,
@@ -7,6 +10,7 @@ import {
   MicrosoftAuthorisation,
 } from '../../../utils/authorizationLinks';
 
+import { TokenErrorFunction } from '../../../utils/TokenError';
 import httpRequest from '../../../utils/httpRequest';
 
 import { Flex, Box, Text, Divider } from '@chakra-ui/react';
@@ -14,6 +18,9 @@ import Card from '../../UI/Card';
 import CustomButton from '../../UI/CustomButton';
 
 const ProviderList = ({ providerName }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [userData, setUserData] = useState([]);
 
   const authorizationLinks = {
@@ -27,17 +34,19 @@ const ProviderList = ({ providerName }) => {
 
   useEffect(() => {
     (async () => {
-      const response = await httpRequest(
-        'get',
-        `${process.env.REACT_APP_SERVER_URL}/list-providers`,
-        { provider: providerName }
-      );
-      console.log('response', response);
+      try {
+        const response = await httpRequest(
+          'get',
+          `${process.env.REACT_APP_SERVER_URL}/list-providers`,
+          { provider: providerName }
+        );
+        console.log('response', response);
 
-      setUserData(response.data);
+        setUserData(response.data);
+      } catch (error) {
+        TokenErrorFunction(dispatch, navigate);
+      }
     })();
-
-    console.log('user', userData);
   }, []);
 
   const deleteConnectionHandler = async (providerID, providerType) => {
@@ -46,14 +55,20 @@ const ProviderList = ({ providerName }) => {
     );
 
     if (proceed) {
-      await httpRequest(
-        'post',
-        `${process.env.REACT_APP_SERVER_URL}/delete-provider`,
-        { providerID, providerType }
-      );
+      try {
+        await httpRequest(
+          'post',
+          `${process.env.REACT_APP_SERVER_URL}/delete-provider`,
+          { providerID, providerType }
+        );
 
-      const updatedUserData = userData.filter((data) => data.id !== providerID);
-      setUserData(updatedUserData);
+        const updatedUserData = userData.filter(
+          (data) => data.id !== providerID
+        );
+        setUserData(updatedUserData);
+      } catch (error) {
+        TokenErrorFunction(dispatch, navigate);
+      }
     }
   };
 

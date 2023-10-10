@@ -47,11 +47,9 @@ const EditProfile = (props) => {
         { userInputData }
       );
 
-      if (response.status === 200) {
-        props.closeFormHandler();
-        setIsSubmitting(false);
-        props.updateDisplayedUserData(userDataInput);
-      }
+      props.closeFormHandler();
+      setIsSubmitting(false);
+      props.updateDisplayedUserData(userDataInput);
     } catch (error) {
       if (
         error.response &&
