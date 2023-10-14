@@ -109,7 +109,7 @@ const authenticateOrCreateAccount = async (req, res, next) => {
       }
 
       Object.assign(req.user, setToken(existingProvider));
-      return redirectSetTokens(req, res);
+      return redirectSetTokens(req, res, existingProvider.role);
     } catch (error) {
       console.log(`Error: ${error}`);
     }
@@ -333,6 +333,25 @@ const deleteProvider = async (req, res, next) => {
   }
 };
 
+const listUsers = async (req, res, next) => {
+  try {
+    const users = await User.find();
+
+    let filterAdminAccounts = users.filter((user) => user.role !== 'admin');
+
+    if (req.role === 'moderator') {
+      filterAdminAccounts = filterAdminAccounts.filter(
+        (user) => user.role !== 'moderator'
+      );
+    }
+
+    res.status(200).send(filterAdminAccounts);
+  } catch (error) {
+    console.log('Error:', error);
+    res.status(500).send('Unexpected error.');
+  }
+};
+
 module.exports = {
   authenticateOrCreateAccount,
   completeProfileSetup,
@@ -341,4 +360,5 @@ module.exports = {
   synchronizeAccount,
   listUserProvider,
   deleteProvider,
+  listUsers,
 };

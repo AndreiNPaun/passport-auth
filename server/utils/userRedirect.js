@@ -1,6 +1,6 @@
 const { sign } = require('jsonwebtoken');
 
-const redirectSetTokens = (req, res) => {
+const redirectSetTokens = (req, res, role) => {
   const accessToken = req.user.accessToken;
   const refreshToken = req.user.refreshToken;
 
@@ -31,7 +31,9 @@ const redirectSetTokens = (req, res) => {
       return res.end();
     }
 
-    res.redirect(`${process.env.CLIENT_URL}/login-check?isLoggedIn=true`);
+    res.redirect(
+      `${process.env.CLIENT_URL}/login-check?isLoggedIn=true&role=${role}`
+    );
   } else {
     console.log('Server error.');
     res.status(400).redirect(process.env.CLIENT_URL);

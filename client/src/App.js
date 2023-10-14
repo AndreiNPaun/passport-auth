@@ -7,13 +7,14 @@ import store from './store/index.js';
 import RootLayout from './pages/RootLayout';
 import ErrorPage from './pages/Error';
 import HomePage from './pages/Home';
-import LoginCheck from './pages/LoginCheck';
+import LoginCheck from './pages/Checks/LoginCheck.js';
 import SubmitAccountDetailsPage from './pages/SubmitAccountDetails';
 import AccountManagementPage, {
   loader as editProfileLoader,
 } from './pages/AccountManagement.js';
 import NoEmailMessage from './components/Authentication/SubmitAccount/NoEmailMessage.js';
-import FailedTokenValidityPage from './pages/FailedTokenValidity.js';
+import FailedTokenValidityPage from './pages/Checks/FailedTokenValidity.js';
+import AdminDashboardPage from './pages/Admin/Dashboard.js';
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
         path: 'account-management',
         element: <AccountManagementPage />,
         loader: editProfileLoader,
+      },
+      {
+        path: 'admin-dashboard',
+        element: <AdminDashboardPage />,
       },
     ],
   },

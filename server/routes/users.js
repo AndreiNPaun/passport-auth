@@ -10,6 +10,7 @@ const {
   synchronizeAccount,
   listUserProvider,
   deleteProvider,
+  listUsers,
 } = require('../controllers/users');
 
 const {
@@ -18,6 +19,8 @@ const {
 } = require('../middleware/authenticate');
 
 const nameValidation = require('../utils/validationUtils');
+
+const authorize = require('../middleware/authorize');
 
 // Microsoft
 router.get(
@@ -114,5 +117,7 @@ router.post('/logout', (req, res) => {
 
 router.get('/list-providers', authenticate, listUserProvider);
 router.post('/delete-provider', authenticate, deleteProvider);
+
+router.get('/list-users', authenticate, authorize, listUsers);
 
 module.exports = router;
