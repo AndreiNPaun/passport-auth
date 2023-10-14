@@ -4,17 +4,17 @@ import { Link as RouterLink } from 'react-router-dom';
 import { Center, Box, Text, Grid, GridItem } from '@chakra-ui/react';
 import { FaGithub, FaLinkedin, FaGoogle, FaMicrosoft } from 'react-icons/fa';
 
-import Modal from '../UI/Modal';
-import ProviderList from './Provider/ProviderList';
+import Modal from '../../UI/Modal';
+import ProviderList from './ProviderList';
 
 import {
   GithubAuthorisation,
   LinkedInAuthorisation,
   GoogleAuthorisation,
   MicrosoftAuthorisation,
-} from '../../utils/authorizationLinks';
+} from '../../../utils/authorizationLinks';
 
-import Card from '../UI/Card';
+import Card from '../../UI/Card';
 
 const ProviderArea = () => {
   const [isListOpen, setIsListOpen] = useState(false);
