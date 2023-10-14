@@ -88,7 +88,7 @@ const authenticateOrCreateAccount = async (req, res, next) => {
         const newUserAccount = new User({
           givenName,
           familyName,
-          email,
+          role: 'guest',
           provider: {
             [providerType]: [
               {
@@ -139,6 +139,7 @@ const completeProfileSetup = async (req, res, next) => {
     const newAccountData = {
       givenName,
       familyName,
+      role: 'guest',
       provider: {
         [providerType]: {
           id: providerID,
@@ -183,6 +184,7 @@ const getEditProfile = async (req, res, next) => {
     const userData = {
       givenName: user.givenName,
       familyName: user.familyName,
+      role: user.role,
     };
 
     res.status(200).send(userData);

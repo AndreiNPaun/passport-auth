@@ -12,7 +12,7 @@ const authenticate = (req, res, next) => {
 
       if (userProfileData) {
         const newAccessToken = sign(
-          { id: userProfileData.id },
+          { id: userProfileData.id, role: userProfileData.role },
           process.env.ACCESS_TOKEN_SECRET,
           { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
         );
@@ -29,6 +29,7 @@ const authenticate = (req, res, next) => {
 
     // Make userID available to all controllers
     req.userID = userProfileData.id;
+    req.role = userProfileData.role;
     next();
   } catch (error) {
     console.log('Error:', error);
