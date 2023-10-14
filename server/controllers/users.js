@@ -109,7 +109,7 @@ const authenticateOrCreateAccount = async (req, res, next) => {
       }
 
       Object.assign(req.user, setToken(existingProvider));
-      return redirectSetTokens(req, res);
+      return redirectSetTokens(req, res, existingProvider.role);
     } catch (error) {
       console.log(`Error: ${error}`);
     }

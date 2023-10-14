@@ -7,6 +7,7 @@ import Logout from '../components/Authentication/Logout';
 
 const MainNavigation = () => {
   const login = useSelector((state) => state.login.loginCheck);
+  const role = useSelector((state) => state.login.role);
 
   if (!login) {
     return null;
@@ -28,6 +29,11 @@ const MainNavigation = () => {
         </Text>
       </Flex>
       <Box>
+        {role && (role === 'admin' || role === 'moderator') && (
+          <Link m="0 1rem" as={RouterLink} to="admin-dashboard">
+            Dashboard
+          </Link>
+        )}
         <Link m="0 1rem" as={RouterLink} to="account-management">
           My Account
         </Link>

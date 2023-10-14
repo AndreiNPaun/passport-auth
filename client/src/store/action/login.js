@@ -2,13 +2,14 @@ import httpRequest from '../../utils/httpRequest';
 
 import { loginActions } from '../slice/login';
 
-export const setLogin = (isLoggedIn) => {
+export const setLogin = (isLoggedIn, role) => {
   return async (dispatch) => {
     try {
       localStorage.setItem('isLoggedIn', isLoggedIn);
+      localStorage.setItem('role', role);
 
       // Sets slice loginCheck value to true
-      dispatch(loginActions.login({ loginCheck: isLoggedIn }));
+      dispatch(loginActions.login({ loginCheck: isLoggedIn, role }));
     } catch (Error) {
       console.log(Error);
     }
