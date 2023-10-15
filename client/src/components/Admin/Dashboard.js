@@ -1,23 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { Admin, Resource, Layout } from 'react-admin';
+import UserList from './UserList';
+import UserEdit from './UserEdit';
+import { Container } from '@chakra-ui/react';
 
-import httpRequest from '../../utils/httpRequest';
+import dataProvider from '../../dataProvider';
+
+const CustomLayout = (props) => {
+  return <Layout {...props} appBar={() => null} sidebar={() => null} />;
+};
 
 const Dashboard = () => {
-  const [userList, setUserList] = useState([]);
-
-  useEffect(() => {
-    (async () => {
-      const response = await httpRequest(
-        'get',
-        `${process.env.REACT_APP_SERVER_URL}/list-users`
-      );
-      console.log('response', response);
-
-      setUserList(response);
-    })();
-  }, []);
-
-  return <>Yo</>;
+  return (
+    <Admin dataProvider={dataProvider} layout={CustomLayout}>
+      <Resource name="list-users" list={UserList} edit={UserEdit} />
+    </Admin>
+  );
 };
 
 export default Dashboard;

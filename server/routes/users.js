@@ -11,6 +11,9 @@ const {
   listUserProvider,
   deleteProvider,
   listUsers,
+  getOneUser,
+  updateUser,
+  deleteUser,
 } = require('../controllers/users');
 
 const {
@@ -118,6 +121,10 @@ router.post('/logout', (req, res) => {
 router.get('/list-providers', authenticate, listUserProvider);
 router.post('/delete-provider', authenticate, deleteProvider);
 
+// Admin Dashboard
 router.get('/list-users', authenticate, authorize, listUsers);
+router.get('/get-user/:id', authenticate, authorize, getOneUser);
+router.post('/update-user/:id', authenticate, authorize, updateUser);
+router.post('/delete-user/:id', authenticate, authorize, deleteUser);
 
 module.exports = router;
