@@ -3,10 +3,18 @@ import httpRequest from './utils/httpRequest';
 export default {
   getList: async (resource, params) => {
     try {
-      const response = await httpRequest(
-        'get',
-        `${process.env.REACT_APP_SERVER_URL}/${resource}`
-      );
+      const url = new URL(`${process.env.REACT_APP_SERVER_URL}/${resource}`);
+
+      // Add query parameters to the URL based on the 'params' argument
+      if (params.filter) {
+        Object.keys(params.filter).forEach((key) =>
+          url.searchParams.append(key, params.filter[key])
+        );
+      }
+
+      const response = await httpRequest('get', url.toString());
+
+      console.log(response);
 
       return {
         data: response.data.map((user) => ({
