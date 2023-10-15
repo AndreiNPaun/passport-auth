@@ -134,6 +134,7 @@ router.post(
   authorize,
   updateUser
 );
-router.post('/delete-user/:id', authenticate, authorize, deleteUser);
+
+router.post('/delete-user/:id', authenticate, deleteUser);
 
 module.exports = router;
