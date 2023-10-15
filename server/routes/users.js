@@ -124,7 +124,16 @@ router.post('/delete-provider', authenticate, deleteProvider);
 // Admin Dashboard
 router.get('/list-users', authenticate, authorize, listUsers);
 router.get('/get-user/:id', authenticate, authorize, getOneUser);
-router.post('/update-user/:id', authenticate, authorize, updateUser);
+router.post(
+  '/update-user/:id',
+  [
+    nameValidation('givenName', 'First name'),
+    nameValidation('familyName', 'Family Name'),
+  ],
+  authenticate,
+  authorize,
+  updateUser
+);
 router.post('/delete-user/:id', authenticate, authorize, deleteUser);
 
 module.exports = router;

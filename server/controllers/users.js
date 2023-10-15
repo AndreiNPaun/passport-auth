@@ -198,6 +198,7 @@ const postEditProfile = async (req, res, next) => {
   if (validationError(req, res)) {
     return;
   }
+
   try {
     const { givenName, familyName } = req.body.userInputData;
 
@@ -335,7 +336,17 @@ const deleteProvider = async (req, res, next) => {
 
 const listUsers = async (req, res, next) => {
   try {
-    const users = await User.find();
+    console.log('req.query', req.query);
+    const { givenName, familyName, email, role } = req.query;
+
+    const query = {};
+
+    if (givenName) query.givenName = new RegExp(givenName, 'i');
+    if (familyName) query.familyName = new RegExp(familyName, 'i');
+    if (email) query.email = new RegExp(email, 'i');
+    if (role) query.role = role;
+
+    const users = await User.find(query);
 
     let filterAdminAccounts = users.filter((user) => user.role !== 'admin');
 
@@ -365,6 +376,10 @@ const getOneUser = async (req, res, next) => {
 };
 
 const updateUser = async (req, res, next) => {
+  if (validationError(req, res)) {
+    return;
+  }
+
   try {
     const userId = req.params.id;
     const user = await User.findByIdAndUpdate(userId, req.body);

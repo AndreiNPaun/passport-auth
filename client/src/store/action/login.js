@@ -24,6 +24,7 @@ export const unsetToken = () => {
 
       // Clear the token in local storage after the action is dispatched
       localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('role');
 
       // Send the logout request to the server
       await httpRequest('post', `${process.env.REACT_APP_SERVER_URL}/logout`);
