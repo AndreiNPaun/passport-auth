@@ -60,7 +60,6 @@ const SubmitDetails = () => {
 
       if (response.status === 200) {
         setIsSubmitting(false);
-        console.log('going zoomiez');
         navigate(`/login-check?isLoggedIn=${response}`);
       } else {
         navigate('/account-management');

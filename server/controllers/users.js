@@ -345,7 +345,51 @@ const listUsers = async (req, res, next) => {
       );
     }
 
-    res.status(200).send(filterAdminAccounts);
+    res.status(200).json(filterAdminAccounts);
+  } catch (error) {
+    console.log('Error:', error);
+    res.status(500).send('Unexpected error.');
+  }
+};
+
+const getOneUser = async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+    const user = await User.findById(userId);
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.log('Error:', error);
+    res.status(500).send('Unexpected error.');
+  }
+};
+
+const updateUser = async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+    const user = await User.findByIdAndUpdate(userId, req.body);
+
+    if (!user) {
+      return res.status(404).send('User not found.');
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.log('Error:', error);
+    res.status(500).send('Unexpected error.');
+  }
+};
+
+const deleteUser = async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+    const user = await User.findByIdAndDelete(userId);
+
+    if (!user) {
+      return res.status(404).send('User not found.');
+    }
+
+    res.status(200).json({ message: 'User deleted successfully.' });
   } catch (error) {
     console.log('Error:', error);
     res.status(500).send('Unexpected error.');
@@ -361,4 +405,7 @@ module.exports = {
   listUserProvider,
   deleteProvider,
   listUsers,
+  getOneUser,
+  updateUser,
+  deleteUser,
 };
