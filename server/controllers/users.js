@@ -125,7 +125,6 @@ const completeProfileSetup = async (req, res, next) => {
   const { givenName, familyName } = req.body.userInputData;
 
   const userProfileData = decodeToken(req.cookies.initialSetup, 'SETUP');
-  console.log('testing', userProfileData);
 
   const email = userProfileData.email;
   const providerType = userProfileData.providerType;
@@ -163,8 +162,7 @@ const completeProfileSetup = async (req, res, next) => {
     const isUserInput = true;
 
     req.user = { accessToken, refreshToken, isUserInput };
-    console.log('redirecting');
-    return redirectSetTokens(req, res);
+    return redirectSetTokens(req, res, createdUser.role);
   } catch (error) {
     console.log('Error:', error);
     res.status(500).send('Server Error.');
@@ -398,11 +396,7 @@ const updateUser = async (req, res, next) => {
 const deleteUser = async (req, res, next) => {
   try {
     const userId = req.params.id;
-    const user = await User.findByIdAndDelete(userId);
-
-    if (!user) {
-      return res.status(404).send('User not found.');
-    }
+    await User.findByIdAndDelete(userId);
 
     res.status(200).json({ message: 'User deleted successfully.' });
   } catch (error) {

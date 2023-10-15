@@ -60,7 +60,7 @@ const SubmitDetails = () => {
 
       if (response.status === 200) {
         setIsSubmitting(false);
-        navigate(`/login-check?isLoggedIn=${response}`);
+        navigate(`/login-check?isLoggedIn=true&${response.data}`);
       } else {
         navigate('/account-management');
       }
