@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
-import { Link as RouterLink } from 'react-router-dom';
-import { Center, Box, Text, Grid, GridItem } from '@chakra-ui/react';
+import { Box, Text, Grid } from '@chakra-ui/react';
 import { FaGithub, FaLinkedin, FaGoogle, FaMicrosoft } from 'react-icons/fa';
+import CustomButton from '../../UI/CustomButton';
 
 import Modal from '../../UI/Modal';
 import ProviderList from './ProviderList';
@@ -85,58 +85,34 @@ const ProviderArea = () => {
             ].map(({ color, Icon, authorizationFunction, name }) => (
               <Grid
                 key={name}
-                templateColumns="10% 60% 15% 15%"
-                mb="0.5rem"
-                minH="3.5rem"
-                w="95%"
-                maxWidth="45vw"
-                border="1px solid"
-                borderColor="gray.300"
+                templateColumns="auto 1fr auto auto"
+                gap="1rem"
+                mb="1.5rem"
+                alignItems="center"
+                p="1rem"
+                bg="white"
+                boxShadow="sm"
                 borderRadius="5px"
+                border="1px solid"
+                borderColor="gray.200"
               >
-                <GridItem
-                  bg={color}
-                  borderTopLeftRadius="5px"
-                  borderBottomLeftRadius="5px"
-                >
-                  <Center height="100%">
-                    <Icon size="2em" color="white" />
-                  </Center>
-                </GridItem>
-                <GridItem
-                  m="0.8rem"
-                  fontSize="xl"
-                  fontWeight="600"
-                  color="gray.700"
-                >
+                <Box bg={color} p="0.5rem" borderRadius="5px">
+                  <Icon size="1.5em" color="white" />
+                </Box>
+                <Text fontSize="xl" fontWeight="600" color="gray.700">
                   {name}
-                </GridItem>
-                <GridItem
-                  as={RouterLink}
-                  mt="1rem"
-                  w="auto"
-                  _hover={{
-                    textDecoration: 'none',
-                    color: 'blue.600',
-                  }}
-                  onClick={() => authorizationFunction(true)}
-                >
+                </Text>
+                <CustomButton onClick={() => authorizationFunction(true)}>
                   Add
-                </GridItem>
-                <GridItem
-                  mt="1rem"
-                  w="auto"
-                  _hover={{
-                    textDecoration: 'none',
-                    color: 'blue.600',
-                  }}
+                </CustomButton>
+                <CustomButton
                   onClick={() => {
                     showListHandler();
                     providerNameHandler(name);
                   }}
                 >
                   See Connections
-                </GridItem>
+                </CustomButton>
               </Grid>
             ))}
           </Box>
