@@ -1,14 +1,5 @@
 import React from 'react';
-import {
-  Box,
-  Text,
-  Flex,
-  Grid,
-  VStack,
-  Spacer,
-  Center,
-} from '@chakra-ui/react';
-import { UseSelector } from 'react-redux/es/hooks/useSelector';
+import { Box, Text, Grid, VStack, Center } from '@chakra-ui/react';
 
 import Card from '../../UI/Card';
 import CustomButton from '../../UI/CustomButton';

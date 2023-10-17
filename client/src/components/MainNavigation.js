@@ -1,13 +1,26 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Flex, Box, Link, Text } from '@chakra-ui/react';
+import {
+  Flex,
+  Box,
+  Link,
+  Text,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  IconButton,
+  useMediaQuery,
+} from '@chakra-ui/react';
+import { HamburgerIcon } from '@chakra-ui/icons';
 
 import Logout from '../components/Authentication/Logout';
 
 const MainNavigation = () => {
   const login = useSelector((state) => state.login.loginCheck);
   const role = useSelector((state) => state.login.role);
+  const [isLargerThan1024] = useMediaQuery('(min-width: 1024px)');
 
   if (!login) {
     return null;
@@ -28,17 +41,40 @@ const MainNavigation = () => {
           Auth
         </Text>
       </Flex>
-      <Box>
-        {role && (role === 'admin' || role === 'moderator') && (
-          <Link m="0 1rem" as={RouterLink} to="admin-dashboard">
-            Dashboard
+
+      {isLargerThan1024 ? (
+        <Box>
+          {role && (role === 'admin' || role === 'moderator') && (
+            <Link m="0 1rem" as={RouterLink} to="admin-dashboard">
+              Dashboard
+            </Link>
+          )}
+          <Link m="0 1rem" as={RouterLink} to="account-management">
+            My Account
           </Link>
-        )}
-        <Link m="0 1rem" as={RouterLink} to="account-management">
-          My Account
-        </Link>
-        <Logout />
-      </Box>
+          <Logout />
+        </Box>
+      ) : (
+        <Menu>
+          <MenuButton
+            as={IconButton}
+            aria-label="Options"
+            icon={<HamburgerIcon />}
+            variant="outline"
+          />
+          <MenuList>
+            {role && (role === 'admin' || role === 'moderator') && (
+              <MenuItem as={RouterLink} to="admin-dashboard">
+                Dashboard
+              </MenuItem>
+            )}
+            <MenuItem as={RouterLink} to="account-management">
+              My Account
+            </MenuItem>
+            <MenuItem onClick={() => <Logout />}>Logout</MenuItem>
+          </MenuList>
+        </Menu>
+      )}
     </Flex>
   );
 };
