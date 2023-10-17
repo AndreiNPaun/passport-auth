@@ -1,6 +1,14 @@
 import React from 'react';
-
-import { Box, Text, Flex, Grid, GridItem } from '@chakra-ui/react';
+import {
+  Box,
+  Text,
+  Flex,
+  Grid,
+  VStack,
+  Spacer,
+  Center,
+} from '@chakra-ui/react';
+import { UseSelector } from 'react-redux/es/hooks/useSelector';
 
 import Card from '../../UI/Card';
 import CustomButton from '../../UI/CustomButton';
@@ -14,30 +22,33 @@ const EditArea = ({ userData, showFormHandler }) => {
             Personal Information
           </Text>
           <Text mt="1rem">
-            Private user information with the option to edit the stored user
-            data.
+            This section contains private user data. Ensure accuracy and
+            confidentiality.
           </Text>
         </Box>
-        <Box p="1rem">
-          <Grid templateColumns="repeat(2, 1fr)" gap="2rem" m="1rem 0 0 1rem">
+        <Box p="1rem" m="0 4rem">
+          <Grid templateColumns="repeat(2, 1fr)" gap="2rem" m="1rem 0">
             {[
               { label: 'First Name', value: userData?.givenName },
               { label: 'Last Name', value: userData?.familyName },
               { label: 'Role', value: userData?.role },
             ].map(({ label, value }) => (
-              <GridItem key={label}>
-                <Text fontSize="xl" color="blue.500">
+              <VStack alignItems="start" key={label}>
+                <Text fontSize="xl" color="blue.500" mb="0.5rem">
                   {label}
                 </Text>
                 <Text fontSize="xl">{value}</Text>
-              </GridItem>
+              </VStack>
             ))}
           </Grid>
-          <Flex justify="end" m="1rem 3.2rem 0 0">
-            <CustomButton onClick={showFormHandler}>
+          <Center mt="2rem">
+            <CustomButton m="0 1rem" onClick={showFormHandler}>
               Edit Information
             </CustomButton>
-          </Flex>
+            <CustomButton m="0 1rem" bg="#cf0f04" _hover={{ bg: '#7c0902' }}>
+              Delete Account
+            </CustomButton>
+          </Center>
         </Box>
       </Grid>
     </Card>
