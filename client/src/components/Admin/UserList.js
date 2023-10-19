@@ -2,10 +2,12 @@ import {
   List,
   Datagrid,
   TextField,
-  EmailField,
   TextInput,
   SelectInput,
+  SimpleList,
 } from 'react-admin';
+
+import { useMediaQuery } from '@chakra-ui/react';
 
 const roles = [
   { id: 'guest', name: 'Guest' },
@@ -20,15 +22,18 @@ const postFilters = [
   <TextInput label="Search by Family Name" source="familyName" />,
 ];
 
-const UserList = () => (
-  <List filters={postFilters}>
-    <Datagrid rowClick="edit">
-      <TextField source="id" />
-      <TextField source="givenName" />
-      <TextField source="familyName" />
-      <TextField source="role" />
-    </Datagrid>
-  </List>
-);
+const UserList = () => {
+  const [is1200] = useMediaQuery('(min-width: 1200px)');
 
+  return (
+    <List filters={postFilters}>
+      <Datagrid rowClick="edit">
+        {is1200 && <TextField source="id" />}
+        <TextField source="givenName" />
+        <TextField source="familyName" />
+        <TextField source="role" />
+      </Datagrid>
+    </List>
+  );
+};
 export default UserList;

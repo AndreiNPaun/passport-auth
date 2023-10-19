@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 
 import EditProfile from './EditProfile/EditProfile';
 import EditArea from './EditProfile/EditArea';
@@ -30,10 +30,8 @@ const AccountManagement = ({ userInfo }) => {
           closeFormHandler={closeFormHandler}
         />
       )}
-      <Container mt="4rem" maxW="60%">
-        <EditArea userData={userData} showFormHandler={showFormHandler} />
-        <ProviderArea />
-      </Container>
+      <EditArea userData={userData} showFormHandler={showFormHandler} />
+      <ProviderArea />
     </>
   );
 };
