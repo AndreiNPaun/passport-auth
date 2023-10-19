@@ -72,7 +72,7 @@ const MainNavigation = () => {
             <MenuItem as={RouterLink} to="account-management">
               My Account
             </MenuItem>
-            <MenuItem onClick={() => <Logout />}>Logout</MenuItem>
+            <MenuItem ><Logout /></MenuItem>
           </MenuList>
         </Menu>
       )}
