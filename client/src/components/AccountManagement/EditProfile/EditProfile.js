@@ -6,7 +6,15 @@ import { useNavigate } from 'react-router-dom';
 import httpRequest from '../../../utils/httpRequest';
 
 import Modal from '../../UI/Modal';
-import { Center, Box, Text, List, ListItem, ListIcon } from '@chakra-ui/react';
+import {
+  Center,
+  Box,
+  Text,
+  List,
+  ListItem,
+  ListIcon,
+  useMediaQuery,
+} from '@chakra-ui/react';
 import { WarningIcon } from '@chakra-ui/icons';
 
 import { TokenErrorFunction } from '../../../utils/TokenError';
@@ -24,6 +32,8 @@ const EditProfile = (props) => {
   });
   const [isError, setIsError] = useState();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [is500] = useMediaQuery('(max-width: 500px)');
 
   const userDataChangeHandler = (event) => {
     const { name, value } = event.target;
@@ -89,7 +99,7 @@ const EditProfile = (props) => {
 
   return (
     <Modal onClickCancel={closeFormHandler}>
-      <Card mt="20vh">
+      <Card mt="20vh" w={is500 ? '80vw' : null} ml={is500 ? '-4.5rem' : null}>
         <Text
           p="1rem"
           m="0 auto"

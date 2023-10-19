@@ -20,7 +20,8 @@ import Logout from '../components/Authentication/Logout';
 const MainNavigation = () => {
   const login = useSelector((state) => state.login.loginCheck);
   const role = useSelector((state) => state.login.role);
-  const [isLargerThan1024] = useMediaQuery('(min-width: 1024px)');
+
+  const [is1200] = useMediaQuery('(min-width: 1200px)');
 
   if (!login) {
     return null;
@@ -42,7 +43,7 @@ const MainNavigation = () => {
         </Text>
       </Flex>
 
-      {isLargerThan1024 ? (
+      {is1200 ? (
         <Box>
           {role && (role === 'admin' || role === 'moderator') && (
             <Link m="0 1rem" as={RouterLink} to="admin-dashboard">
@@ -62,7 +63,7 @@ const MainNavigation = () => {
             icon={<HamburgerIcon />}
             variant="outline"
           />
-          <MenuList>
+          <MenuList zIndex={1000}>
             {role && (role === 'admin' || role === 'moderator') && (
               <MenuItem as={RouterLink} to="admin-dashboard">
                 Dashboard

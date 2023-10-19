@@ -13,7 +13,7 @@ import {
 import { TokenErrorFunction } from '../../../utils/TokenError';
 import httpRequest from '../../../utils/httpRequest';
 
-import { Flex, Box, Text, Divider } from '@chakra-ui/react';
+import { Box, Text, Divider, useMediaQuery } from '@chakra-ui/react';
 import Card from '../../UI/Card';
 import CustomButton from '../../UI/CustomButton';
 
@@ -22,6 +22,8 @@ const ProviderList = ({ providerName }) => {
   const navigate = useNavigate();
 
   const [userData, setUserData] = useState([]);
+
+  const [is500] = useMediaQuery('(max-width: 500px)');
 
   const authorizationLinks = {
     Microsoft: MicrosoftAuthorisation,
@@ -73,41 +75,44 @@ const ProviderList = ({ providerName }) => {
   };
 
   return (
-    <Flex>
-      <Card p="1rem" w="80vw" mt="10vh">
-        <Text p="1rem">Provider: {providerName}</Text>
-        <CustomButton
-          h="2rem"
-          m="0 1rem 1.5rem"
-          onClick={() => providerAuthorizationLink(true)}
-        >
-          Add more
-        </CustomButton>
-        {userData.length === 0 && (
-          <Text p="1rem">No accounts linked from this provider.</Text>
-        )}
-        {Array.isArray(userData) &&
-          userData.length > 0 &&
-          userData.map((data) => (
-            <Box key={data.id} p="1rem">
-              <Box>
-                {data.email && <Text>Email: {data.email}</Text>}
-                {data.givenName && <Text>First name: {data.givenName}</Text>}
-                {data.familyName && <Text>Last name: {data.familyName}</Text>}
-                {data.username && <Text>Username: {data.username}</Text>}
-              </Box>
-              <CustomButton
-                h="2rem"
-                m="1rem 0"
-                onClick={() => deleteConnectionHandler(data.id, providerName)}
-              >
-                Delete
-              </CustomButton>
-              <Divider mt="1rem" />
+    <Card
+      p="1rem"
+      w={is500 ? '80vw' : '50vw'}
+      mt="10vh"
+      ml={is500 ? '-4.5rem' : '-5rem'}
+    >
+      <Text p="1rem">Provider: {providerName}</Text>
+      <CustomButton
+        h="2rem"
+        m="0 1rem 1.5rem"
+        onClick={() => providerAuthorizationLink(true)}
+      >
+        Add more
+      </CustomButton>
+      {userData.length === 0 && (
+        <Text p="1rem">No accounts linked from this provider.</Text>
+      )}
+      {Array.isArray(userData) &&
+        userData.length > 0 &&
+        userData.map((data) => (
+          <Box key={data.id} p="1rem">
+            <Box>
+              {data.email && <Text>Email: {data.email}</Text>}
+              {data.givenName && <Text>First name: {data.givenName}</Text>}
+              {data.familyName && <Text>Last name: {data.familyName}</Text>}
+              {data.username && <Text>Username: {data.username}</Text>}
             </Box>
-          ))}
-      </Card>
-    </Flex>
+            <CustomButton
+              h="2rem"
+              m="1rem 0"
+              onClick={() => deleteConnectionHandler(data.id, providerName)}
+            >
+              Delete
+            </CustomButton>
+            <Divider mt="1rem" />
+          </Box>
+        ))}
+    </Card>
   );
 };
 
