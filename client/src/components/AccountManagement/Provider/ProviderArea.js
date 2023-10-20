@@ -20,7 +20,7 @@ const ProviderArea = () => {
   const [isListOpen, setIsListOpen] = useState(false);
   const [providerName, setProviderName] = useState('');
 
-  const [is1200] = useMediaQuery('(min-width: 1200px)');
+  const [is1130] = useMediaQuery('(min-width: 1130px)');
 
   const showListHandler = () => {
     setIsListOpen(true);
@@ -35,7 +35,7 @@ const ProviderArea = () => {
   };
 
   const renderGrid = ({ color, Icon, authorizationFunction, name }) => {
-    if (is1200) {
+    if (is1130) {
       return (
         <Grid
           key={name}
@@ -115,9 +115,9 @@ const ProviderArea = () => {
         </Modal>
       )}
       <Center ml="-1rem">
-        <Card m="1rem" maxW={is1200 ? '59%' : '70%'}>
+        <Card m="1rem" maxW={is1130 ? '59%' : '70%'}>
           <Grid templateColumns="30% 70%" gap="1rem">
-            {is1200 && (
+            {is1130 && (
               <Box p="1rem" borderRight="1px solid" borderColor="gray.300">
                 <Text fontSize="2xl" mt="2rem">
                   Connections

@@ -8,18 +8,42 @@ import {
   useMediaQuery,
   Center,
 } from '@chakra-ui/react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
+import {unsetToken} from '../../../store/action/login'
+import httpRequest from '../../../utils/httpRequest'
 
 import Card from '../../UI/Card';
 import CustomButton from '../../UI/CustomButton';
 
 const EditArea = ({ userData, showFormHandler }) => {
-  const [is1200] = useMediaQuery('(min-width: 1200px)');
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  const [is1130] = useMediaQuery('(min-width: 1130px)');
+
+    const deleteAccountHandler = async () => {
+    const proceed = window.confirm(
+      'Are you sure you wish to delete this connection?'
+    );
+
+    if (proceed) {
+        await httpRequest(
+          'post',
+          `${process.env.REACT_APP_SERVER_URL}/delete-account`,
+        );
+
+        dispatch(unsetToken())
+        navigate('/')
+    }
+  };
 
   return (
     <Center>
-      <Card m="3rem 1rem 0 0" maxW={is1200 ? '60%' : '80%'} overflow="hidden">
-        <Grid templateColumns={is1200 ? '30% 70%' : '100%'} gap="1rem">
-          {is1200 && (
+      <Card m="3rem 1rem 0 0" maxW={is1130 ? '60%' : '80%'} overflow="hidden">
+        <Grid templateColumns={is1130 ? '30% 70%' : '100%'} gap="1rem">
+          {is1130 && (
             <Box p="1rem" borderRight="1px solid" borderColor="gray.300">
               <Text fontSize="2xl" mt="2rem">
                 Personal Information
@@ -46,7 +70,7 @@ const EditArea = ({ userData, showFormHandler }) => {
               ))}
             </Grid>
             <Flex
-              direction={is1200 ? 'row' : 'column'}
+              direction={is1130 ? 'row' : 'column'}
               alignItems="center"
               justifyContent="center"
               mt="1rem"
@@ -54,7 +78,7 @@ const EditArea = ({ userData, showFormHandler }) => {
               <CustomButton m="1rem" onClick={showFormHandler}>
                 Edit Information
               </CustomButton>
-              <CustomButton m="1rem" bg="#cf0f04" _hover={{ bg: '#7c0902' }}>
+              <CustomButton m="1rem" bg="#cf0f04" _hover={{ bg: '#7c0902' }} onClick={deleteAccountHandler}>
                 Delete Account
               </CustomButton>
             </Flex>
