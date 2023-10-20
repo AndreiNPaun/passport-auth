@@ -21,7 +21,7 @@ const MainNavigation = () => {
   const login = useSelector((state) => state.login.loginCheck);
   const role = useSelector((state) => state.login.role);
 
-  const [is1200] = useMediaQuery('(min-width: 1200px)');
+  const [is700] = useMediaQuery('(min-width: 700px)');
 
   if (!login) {
     return null;
@@ -43,7 +43,7 @@ const MainNavigation = () => {
         </Text>
       </Flex>
 
-      {is1200 ? (
+      {is700 ? (
         <Box>
           {role && (role === 'admin' || role === 'moderator') && (
             <Link m="0 1rem" as={RouterLink} to="admin-dashboard">

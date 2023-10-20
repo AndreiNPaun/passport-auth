@@ -293,6 +293,19 @@ const synchronizeAccount = async (req, res, next) => {
   next();
 };
 
+const deleteAccount = async (req, res, next) => {
+  try {
+    const userID = req.userID;
+    await User.findByIdAndDelete(userID);
+
+    res.status(200).json({ message: 'User deleted successfully.' });
+  } catch (error) {
+    console.log('Error:', error);
+    res.status(500).send('Unexpected error.');
+  }
+};
+
+
 const listUserProvider = async (req, res, next) => {
   const userID = req.userID;
 
@@ -393,10 +406,10 @@ const updateUser = async (req, res, next) => {
   }
 };
 
-const deleteUser = async (req, res, next) => {
+const deleteUserAdmin = async (req, res, next) => {
   try {
-    const userId = req.params.id;
-    await User.findByIdAndDelete(userId);
+    const userID = req.params.id;
+    await User.findByIdAndDelete(userID);
 
     res.status(200).json({ message: 'User deleted successfully.' });
   } catch (error) {
@@ -411,10 +424,11 @@ module.exports = {
   getEditProfile,
   postEditProfile,
   synchronizeAccount,
+  deleteAccount,
   listUserProvider,
   deleteProvider,
   listUsers,
   getOneUser,
   updateUser,
-  deleteUser,
+  deleteUserAdmin,
 };

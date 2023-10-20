@@ -8,12 +8,13 @@ const {
   getEditProfile,
   postEditProfile,
   synchronizeAccount,
+  deleteAccount,
   listUserProvider,
   deleteProvider,
   listUsers,
   getOneUser,
   updateUser,
-  deleteUser,
+  deleteUserAdmin,
 } = require('../controllers/users');
 
 const {
@@ -121,6 +122,8 @@ router.post('/logout', (req, res) => {
 router.get('/list-providers', authenticate, listUserProvider);
 router.post('/delete-provider', authenticate, deleteProvider);
 
+router.post('/delete-account', authenticate, deleteAccount);
+
 // Admin Dashboard
 router.get('/list-users', authenticate, authorize, listUsers);
 router.get('/get-user/:id', authenticate, authorize, getOneUser);
@@ -135,6 +138,6 @@ router.post(
   updateUser
 );
 
-router.post('/delete-user/:id', authenticate, deleteUser);
+router.post('/delete-user/:id', authenticate, authorize, deleteUserAdmin);
 
 module.exports = router;
