@@ -25,7 +25,7 @@ const EditArea = ({ userData, showFormHandler }) => {
 
     const deleteAccountHandler = async () => {
     const proceed = window.confirm(
-      'Are you sure you wish to delete this connection?'
+      'Are you sure you wish to delete your account?'
     );
 
     if (proceed) {
