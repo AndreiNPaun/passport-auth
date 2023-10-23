@@ -17,9 +17,12 @@
     "passport-microsoft": "^1.0.0"
   },
   "scripts": {
+    "test": "vitest --run --reporter verbose",
+    "test:watch": "vitest",
     "start": "nodemon index.js"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.1",
+    "vitest": "^0.34.6"
   }
 }
