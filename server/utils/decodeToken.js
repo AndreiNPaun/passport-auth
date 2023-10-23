@@ -19,7 +19,7 @@ const decodeToken = (token, tokenType) => {
     return decoded;
   } catch (error) {
     console.log('Error:', error);
-    if (error.name === 'TokenExpiredError') {
+    if (error.name === 'JsonWebTokenError') {
       console.log('Token expired.');
       return;
     }

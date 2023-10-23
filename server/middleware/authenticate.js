@@ -1,30 +1,40 @@
 const { sign } = require('jsonwebtoken');
 const decodeToken = require('../utils/decodeToken');
 
+const checkRefreshToken = (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+  const userProfileData = decodeToken(refreshToken, 'REFRESH');
+
+  // If refresh token is valid, then refresh access token
+  if (userProfileData) {
+    generateNewAccessToken(userProfileData, res);
+  } else {
+    res.status(401).send('Access token error.');
+  }
+};
+
+const generateNewAccessToken = (userProfileData, res) => {
+  const newAccessToken = sign(
+    { id: userProfileData.id, role: userProfileData.role },
+    process.env.ACCESS_TOKEN_SECRET,
+    { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
+  );
+
+  return res.cookie('accessToken', newAccessToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'Lax',
+  });
+};
+
 const authenticate = (req, res, next) => {
   try {
     const accessToken = req.cookies.accessToken;
     let userProfileData = decodeToken(accessToken, 'ACCESS');
 
+    // If access token cannot be decoded, check the refresh token
     if (!userProfileData) {
-      const refreshToken = req.cookies.refreshToken;
-      userProfileData = decodeToken(refreshToken, 'REFRESH');
-
-      if (userProfileData) {
-        const newAccessToken = sign(
-          { id: userProfileData.id, role: userProfileData.role },
-          process.env.ACCESS_TOKEN_SECRET,
-          { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
-        );
-
-        res.cookie('accessToken', newAccessToken, {
-          httpOnly: true,
-          secure: true,
-          sameSite: 'Lax',
-        });
-      } else {
-        return res.status(401).send('Access token error.');
-      }
+      checkRefreshToken(req, res);
     }
 
     // Make userID available to all controllers
@@ -39,7 +49,6 @@ const authenticate = (req, res, next) => {
 
 const passportStateOrTokenCheck = (req, res, next) => {
   // If state is set in Passport.js, skip authenticate middleware
-  console.log();
   if (req.user.state) {
     authenticate(req, res, next);
   } else {
@@ -47,4 +56,9 @@ const passportStateOrTokenCheck = (req, res, next) => {
   }
 };
 
-module.exports = { authenticate, passportStateOrTokenCheck };
+module.exports = {
+  authenticate,
+  passportStateOrTokenCheck,
+  generateNewAccessToken,
+  checkRefreshToken,
+};
