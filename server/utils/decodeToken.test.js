@@ -1,5 +1,5 @@
-import { it, expect, beforeEach, vi } from 'vitest';
-import { sign, verify } from 'jsonwebtoken';
+import { it, expect, vi } from 'vitest';
+import { sign } from 'jsonwebtoken';
 
 import decodeToken from './decodeToken';
 
