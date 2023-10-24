@@ -12,16 +12,16 @@ let req;
 let res;
 let next;
 
+vi.stubEnv('ACCESS_TOKEN_SECRET', 'test');
+vi.stubEnv('ACCESS_TOKEN_EXPIRY', '1m');
+vi.stubEnv('REFRESH_TOKEN_SECRET', 'test');
+vi.stubEnv('REFRESH_TOKEN_EXPIRY', '1m');
+
 const testToken = sign({ id: 1, role: 'user' }, 'test', {
   expiresIn: '1m',
 });
 
 beforeEach(() => {
-  vi.stubEnv('ACCESS_TOKEN_SECRET', 'test');
-  vi.stubEnv('ACCESS_TOKEN_EXPIRY', '1m');
-  vi.stubEnv('REFRESH_TOKEN_SECRET', 'test');
-  vi.stubEnv('REFRESH_TOKEN_EXPIRY', '1m');
-
   req = {
     cookies: {
       accessToken: 'accessToken',
@@ -48,8 +48,8 @@ describe('Authenticate Middleware', () => {
 
     checkRefreshToken(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.send).toHaveBeenCalled();
+    expect(res.status).toBeCalledWith(401);
+    expect(res.send).toBeCalled();
   });
 
   it('should generate a new access token and set it as a cookie', () => {
@@ -57,7 +57,7 @@ describe('Authenticate Middleware', () => {
 
     generateNewAccessToken(userData, res);
 
-    expect(res.cookie).toHaveBeenCalled();
+    expect(res.cookie).toBeCalled();
   });
 
   it('should redirect user to homepage if error is thrown', () => {
@@ -65,7 +65,7 @@ describe('Authenticate Middleware', () => {
 
     authenticate(req, res, next);
 
-    expect(res.redirect).toHaveBeenCalledWith(`${process.env.CLIENT_URL}`);
+    expect(res.redirect).toBeCalledWith(`${process.env.CLIENT_URL}`);
   });
 
   it('should set req.userID and req.role, and then call next', () => {
@@ -75,8 +75,16 @@ describe('Authenticate Middleware', () => {
 
     expect(req.userID).toBe(1);
     expect(req.role).toBe('user');
-    expect(next).toHaveBeenCalled();
+    expect(next).toBeCalled();
   });
 });
 
-// describe('PassportStateOrTokenCheck Middleware', () => {});
+describe('PassportStateOrTokenCheck Middleware', () => {
+  it('should call next if req.user.state is falsy', () => {
+    req.user.state = null;
+
+    passportStateOrTokenCheck(req, res, next);
+
+    expect(next).toBeCalled();
+  });
+});
