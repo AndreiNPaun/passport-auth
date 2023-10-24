@@ -1,7 +1,7 @@
 const User = require('../models/users');
 const { ObjectId } = require('mongodb');
 
-const { setToken } = require('../utils/setToken');
+const setToken = require('../utils/setToken');
 const decodeToken = require('../utils/decodeToken');
 const validationError = require('../utils/validationError');
 const {
@@ -304,7 +304,6 @@ const deleteAccount = async (req, res, next) => {
     res.status(500).send('Unexpected error.');
   }
 };
-
 
 const listUserProvider = async (req, res, next) => {
   const userID = req.userID;
