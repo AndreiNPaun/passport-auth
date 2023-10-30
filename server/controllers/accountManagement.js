@@ -6,6 +6,8 @@ const validationError = require('../utils/validationError');
 const getEditProfile = async (req, res, next) => {
   const userID = req.userID;
 
+  console.log('userID', userID);
+
   const _id = new ObjectId(userID);
 
   try {
