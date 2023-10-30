@@ -2,31 +2,37 @@ const User = require('../models/user');
 
 const validationError = require('../utils/validationError');
 
+const buildUserQuery = (req) => {
+  const { givenName, familyName, email, role } = req.query;
+  const query = {};
+
+  if (givenName) query.givenName = new RegExp(givenName, 'i');
+  if (familyName) query.familyName = new RegExp(familyName, 'i');
+  if (email) query.email = new RegExp(email, 'i');
+  if (role) query.role = role;
+
+  return query;
+};
+
+const filterUsersByRole = (users, requesterRole) => {
+  let filteredUsers = users.filter((user) => user.role !== 'admin');
+
+  if (requesterRole === 'moderator') {
+    filteredUsers = filteredUsers.filter((user) => user.role !== 'moderator');
+  }
+
+  return filteredUsers;
+};
+
 const listUsers = async (req, res, next) => {
   try {
-    console.log('req.query', req.query);
-    const { givenName, familyName, email, role } = req.query;
-
-    const query = {};
-
-    if (givenName) query.givenName = new RegExp(givenName, 'i');
-    if (familyName) query.familyName = new RegExp(familyName, 'i');
-    if (email) query.email = new RegExp(email, 'i');
-    if (role) query.role = role;
-
+    const query = buildUserQuery(req);
     const users = await User.find(query);
+    const filteredUsers = filterUsersByRole(users, req.role);
 
-    let filterAdminAccounts = users.filter((user) => user.role !== 'admin');
-
-    if (req.role === 'moderator') {
-      filterAdminAccounts = filterAdminAccounts.filter(
-        (user) => user.role !== 'moderator'
-      );
-    }
-
-    res.status(200).json(filterAdminAccounts);
+    res.status(200).json(filteredUsers);
   } catch (error) {
-    console.log('Error:', error);
+    console.error('Error:', error);
     res.status(500).send('Unexpected error.');
   }
 };
