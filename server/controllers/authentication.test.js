@@ -7,7 +7,7 @@ import {
   checkIfRecordExists,
   authErrorRedirect,
   setUserInformation,
-} from './users';
+} from './authentication';
 
 let givenName = 'John';
 let familyName = 'Doe';

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Admin, Resource, Layout } from 'react-admin';
-import { Box } from '@chakra-ui/react';
 import UserList from './UserList';
 import UserEdit from './UserEdit';
 

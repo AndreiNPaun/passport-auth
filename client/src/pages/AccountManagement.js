@@ -38,7 +38,7 @@ const loadedUserData = async () => {
   try {
     const response = await httpRequest(
       'get',
-      `${process.env.REACT_APP_SERVER_URL}/edit-profile`
+      `${process.env.REACT_APP_SERVER_URL}/account-management/edit-profile`
     );
     console.log('res', response);
     return response.data;
@@ -66,7 +66,7 @@ export const action = async ({ request, params }) => {
   try {
     const response = await httpRequest(
       'post',
-      `${process.env.REACT_APP_SERVER_URL}/edit-profile`,
+      `${process.env.REACT_APP_SERVER_URL}/account-management/edit-profile`,
       { userInputData }
     );
 

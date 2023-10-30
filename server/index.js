@@ -15,7 +15,9 @@ const certificate = fs.readFileSync(process.env.PRIVATE_KEY_PATH, 'utf8');
 const credentials = { key: privateKey, cert: certificate };
 
 // Routes
-const authRoute = require('./routes/users');
+const authRoute = require('./routes/authentication');
+const accountManagementRoute = require('./routes/accountManagement');
+const adminRoute = require('./routes/admin');
 const passport = require('./middleware/passport');
 
 mongoose.connect(process.env.MONGODB_URL, {
@@ -54,6 +56,8 @@ app.get('/', (req, res) => {
 });
 
 app.use('/', authRoute);
+app.use('/account-management/', accountManagementRoute);
+app.use('/admin/', adminRoute);
 
 // Create the HTTPS server
 const httpsServer = https.createServer(credentials, app);

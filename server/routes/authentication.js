@@ -5,26 +5,12 @@ const passport = require('passport');
 const {
   authenticateOrCreateAccount,
   completeProfileSetup,
-  getEditProfile,
-  postEditProfile,
   synchronizeAccount,
-  deleteAccount,
-  listUserProvider,
-  deleteProvider,
-  listUsers,
-  getOneUser,
-  updateUser,
-  deleteUserAdmin,
-} = require('../controllers/users');
+} = require('../controllers/authentication');
 
-const {
-  authenticate,
-  passportStateOrTokenCheck,
-} = require('../middleware/authenticate');
+const { passportStateOrTokenCheck } = require('../middleware/authenticate');
 
 const nameValidation = require('../utils/validationUtils');
-
-const authorize = require('../middleware/authorize');
 
 // Microsoft
 router.get(
@@ -32,16 +18,6 @@ router.get(
   passport.authenticate('microsoft', {
     prompt: 'select_account',
   })
-);
-
-router.get(
-  '/auth/microsoft/callback',
-  passport.authenticate('microsoft', {
-    session: false,
-  }),
-  passportStateOrTokenCheck,
-  authenticateOrCreateAccount,
-  synchronizeAccount
 );
 
 // Google
@@ -101,43 +77,11 @@ router.post(
   completeProfileSetup
 );
 
-router.get('/edit-profile', authenticate, getEditProfile);
-router.post(
-  '/edit-profile',
-  [
-    nameValidation('userInputData.givenName', 'First name'),
-    nameValidation('userInputData.familyName', 'Family Name'),
-  ],
-  authenticate,
-  postEditProfile
-);
-
 router.post('/logout', (req, res) => {
   res
     .clearCookie('accessToken')
     .clearCookie('refreshToken')
     .send('Cookies cleared');
 });
-
-router.get('/list-providers', authenticate, listUserProvider);
-router.post('/delete-provider', authenticate, deleteProvider);
-
-router.post('/delete-account', authenticate, deleteAccount);
-
-// Admin Dashboard
-router.get('/list-users', authenticate, authorize, listUsers);
-router.get('/get-user/:id', authenticate, authorize, getOneUser);
-router.post(
-  '/update-user/:id',
-  [
-    nameValidation('givenName', 'First name'),
-    nameValidation('familyName', 'Family Name'),
-  ],
-  authenticate,
-  authorize,
-  updateUser
-);
-
-router.post('/delete-user/:id', authenticate, authorize, deleteUserAdmin);
 
 module.exports = router;

@@ -11,31 +11,31 @@ import {
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import {unsetToken} from '../../../store/action/login'
-import httpRequest from '../../../utils/httpRequest'
+import { unsetToken } from '../../../store/action/login';
+import httpRequest from '../../../utils/httpRequest';
 
 import Card from '../../UI/Card';
 import CustomButton from '../../UI/CustomButton';
 
 const EditArea = ({ userData, showFormHandler }) => {
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [is1130] = useMediaQuery('(min-width: 1130px)');
 
-    const deleteAccountHandler = async () => {
+  const deleteAccountHandler = async () => {
     const proceed = window.confirm(
       'Are you sure you wish to delete your account?'
     );
 
     if (proceed) {
-        await httpRequest(
-          'post',
-          `${process.env.REACT_APP_SERVER_URL}/delete-account`,
-        );
+      await httpRequest(
+        'post',
+        `${process.env.REACT_APP_SERVER_URL}/account-management/delete-account`
+      );
 
-        dispatch(unsetToken())
-        navigate('/')
+      dispatch(unsetToken());
+      navigate('/');
     }
   };
 
@@ -78,7 +78,12 @@ const EditArea = ({ userData, showFormHandler }) => {
               <CustomButton m="1rem" onClick={showFormHandler}>
                 Edit Information
               </CustomButton>
-              <CustomButton m="1rem" bg="#cf0f04" _hover={{ bg: '#7c0902' }} onClick={deleteAccountHandler}>
+              <CustomButton
+                m="1rem"
+                bg="#cf0f04"
+                _hover={{ bg: '#7c0902' }}
+                onClick={deleteAccountHandler}
+              >
                 Delete Account
               </CustomButton>
             </Flex>
