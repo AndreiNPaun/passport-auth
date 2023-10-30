@@ -31,7 +31,6 @@ const redirectSetTokens = (req, res, role) => {
       return res.send(`role=${role}`);
     }
 
-    console.log('redirect', role);
     res.redirect(
       `${process.env.CLIENT_URL}/login-check?isLoggedIn=true&role=${role}`
     );
