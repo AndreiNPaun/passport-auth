@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Box } from '@chakra-ui/react';
 
 import EditProfile from './EditProfile/EditProfile';
 import EditArea from './EditProfile/EditArea';
@@ -7,6 +6,7 @@ import ProviderArea from './Provider/ProviderArea';
 
 const AccountManagement = ({ userInfo }) => {
   const [userData, setUserData] = useState(userInfo);
+  console.log(userData);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   const showFormHandler = () => {

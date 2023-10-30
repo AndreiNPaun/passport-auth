@@ -29,6 +29,7 @@ const EditProfile = (props) => {
   const [userDataInput, setUserDataInput] = useState({
     givenName: props.userData.givenName || '',
     familyName: props.userData.familyName || '',
+    role: props.userData.role,
   });
   const [isError, setIsError] = useState();
   const [isSubmitting, setIsSubmitting] = useState(false);
