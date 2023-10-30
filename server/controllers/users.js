@@ -1,4 +1,4 @@
-const User = require('../models/users');
+const User = require('../models/user');
 const { ObjectId } = require('mongodb');
 
 const setToken = require('../utils/setToken');
@@ -9,6 +9,73 @@ const {
   redirectSync,
   redirectWithError,
 } = require('../utils/userRedirect');
+
+const checkIfProviderExists = async (providerType, providerID, email) => {
+  // Looks for existing record stored under a providerType (Microsoft)
+  return await User.findOne({
+    [`provider.${providerType}`]: {
+      $elemMatch: { id: providerID, email },
+    },
+  });
+};
+
+const checkIfRecordExists = async (providerID, email) => {
+  // Looks for any record matching id and email
+  return await User.findOne({
+    $or: [
+      { 'provider.google': { $elemMatch: { id: providerID, email } } },
+      { 'provider.github': { $elemMatch: { id: providerID, email } } },
+      { 'provider.microsoft': { $elemMatch: { id: providerID, email } } },
+      { 'provider.linkedin': { $elemMatch: { id: providerID, email } } },
+    ],
+  });
+};
+
+const authErrorRedirect = (req, res, errorValues) => {
+  req.user.error = errorValues;
+
+  return redirectWithError(req, res);
+};
+
+const setUserInformation = (userInfo) => {
+  const { givenName, familyName, providerType, providerID, email, extraParam } =
+    userInfo;
+
+  const newAccountData = {
+    givenName,
+    familyName,
+    role: 'guest',
+    provider: {
+      [providerType]: [
+        {
+          id: providerID,
+          givenName,
+          familyName,
+          email,
+        },
+      ],
+    },
+  };
+
+  // Set any extra parameter passed as key value pair
+  if (extraParam) {
+    console.log('extra', extraParam[0]);
+    const key = extraParam[0];
+    const value = extraParam[1];
+
+    newAccountData.provider[providerType][0][key] = value;
+  }
+
+  return newAccountData;
+};
+
+const createUserAccount = async (userProfileData) => {
+  const newAccountData = setUserInformation(userProfileData);
+
+  const newAccount = await new User(newAccountData).save();
+
+  return newAccount;
+};
 
 const authenticateOrCreateAccount = async (req, res, next) => {
   if (req.user.state === null) {
@@ -22,57 +89,34 @@ const authenticateOrCreateAccount = async (req, res, next) => {
         extraParam,
       } = req.user;
 
-      // Extra param set in passport middleware
-      const key = (Array.isArray(extraParam) && extraParam[0]) || null;
-      const value = (Array.isArray(extraParam) && extraParam[1]) || null;
-
       // Looks for existing record stored under a providerType (Microsoft)
-      const existingProvider = await User.findOne({
-        [`provider.${providerType}`]: {
-          $elemMatch: { id: providerID, email },
-        },
-      });
+      const existingProvider = await checkIfProviderExists(
+        providerType,
+        providerID,
+        email
+      );
 
       // Looks for any record matching id and email
-      const existingProviderRecord = await User.findOne({
-        $or: [
-          { 'provider.google': { $elemMatch: { id: providerID, email } } },
-          { 'provider.github': { $elemMatch: { id: providerID, email } } },
-          { 'provider.microsoft': { $elemMatch: { id: providerID, email } } },
-          { 'provider.linkedin': { $elemMatch: { id: providerID, email } } },
-        ],
-      });
+      const existingProviderRecord = await checkIfRecordExists();
 
       if (!existingProvider) {
-        console.log('No user account found.');
-
         if (existingProviderRecord) {
-          console.log('Provider account is already linked to another account.');
-
-          req.user.error = {
+          return authErrorRedirect(req, res, {
             error: 'Provider account is already linked to another account.',
-          };
-
-          return redirectWithError(req, res);
+          });
         }
 
         if (email === '') {
-          console.log('Email cannot be retrieved.');
-
-          req.user.error = {
+          return authErrorRedirect(req, res, {
             error: 'Email cannot be retrieved.',
             email: '',
             providerType,
-          };
-
-          return redirectWithError(req, res);
+          });
         }
 
         // Check if either field is empty and redirect the user to form to complete missing fields
         if (givenName === '' || familyName === '') {
-          console.log('User account fields are empty.');
-
-          req.user.error = {
+          return authErrorRedirect(req, res, {
             error: 'User account name fields are empty.',
             givenName,
             familyName,
@@ -80,31 +124,21 @@ const authenticateOrCreateAccount = async (req, res, next) => {
             providerType,
             providerID,
             extraParam,
-          };
-
-          return redirectWithError(req, res);
+          });
         }
 
-        const newUserAccount = new User({
+        const userProfileData = {
           givenName,
           familyName,
-          role: 'guest',
-          provider: {
-            [providerType]: [
-              {
-                id: providerID,
-                givenName,
-                familyName,
-                email,
-                [key]: value,
-              },
-            ],
-          },
-        });
+          email,
+          providerType,
+          providerID,
+          extraParam,
+        };
 
-        await newUserAccount.save();
+        const newAccount = await createUserAccount(userProfileData);
 
-        req.user = setToken(newUserAccount);
+        req.user = setToken(newAccount);
         return redirectSetTokens(req, res);
       }
 
@@ -122,47 +156,21 @@ const completeProfileSetup = async (req, res, next) => {
     return;
   }
 
-  const { givenName, familyName } = req.body.userInputData;
-
-  const userProfileData = decodeToken(req.cookies.initialSetup, 'SETUP');
-
-  const email = userProfileData.email;
-  const providerType = userProfileData.providerType;
-  const providerID = userProfileData.providerID;
-  const extraParam = userProfileData.extraParam;
-
-  const key = extraParam[0];
-  const value = extraParam[1];
-
   try {
-    const newAccountData = {
-      givenName,
-      familyName,
-      role: 'guest',
-      provider: {
-        [providerType]: {
-          id: providerID,
-          givenName,
-          familyName,
-          email,
-        },
-      },
-    };
+    const userProfileData = decodeToken(req.cookies.initialSetup, 'SETUP');
 
-    if (key && value) {
-      newAccountData.provider[providerType][key] = value;
-    }
+    userProfileData.givenName = req.body.userInputData.givenName;
+    userProfileData.familyName = req.body.userInputData.familyName;
 
-    const newAccount = new User(newAccountData);
-    const createdUser = await newAccount.save();
+    const newAccount = await createUserAccount(userProfileData);
 
-    const { accessToken, refreshToken } = setToken(createdUser);
+    const { accessToken, refreshToken } = setToken(newAccount);
 
     // isUserInput flags the redirect to navigate to complete-setup page
     const isUserInput = true;
 
     req.user = { accessToken, refreshToken, isUserInput };
-    return redirectSetTokens(req, res, createdUser.role);
+    return redirectSetTokens(req, res, newAccount.role);
   } catch (error) {
     console.log('Error:', error);
     res.status(500).send('Server Error.');
@@ -418,8 +426,14 @@ const deleteUserAdmin = async (req, res, next) => {
 };
 
 module.exports = {
+  checkIfProviderExists,
+  checkIfRecordExists,
+  authErrorRedirect,
+  setUserInformation,
+  createUserAccount,
   authenticateOrCreateAccount,
   completeProfileSetup,
+
   getEditProfile,
   postEditProfile,
   synchronizeAccount,
