@@ -51,9 +51,9 @@ const EditProfile = (props) => {
     const userInputData = { givenName, familyName };
 
     try {
-      const response = await httpRequest(
+      await httpRequest(
         'post',
-        `${process.env.REACT_APP_SERVER_URL}/edit-profile`,
+        `${process.env.REACT_APP_SERVER_URL}/account-management/edit-profile`,
         { userInputData }
       );
 

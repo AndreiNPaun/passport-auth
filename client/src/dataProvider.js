@@ -3,7 +3,9 @@ import httpRequest from './utils/httpRequest';
 export default {
   getList: async (resource, params) => {
     try {
-      const url = new URL(`${process.env.REACT_APP_SERVER_URL}/${resource}`);
+      const url = new URL(
+        `${process.env.REACT_APP_SERVER_URL}/admin/${resource}`
+      );
 
       // Add query parameters to the URL based on the 'params' argument
       if (params.filter) {
@@ -32,7 +34,7 @@ export default {
     try {
       const response = await httpRequest(
         'get',
-        `${process.env.REACT_APP_SERVER_URL}/get-user/${params.id}`
+        `${process.env.REACT_APP_SERVER_URL}/admin/get-user/${params.id}`
       );
 
       return {
@@ -50,7 +52,7 @@ export default {
     try {
       const response = await httpRequest(
         'post',
-        `${process.env.REACT_APP_SERVER_URL}/update-user/${params.id}`,
+        `${process.env.REACT_APP_SERVER_URL}/admin/update-user/${params.id}`,
         params.data
       );
 
@@ -69,7 +71,7 @@ export default {
     try {
       const response = await httpRequest(
         'post',
-        `${process.env.REACT_APP_SERVER_URL}/delete-user/${params.id}`
+        `${process.env.REACT_APP_SERVER_URL}/admin/delete-user/${params.id}`
       );
 
       if (!response.data) {

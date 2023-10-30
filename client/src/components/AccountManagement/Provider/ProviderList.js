@@ -39,7 +39,7 @@ const ProviderList = ({ providerName }) => {
       try {
         const response = await httpRequest(
           'get',
-          `${process.env.REACT_APP_SERVER_URL}/list-providers`,
+          `${process.env.REACT_APP_SERVER_URL}/account-management/list-providers`,
           { provider: providerName }
         );
         console.log('response', response);
@@ -60,7 +60,7 @@ const ProviderList = ({ providerName }) => {
       try {
         await httpRequest(
           'post',
-          `${process.env.REACT_APP_SERVER_URL}/delete-provider`,
+          `${process.env.REACT_APP_SERVER_URL}/account-management/delete-provider`,
           { providerID, providerType }
         );
 
