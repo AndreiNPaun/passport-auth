@@ -13,7 +13,6 @@ const CheckTokens = () => {
     if (isRefreshTokenExpired) {
       Cookies.remove('isRefreshTokenExpired');
       dispatch(unsetToken());
-      console.log('kek removed');
       navigate('/');
     }
   }, []);

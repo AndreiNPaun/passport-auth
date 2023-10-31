@@ -4,7 +4,7 @@ import { useLoaderData, defer, Await } from 'react-router-dom';
 import { Spinner, Center } from '@chakra-ui/react';
 
 import AccountManagement from '../components/AccountManagement/AccountManagement';
-import httpRequest from '../utils/httpRequest';
+import HttpRequest from '../utils/HttpRequest';
 import { TokenErrorComponent } from '../utils/TokenError';
 
 const AccountManagementPage = () => {
@@ -36,7 +36,7 @@ export default AccountManagementPage;
 
 const loadedUserData = async () => {
   try {
-    const response = await httpRequest(
+    const response = await HttpRequest(
       'get',
       `${process.env.REACT_APP_SERVER_URL}/account-management/edit-profile`
     );
@@ -64,7 +64,7 @@ export const action = async ({ request, params }) => {
   };
 
   try {
-    const response = await httpRequest(
+    const response = await HttpRequest(
       'post',
       `${process.env.REACT_APP_SERVER_URL}/account-management/edit-profile`,
       { userInputData }

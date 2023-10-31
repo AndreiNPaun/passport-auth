@@ -1,4 +1,4 @@
-import httpRequest from './utils/httpRequest';
+import HttpRequest from './utils/HttpRequest';
 
 export default {
   getList: async (resource, params) => {
@@ -14,7 +14,7 @@ export default {
         );
       }
 
-      const response = await httpRequest('get', url.toString());
+      const response = await HttpRequest('get', url.toString());
 
       console.log(response);
 
@@ -32,7 +32,7 @@ export default {
   },
   getOne: async (resource, params) => {
     try {
-      const response = await httpRequest(
+      const response = await HttpRequest(
         'get',
         `${process.env.REACT_APP_SERVER_URL}/admin/get-user/${params.id}`
       );
@@ -50,7 +50,7 @@ export default {
   },
   update: async (resource, params) => {
     try {
-      const response = await httpRequest(
+      const response = await HttpRequest(
         'post',
         `${process.env.REACT_APP_SERVER_URL}/admin/update-user/${params.id}`,
         params.data
@@ -69,7 +69,7 @@ export default {
   },
   delete: async (resource, params) => {
     try {
-      const response = await httpRequest(
+      const response = await HttpRequest(
         'post',
         `${process.env.REACT_APP_SERVER_URL}/admin/delete-user/${params.id}`
       );

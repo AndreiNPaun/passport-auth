@@ -1,4 +1,4 @@
-import httpRequest from '../../utils/httpRequest';
+import HttpRequest from '../../utils/HttpRequest';
 
 import { loginActions } from '../slice/login';
 
@@ -27,7 +27,7 @@ export const unsetToken = () => {
       localStorage.removeItem('role');
 
       // Send the logout request to the server
-      await httpRequest('post', `${process.env.REACT_APP_SERVER_URL}/logout`);
+      await HttpRequest('post', `${process.env.REACT_APP_SERVER_URL}/logout`);
     } catch (error) {
       console.log(error);
     }

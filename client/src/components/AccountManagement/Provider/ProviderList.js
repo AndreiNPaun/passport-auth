@@ -11,7 +11,7 @@ import {
 } from '../../../utils/authorizationLinks';
 
 import { TokenErrorFunction } from '../../../utils/TokenError';
-import httpRequest from '../../../utils/httpRequest';
+import HttpRequest from '../../../utils/HttpRequest';
 
 import { Box, Text, Divider, useMediaQuery } from '@chakra-ui/react';
 import Card from '../../UI/Card';
@@ -37,7 +37,7 @@ const ProviderList = ({ providerName }) => {
   useEffect(() => {
     (async () => {
       try {
-        const response = await httpRequest(
+        const response = await HttpRequest(
           'get',
           `${process.env.REACT_APP_SERVER_URL}/account-management/list-providers`,
           { provider: providerName }
@@ -58,7 +58,7 @@ const ProviderList = ({ providerName }) => {
 
     if (proceed) {
       try {
-        await httpRequest(
+        await HttpRequest(
           'post',
           `${process.env.REACT_APP_SERVER_URL}/account-management/delete-provider`,
           { providerID, providerType }

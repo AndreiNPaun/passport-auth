@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import httpRequest from '../../../utils/httpRequest';
+import HttpRequest from '../../../utils/HttpRequest';
 
 import Modal from '../../UI/Modal';
 import {
@@ -52,7 +52,7 @@ const EditProfile = (props) => {
     const userInputData = { givenName, familyName };
 
     try {
-      await httpRequest(
+      await HttpRequest(
         'post',
         `${process.env.REACT_APP_SERVER_URL}/account-management/edit-profile`,
         { userInputData }

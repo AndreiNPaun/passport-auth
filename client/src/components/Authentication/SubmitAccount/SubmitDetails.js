@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react';
 import { WarningIcon } from '@chakra-ui/icons';
 import Card from '../../UI/Card';
-import httpRequest from '../../../utils/httpRequest';
+import HttpRequest from '../../../utils/HttpRequest';
 import InputFields from '../../UI/InputFields';
 import CustomButton from '../../UI/CustomButton';
 
@@ -50,7 +50,7 @@ const SubmitDetails = () => {
     const userInputData = { givenName, familyName, email };
 
     try {
-      const response = await httpRequest(
+      const response = await HttpRequest(
         'post',
         `${process.env.REACT_APP_SERVER_URL}/complete-setup`,
         { userInputData }
