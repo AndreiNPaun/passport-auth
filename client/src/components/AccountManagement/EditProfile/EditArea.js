@@ -12,7 +12,7 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { unsetToken } from '../../../store/action/login';
-import httpRequest from '../../../utils/httpRequest';
+import HttpRequest from '../../../utils/HttpRequest';
 
 import Card from '../../UI/Card';
 import CustomButton from '../../UI/CustomButton';
@@ -29,7 +29,7 @@ const EditArea = ({ userData, showFormHandler }) => {
     );
 
     if (proceed) {
-      await httpRequest(
+      await HttpRequest(
         'post',
         `${process.env.REACT_APP_SERVER_URL}/account-management/delete-account`
       );
