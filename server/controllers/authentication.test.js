@@ -80,8 +80,6 @@ describe('authenticateOrCreateAccount controller', () => {
   it("should return a user's record if it exists", async () => {
     const checkRecordExists = await checkIfRecordExists(providerID, email);
 
-    console.log('exting', checkRecordExists);
-
     expect(checkRecordExists.provider[providerType][0].email).toBe(
       'johndoe@gmail.com'
     );

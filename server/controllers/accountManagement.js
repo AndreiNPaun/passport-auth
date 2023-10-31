@@ -10,7 +10,7 @@ const convertIDToObjectID = (userID) => {
 
 const getEditProfile = async (req, res, next) => {
   try {
-    _id = convertIDToObjectID(req.userID);
+    const _id = convertIDToObjectID(req.userID);
 
     const user = await User.findOne({
       _id,
@@ -56,18 +56,6 @@ const postEditProfile = async (req, res, next) => {
   }
 };
 
-const deleteAccount = async (req, res, next) => {
-  try {
-    const userID = req.userID;
-    await User.findByIdAndDelete(userID);
-
-    res.status(200).json({ message: 'User deleted successfully.' });
-  } catch (error) {
-    console.log('Error:', error);
-    res.status(500).send('Unexpected error.');
-  }
-};
-
 const listUserProvider = async (req, res, next) => {
   const userID = req.userID;
   const provider = req.query.provider.toLowerCase();
@@ -80,7 +68,7 @@ const listUserProvider = async (req, res, next) => {
     res.status(200).send(userProviders.provider[provider]);
   } catch (error) {
     console.log('Error:', error);
-    res.status(500).send('Unexpected error.');
+    res.status(500).send('Server Error.');
   }
 };
 
@@ -99,7 +87,19 @@ const deleteProvider = async (req, res, next) => {
     res.status(200).send('Provider connection removed successfully.');
   } catch (error) {
     console.log('Error:', error);
-    res.status(500).send('Error while removing the provider connection.');
+    res.status(500).send('Server Error.');
+  }
+};
+
+const deleteAccount = async (req, res, next) => {
+  try {
+    const userID = req.userID;
+    await User.findByIdAndDelete(userID);
+
+    res.status(200).json({ message: 'User deleted successfully.' });
+  } catch (error) {
+    console.log('Error:', error);
+    res.status(500).send('Server Error.');
   }
 };
 
@@ -108,6 +108,6 @@ module.exports = {
   getEditProfile,
   postEditProfile,
   listUserProvider,
-  deleteAccount,
   deleteProvider,
+  deleteAccount,
 };
