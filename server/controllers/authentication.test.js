@@ -41,7 +41,7 @@ describe('functions used by both auth controllers', () => {
   });
 });
 
-describe('authenticateOrCreateAccount controller', () => {
+describe('authenticateOrCreateAccount()', () => {
   beforeAll(async () => {
     await mongoose.connect('mongodb://localhost:27017/test');
 

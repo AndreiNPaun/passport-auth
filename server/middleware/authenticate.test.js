@@ -42,7 +42,7 @@ beforeEach(() => {
   next = vi.fn();
 });
 
-describe('Authenticate Middleware', () => {
+describe('authenticate()', () => {
   it('should respond with status code 401 and call send if the refresh token is invalid', () => {
     req.cookies.refreshToken = 'invalid';
 
@@ -79,7 +79,7 @@ describe('Authenticate Middleware', () => {
   });
 });
 
-describe('PassportStateOrTokenCheck Middleware', () => {
+describe('passportStateOrTokenCheck()', () => {
   it('should call next if req.user.state is falsy', () => {
     req.user.state = null;
 
