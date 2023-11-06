@@ -6,7 +6,6 @@ import ProviderArea from './Provider/ProviderArea';
 
 const AccountManagement = ({ userInfo }) => {
   const [userData, setUserData] = useState(userInfo);
-  console.log(userData);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   const showFormHandler = () => {

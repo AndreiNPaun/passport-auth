@@ -20,14 +20,12 @@
     "react-redux": "^8.1.2",
     "react-router-dom": "^6.14.2",
     "react-scripts": "^5.0.1",
-    "vitest": "^0.34.6",
     "web-vitals": "^3.4.0"
   },
   "scripts": {
     "start": "HTTPS=true SSL_CRT_FILE=../certs/localhost.crt SSL_KEY_FILE=../certs/localhost.key react-scripts start",
     "build": "react-scripts build",
-    "test": "vitest --run --reporter verbose",
-    "test:watch": "vitest",
+    "test": "react-scripts test --transformIgnorePatterns",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
