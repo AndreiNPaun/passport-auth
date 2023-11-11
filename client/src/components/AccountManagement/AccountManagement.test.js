@@ -11,9 +11,9 @@ describe('AccountManagement', () => {
   it('should render user profile information', async () => {
     render(<AccountManagement userInfo={userInfo} />);
 
-    const givenNameElement = screen.getByText('John', { exact: false });
-    const familyNameElement = screen.getByText('Doe', { exact: false });
-    const roleElement = screen.getByText('test', { exact: false });
+    const givenNameElement = screen.queryByText('John');
+    const familyNameElement = screen.queryByText('Doe');
+    const roleElement = screen.queryByText('tester');
 
     expect(givenNameElement).toBeInTheDocument();
     expect(familyNameElement).toBeInTheDocument();
