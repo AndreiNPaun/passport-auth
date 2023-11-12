@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
-
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-
-import HttpRequest from '../../../utils/HttpRequest';
-
-import Modal from '../../UI/Modal';
 import {
   Center,
   Box,
@@ -17,6 +12,8 @@ import {
 } from '@chakra-ui/react';
 import { WarningIcon } from '@chakra-ui/icons';
 
+import HttpRequest from '../../../utils/HttpRequest';
+import Modal from '../../UI/Modal';
 import { TokenErrorFunction } from '../../../utils/TokenError';
 import CustomButton from '../../UI/CustomButton';
 import Card from '../../UI/Card';
@@ -27,8 +24,8 @@ const EditProfile = (props) => {
   const navigate = useNavigate();
 
   const [userDataInput, setUserDataInput] = useState({
-    givenName: props.userData.givenName || '',
-    familyName: props.userData.familyName || '',
+    givenName: props.userData.givenName,
+    familyName: props.userData.familyName,
     role: props.userData.role,
   });
   const [isError, setIsError] = useState();
