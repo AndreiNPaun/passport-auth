@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { Box, Text, Divider, useMediaQuery } from '@chakra-ui/react';
 
 import {
   GithubAuthorisation,
@@ -9,13 +9,10 @@ import {
   GoogleAuthorisation,
   MicrosoftAuthorisation,
 } from '../../../utils/authorizationLinks';
-
-import { TokenErrorFunction } from '../../../utils/TokenError';
-import HttpRequest from '../../../utils/HttpRequest';
-
-import { Box, Text, Divider, useMediaQuery } from '@chakra-ui/react';
 import Card from '../../UI/Card';
 import CustomButton from '../../UI/CustomButton';
+import { TokenErrorFunction } from '../../../utils/TokenError';
+import HttpRequest from '../../../utils/HttpRequest';
 
 const ProviderList = ({ providerName }) => {
   const dispatch = useDispatch();
