@@ -32,7 +32,7 @@ describe('EditArea', () => {
 
   beforeEach(() => {
     window.confirm = jest.fn().mockImplementation(() => true);
-    HttpRequest.mockImplementation(() => Promise.resolve());
+    HttpRequest.mockResolvedValueOnce();
 
     useDispatch.mockImplementation(() => mockDispatch);
     useNavigate.mockImplementation(() => mockNavigate);
