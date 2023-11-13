@@ -56,8 +56,6 @@ const SubmitDetails = () => {
         { userInputData }
       );
 
-      console.log('response', response);
-
       if (response.status === 200) {
         setIsSubmitting(false);
         navigate(`/login-check?isLoggedIn=true&${response.data}`);
@@ -65,7 +63,6 @@ const SubmitDetails = () => {
         navigate('/account-management');
       }
     } catch (error) {
-      console.log(error);
       if (
         error.response &&
         error.response.data &&
