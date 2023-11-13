@@ -39,7 +39,6 @@ const ProviderList = ({ providerName }) => {
           `${process.env.REACT_APP_SERVER_URL}/account-management/list-providers`,
           { provider: providerName }
         );
-        console.log('response', response);
 
         setUserData(response.data);
       } catch (error) {
