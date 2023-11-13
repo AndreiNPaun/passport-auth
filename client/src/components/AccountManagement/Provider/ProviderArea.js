@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
-
 import { Box, Text, Grid, Center, useMediaQuery } from '@chakra-ui/react';
 import { FaGithub, FaLinkedin, FaGoogle, FaMicrosoft } from 'react-icons/fa';
-import CustomButton from '../../UI/CustomButton';
-
-import Modal from '../../UI/Modal';
-import ProviderList from './ProviderList';
 
 import {
   GithubAuthorisation,
@@ -13,8 +8,10 @@ import {
   GoogleAuthorisation,
   MicrosoftAuthorisation,
 } from '../../../utils/authorizationLinks';
-
+import Modal from '../../UI/Modal';
+import ProviderList from './ProviderList';
 import Card from '../../UI/Card';
+import ProviderGridItem from './ProviderGridItem';
 
 const ProviderArea = () => {
   const [isListOpen, setIsListOpen] = useState(false);
@@ -32,79 +29,6 @@ const ProviderArea = () => {
 
   const providerNameHandler = (providerName) => {
     setProviderName(providerName);
-  };
-
-  const renderGrid = ({ color, Icon, authorizationFunction, name }) => {
-    if (is1130) {
-      return (
-        <Grid
-          key={name}
-          templateColumns="auto 1fr auto auto"
-          gap="1rem"
-          mb="1.5rem"
-          alignItems="center"
-          p="1rem"
-          bg="white"
-          boxShadow="sm"
-          borderRadius="5px"
-          border="1px solid"
-          borderColor="gray.200"
-        >
-          <Box bg={color} p="0.5rem" borderRadius="5px">
-            <Icon size="1.5em" color="white" />
-          </Box>
-          <Text fontSize="xl" fontWeight="600" color="gray.700">
-            {name}
-          </Text>
-          <CustomButton onClick={() => authorizationFunction(true)}>
-            Add
-          </CustomButton>
-          <CustomButton
-            onClick={() => {
-              showListHandler();
-              providerNameHandler(name);
-            }}
-          >
-            See Connections
-          </CustomButton>
-        </Grid>
-      );
-    } else {
-      return (
-        <Grid
-          key={name}
-          templateColumns="auto 1fr"
-          templateRows="auto auto auto"
-          gap="1rem"
-          mb="1.5rem"
-          alignItems="center"
-          p="1rem"
-          bg="white"
-        >
-          <Box bg={color} p="0.5rem" borderRadius="5px">
-            <Icon size="1.5em" color="white" />
-          </Box>
-          <Text fontSize="xl" fontWeight="600" color="gray.700">
-            {name}
-          </Text>
-          <CustomButton
-            onClick={() => authorizationFunction(true)}
-            gridColumn="span 2"
-          >
-            Add
-          </CustomButton>
-          <CustomButton
-            onClick={() => {
-              showListHandler();
-              providerNameHandler(name);
-            }}
-            gridColumn="span 3"
-          >
-            See Connections
-          </CustomButton>
-        </Grid>
-      );
-    }
   };
 
   return (
@@ -158,7 +82,20 @@ const ProviderArea = () => {
                   authorizationFunction: LinkedInAuthorisation,
                   name: 'LinkedIn',
                 },
-              ].map((provider) => renderGrid(provider))}
+              ].map((provider) => (
+                <ProviderGridItem
+                  key={provider.name}
+                  color={provider.color}
+                  Icon={provider.Icon}
+                  authorizationFunction={provider.authorizationFunction}
+                  name={provider.name}
+                  is1130={is1130}
+                  onShowList={(name) => {
+                    showListHandler();
+                    providerNameHandler(name);
+                  }}
+                />
+              ))}
             </Box>
           </Grid>
         </Card>
