@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Grid, Text } from '@chakra-ui/react';
+
 import CustomButton from '../../UI/CustomButton';
 
 const ProviderGridItem = ({
