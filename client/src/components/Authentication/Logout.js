@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Link } from '@chakra-ui/react';
-
 import { useDispatch } from 'react-redux';
+
 import { unsetToken } from '../../store/action/login';
 
 const Logout = () => {

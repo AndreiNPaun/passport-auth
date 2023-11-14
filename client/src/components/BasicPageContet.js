@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { Center, Text, Box, VStack } from '@chakra-ui/react';
 
 const BasicPageContent = ({ title, message }) => {

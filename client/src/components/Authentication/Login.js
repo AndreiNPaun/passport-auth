@@ -9,7 +9,6 @@ import {
   MicrosoftAuthorisation,
 } from '../../utils/authorizationLinks';
 import CustomButton from '../UI/CustomButton';
-
 import Card from '../UI/Card';
 
 const Login = () => {

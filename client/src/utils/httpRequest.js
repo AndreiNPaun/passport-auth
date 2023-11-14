@@ -13,6 +13,8 @@ const HttpRequest = async (method, url, values = {}) => {
     options.data = values;
   } else if (method === 'get') {
     options.params = values;
+  } else {
+    throw new Error('Invalid HTTP Request Method.');
   }
 
   const response = await axios({ method, url, ...options });
