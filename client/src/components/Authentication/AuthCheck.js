@@ -20,7 +20,6 @@ const AuthCheck = () => {
         navigate('/');
       }
     } catch (error) {
-      console.log(error);
       navigate('/');
     }
   }, []);

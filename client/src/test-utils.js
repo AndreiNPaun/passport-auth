@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 import store from './store';
 
-const render = (component) => {
+export const render = (component) => {
   rtlRender(
     <Provider store={store}>
       <BrowserRouter>{component}</BrowserRouter>
@@ -12,4 +12,7 @@ const render = (component) => {
   );
 };
 
-export default render;
+export const renderWithCustomRouter = (component, { route = '/' } = {}) => {
+  window.history.pushState({}, 'Test page', route);
+  render(component);
+};

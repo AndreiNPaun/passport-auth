@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { unsetToken } from '../../../store/action/login';
 
-import render from '../../../test-utils';
+import { render } from '../../../test-utils';
 import EditArea from './EditArea';
 import HttpRequest from '../../../utils/HttpRequest';
 
@@ -25,10 +25,7 @@ jest.mock('../../../store/action/login', () => ({
 
 describe('EditArea', () => {
   const mockDispatch = jest.fn();
-  useDispatch.mockReturnValue(mockDispatch);
-
   const mockNavigate = jest.fn();
-  useNavigate.mockReturnValue(mockNavigate);
 
   beforeEach(() => {
     window.confirm = jest.fn().mockImplementation(() => true);
