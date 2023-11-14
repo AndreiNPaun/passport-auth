@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
@@ -18,8 +17,7 @@ const FailedTokenValidity = () => {
         dispatch(unsetToken());
         navigate('/');
       }
-    } catch (Error) {
-      console.log(Error);
+    } catch (error) {
       navigate('/');
     }
   }, []);

@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
@@ -20,8 +19,9 @@ const AuthCheck = () => {
         dispatch(setLogin(isLoggedIn, role));
         navigate('/');
       }
-    } catch (Error) {
-      console.log(Error);
+    } catch (error) {
+      console.log(error);
+      navigate('/');
     }
   }, []);
 };

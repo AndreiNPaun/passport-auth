@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import {
   Text,
@@ -12,6 +11,7 @@ import {
   ListIcon,
 } from '@chakra-ui/react';
 import { WarningIcon } from '@chakra-ui/icons';
+
 import Card from '../../UI/Card';
 import HttpRequest from '../../../utils/HttpRequest';
 import InputFields from '../../UI/InputFields';
@@ -70,7 +70,6 @@ const SubmitDetails = () => {
       ) {
         setIsError(error.response.data);
       } else {
-        console.log('KEKZ');
         navigate('/');
       }
       setIsSubmitting(false);

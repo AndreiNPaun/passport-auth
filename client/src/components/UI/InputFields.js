@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { FormLabel, Input } from '@chakra-ui/react';
 
 const InputFields = ({
