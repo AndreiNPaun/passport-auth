@@ -14,8 +14,7 @@ jest.mock('react-router-dom', () => ({
 }));
 
 describe('SubmitDetails', () => {
-  let mockNavigate = jest.fn();
-  const originalLocation = window.location;
+  const mockNavigate = jest.fn();
 
   beforeEach(() => {
     delete window.location;
@@ -25,7 +24,6 @@ describe('SubmitDetails', () => {
 
   afterEach(() => {
     jest.resetAllMocks();
-    window.location = originalLocation;
   });
 
   it('submits form data and navigates on success', async () => {
