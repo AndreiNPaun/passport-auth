@@ -55,7 +55,7 @@ const SubmitDetails = () => {
       ) {
         setIsError(error.response.data);
       } else {
-        navigate('/');
+        setIsError(['An error occurred while updating the profile.']);
       }
       setIsSubmitting(false);
     }

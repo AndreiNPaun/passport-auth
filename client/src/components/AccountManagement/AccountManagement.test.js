@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import render from '../../test-utils';
+import { render } from '../../test-utils';
 import HttpRequest from '../../utils/HttpRequest';
 import AccountManagement from './AccountManagement';
 
