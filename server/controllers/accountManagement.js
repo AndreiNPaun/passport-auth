@@ -24,7 +24,6 @@ const getEditProfile = async (req, res, next) => {
 
     res.status(200).send(userData);
   } catch (error) {
-    console.log('Error:', error);
     res.status(500).send('Server Error.');
   }
 };
@@ -51,7 +50,6 @@ const postEditProfile = async (req, res, next) => {
 
     res.status(200).send('Account updated.');
   } catch (error) {
-    console.log('Error:', error);
     res.status(500).send('Server Error.');
   }
 };
@@ -67,7 +65,6 @@ const listUserProvider = async (req, res, next) => {
 
     res.status(200).send(userProviders.provider[provider]);
   } catch (error) {
-    console.log('Error:', error);
     res.status(500).send('Server Error.');
   }
 };
@@ -86,7 +83,6 @@ const deleteProvider = async (req, res, next) => {
 
     res.status(200).send('Provider connection removed successfully.');
   } catch (error) {
-    console.log('Error:', error);
     res.status(500).send('Server Error.');
   }
 };
@@ -98,7 +94,6 @@ const deleteAccount = async (req, res, next) => {
 
     res.status(200).json({ message: 'User deleted successfully.' });
   } catch (error) {
-    console.log('Error:', error);
     res.status(500).send('Server Error.');
   }
 };

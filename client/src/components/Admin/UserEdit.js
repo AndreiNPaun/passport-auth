@@ -7,20 +7,17 @@ const UserEdit = () => {
 
   const choices = [
     { id: 'guest', name: 'Guest' },
-    { id: 'developer', name: 'Developer' },
-    { id: 'moderator', name: 'Moderator' },
+    { id: 'admin', name: 'Admin' },
   ];
-
-  if (role && role === 'admin') {
-    choices.push({ id: 'admin', name: 'Admin' });
-  }
 
   return (
     <Edit title="Edit User">
       <SimpleForm>
         <TextInput source="givenName" />
         <TextInput source="familyName" />
-        <SelectInput source="role" choices={choices} />
+        {role && role === 'owner' && (
+          <SelectInput source="role" choices={choices} />
+        )}
       </SimpleForm>
     </Edit>
   );

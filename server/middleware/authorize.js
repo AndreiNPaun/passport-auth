@@ -1,5 +1,5 @@
 const authorize = (req, res, next) => {
-  if (req.role !== 'admin' && req.role !== 'moderator') {
+  if (req.role !== 'owner' && req.role !== 'admin') {
     return res.status(401).send('Unauthorized access.');
   }
 

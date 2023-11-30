@@ -59,7 +59,6 @@ const setUserInformation = (userInfo) => {
 
   // Set any extra parameter passed as key value pair
   if (extraParam) {
-    console.log('extra', extraParam[0]);
     const key = extraParam[0];
     const value = extraParam[1];
 
@@ -172,7 +171,6 @@ const completeProfileSetup = async (req, res, next) => {
     req.user = { accessToken, refreshToken, isUserInput };
     return redirectSetTokens(req, res, newAccount.role);
   } catch (error) {
-    console.log('Error:', error);
     res.status(500).send('Server Error.');
   }
 };
@@ -203,8 +201,6 @@ const synchronizeAccount = async (req, res, next) => {
         existingProvider &&
         _id.toString() !== existingProvider._id.toString()
       ) {
-        console.log('Provider account is already linked to another account.');
-
         req.user.error = {
           error: 'Provider account is already linked to another account.',
         };
@@ -241,8 +237,6 @@ const synchronizeAccount = async (req, res, next) => {
 
       redirectSync(req, res);
     } catch (error) {
-      console.log('weird error');
-      console.log('Error', error);
       res.status(401).redirect(`${process.env.CLIENT_URL}/account-management`);
     }
   }

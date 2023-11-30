@@ -25,7 +25,6 @@ const setToken = ({ _id, role }) => {
 
     return { accessToken, refreshToken };
   } catch (error) {
-    console.log('Error: ', error);
     throw new Error(
       `An error occurred while creating tokens: ${error.message}`
     );

@@ -18,12 +18,10 @@ const decodeToken = (token, tokenType) => {
     const decoded = verify(token, secret);
     return decoded;
   } catch (error) {
-    console.log('Error:', error);
     if (
       error.name === 'JsonWebTokenError' ||
       error.name === 'TokenExpiredError'
     ) {
-      console.log('Token expired.');
       return;
     }
 
