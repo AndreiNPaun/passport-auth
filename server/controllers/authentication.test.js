@@ -1,5 +1,4 @@
 import { it, expect, describe, beforeAll, afterAll, vi } from 'vitest';
-import mongoose from 'mongoose';
 import User from '../models/user';
 
 import {
@@ -43,27 +42,21 @@ describe('functions used by both auth controllers', () => {
 
 describe('authenticateOrCreateAccount()', () => {
   beforeAll(async () => {
-    await mongoose.connect('mongodb://localhost:27017/test');
-
-    const user = new User({
+    User.findOne = vi.fn().mockReturnValueOnce({
       givenName,
       familyName,
       role,
       provider: {
-        [providerType]: [
-          {
-            id: providerID,
-            email,
-          },
-        ],
+        [providerType]: {
+          providerID,
+          email,
+        },
       },
     });
-    await user.save();
   });
 
   afterAll(async () => {
-    await User.deleteMany({});
-    await mongoose.connection.close();
+    vi.restoreAllMocks();
   });
 
   it("should return a user's provider record if it exists", async () => {
@@ -78,9 +71,37 @@ describe('authenticateOrCreateAccount()', () => {
   });
 
   it("should return a user's record if it exists", async () => {
+    const mockUser = {
+      givenName: 'John',
+      familyName: 'Doe',
+      role: 'guest',
+      provider: {
+        google: [{ id: providerID, email }],
+        github: [],
+        microsoft: [],
+        linkedin: [],
+      },
+    };
+
+    User.findOne = vi.fn((query) => {
+      // Check if the query matches any of the $or conditions
+      if (
+        query.$or.some(
+          (cond) =>
+            Object.values(cond)[0].$elemMatch.id === providerID &&
+            Object.values(cond)[0].$elemMatch.email === email
+        )
+      ) {
+        return Promise.resolve(mockUser);
+      }
+      return Promise.resolve(null);
+    });
+
     const checkRecordExists = await checkIfRecordExists(providerID, email);
 
-    expect(checkRecordExists.provider[providerType][0].email).toBe(
+    console.log('checkRecordExists', checkRecordExists);
+
+    expect(checkRecordExists.provider.google[0].email).toBe(
       'johndoe@gmail.com'
     );
   });
