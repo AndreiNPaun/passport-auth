@@ -37,14 +37,21 @@ const authErrorRedirect = (req, res, errorValues) => {
   return redirectWithError(req, res);
 };
 
+const setRoleForEmailDomain = (email) => {
+  const role = email.endsWith(process.env.EMAIL_DOMAIN) ? 'admin' : 'guest';
+  return role;
+};
+
 const setUserInformation = (userInfo) => {
   const { givenName, familyName, providerType, providerID, email, extraParam } =
     userInfo;
 
+  const role = setRoleForEmailDomain(email);
+
   const newAccountData = {
     givenName,
     familyName,
-    role: 'guest',
+    role,
     provider: {
       [providerType]: [
         {
@@ -247,6 +254,7 @@ module.exports = {
   checkIfProviderExists,
   checkIfRecordExists,
   authErrorRedirect,
+  setRoleForEmailDomain,
   setUserInformation,
   createUserAccount,
   authenticateOrCreateAccount,
