@@ -10,8 +10,8 @@ export const setLogin = (isLoggedIn, role) => {
 
       // Sets slice loginCheck value to true
       dispatch(loginActions.login({ loginCheck: isLoggedIn, role }));
-    } catch (Error) {
-      console.log(Error);
+    } catch (error) {
+      console.log(error);
     }
   };
 };

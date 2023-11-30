@@ -40,7 +40,7 @@ const loadedUserData = async () => {
       'get',
       `${process.env.REACT_APP_SERVER_URL}/account-management/edit-profile`
     );
-    console.log('res', response);
+
     return response.data;
   } catch (error) {
     console.error('Error fetching user data:', error);

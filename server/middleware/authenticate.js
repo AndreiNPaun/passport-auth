@@ -46,7 +46,6 @@ const authenticate = (req, res, next) => {
 
     next();
   } catch (error) {
-    console.log('Error:', error);
     return res.redirect(`${process.env.CLIENT_URL}`);
   }
 };

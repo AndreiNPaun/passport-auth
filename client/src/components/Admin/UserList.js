@@ -1,18 +1,9 @@
-import {
-  List,
-  Datagrid,
-  TextField,
-  TextInput,
-  SelectInput,
-  SimpleList,
-} from 'react-admin';
+import { List, Datagrid, TextField, TextInput, SelectInput } from 'react-admin';
 
 import { useMediaQuery } from '@chakra-ui/react';
 
 const roles = [
   { id: 'guest', name: 'Guest' },
-  { id: 'developer', name: 'Developer' },
-  { id: 'moderator', name: 'Moderator' },
   { id: 'admin', name: 'Admin' },
 ];
 

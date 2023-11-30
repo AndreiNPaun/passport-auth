@@ -8,8 +8,6 @@ const redirectSetTokens = (req, res, role) => {
   const isUserInput = req.user.isUserInput;
 
   if (accessToken && refreshToken) {
-    console.log('Log In successful.');
-
     if (req.cookies.initialSetup) {
       res.clearCookie('initialSetup');
     }
@@ -35,7 +33,6 @@ const redirectSetTokens = (req, res, role) => {
       `${process.env.CLIENT_URL}/login-check?isLoggedIn=true&role=${role}`
     );
   } else {
-    console.log('Server error.');
     res.status(400).redirect(process.env.CLIENT_URL);
   }
 };
@@ -48,8 +45,6 @@ const redirectWithError = (req, res) => {
   const userError = req.user.error;
 
   if (userError) {
-    console.log('Error redirect');
-
     const {
       givenName,
       familyName,

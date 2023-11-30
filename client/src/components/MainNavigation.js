@@ -45,7 +45,7 @@ const MainNavigation = () => {
 
       {is700 ? (
         <Box>
-          {role && (role === 'admin' || role === 'moderator') && (
+          {role && (role === 'owner' || role === 'admin') && (
             <Link m="0 1rem" as={RouterLink} to="admin-dashboard">
               Dashboard
             </Link>
@@ -64,7 +64,7 @@ const MainNavigation = () => {
             variant="outline"
           />
           <MenuList zIndex={1000}>
-            {role && (role === 'admin' || role === 'moderator') && (
+            {role && (role === 'owner' || role === 'admin') && (
               <MenuItem as={RouterLink} to="admin-dashboard">
                 Dashboard
               </MenuItem>

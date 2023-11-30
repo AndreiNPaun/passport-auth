@@ -9,7 +9,7 @@ const DashboardPage = () => {
   const role = useSelector((state) => state.login.role);
 
   useEffect(() => {
-    if (role !== 'admin' && role !== 'moderator') {
+    if (role !== 'owner' && role !== 'admin') {
       navigate('/');
     }
   }, []);

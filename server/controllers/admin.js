@@ -19,10 +19,10 @@ const buildUserQuery = (req) => {
 };
 
 const filterUsersByRole = (users, requesterRole) => {
-  let filteredUsers = users.filter((user) => user.role !== 'admin');
+  let filteredUsers = users.filter((user) => user.role !== 'owner');
 
-  if (requesterRole === 'moderator') {
-    filteredUsers = filteredUsers.filter((user) => user.role !== 'moderator');
+  if (requesterRole === 'admin') {
+    filteredUsers = filteredUsers.filter((user) => user.role !== 'admin');
   }
 
   return filteredUsers;
@@ -36,22 +36,17 @@ const listUsers = async (req, res, next) => {
 
     res.status(200).json(filteredUsers);
   } catch (error) {
-    console.error('Error:', error);
     res.status(500).send('Server Error.');
   }
 };
 
 const getOneUser = async (req, res, next) => {
   try {
-    console.log('first');
     const userId = req.params.id;
-    console.log('second');
     const user = await User.findById(userId);
-    console.log('third');
 
     res.status(200).json(user);
   } catch (error) {
-    console.log('Erroreeeeeeee:', error);
     res.status(500).send('Server Error.');
   }
 };
@@ -71,7 +66,6 @@ const updateUser = async (req, res, next) => {
 
     res.status(200).json(user);
   } catch (error) {
-    console.log('Error:', error);
     res.status(500).send('Server Error.');
   }
 };
@@ -83,7 +77,6 @@ const deleteUserAdmin = async (req, res, next) => {
 
     res.status(200).json({ message: 'User deleted successfully.' });
   } catch (error) {
-    console.log('Error:', error);
     res.status(500).send('Server Error.');
   }
 };

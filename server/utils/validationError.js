@@ -6,7 +6,6 @@ const validationError = (req, res) => {
 
   if (!errors.isEmpty()) {
     const errorMessages = errors.array().map((error) => error.msg);
-    console.log(errorMessages);
 
     return res.status(422).send(errorMessages);
   }

@@ -16,8 +16,6 @@ export default {
 
       const response = await HttpRequest('get', url.toString());
 
-      console.log(response);
-
       return {
         data: response.data.map((user) => ({
           ...user,
