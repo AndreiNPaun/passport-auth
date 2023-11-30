@@ -6,6 +6,7 @@ const {
   getOneUser,
   updateUser,
   deleteUserAdmin,
+  deleteManyUsersAdmin,
 } = require('../controllers/admin');
 
 const { authenticate } = require('../middleware/authenticate');
@@ -28,5 +29,12 @@ router.post(
 );
 
 router.post('/delete-user/:id', authenticate, authorize, deleteUserAdmin);
+
+router.post(
+  '/delete-many-users',
+  authenticate,
+  authorize,
+  deleteManyUsersAdmin
+);
 
 module.exports = router;

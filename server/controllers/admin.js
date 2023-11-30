@@ -81,6 +81,17 @@ const deleteUserAdmin = async (req, res, next) => {
   }
 };
 
+const deleteManyUsersAdmin = async (req, res, next) => {
+  try {
+    const { ids } = req.body;
+    await User.deleteMany({ _id: { $in: ids } });
+
+    res.status(200).json({ message: 'Users deleted successfully.' });
+  } catch (error) {
+    res.status(500).send('Server Error.');
+  }
+};
+
 module.exports = {
   buildUserQuery,
   filterUsersByRole,
@@ -88,4 +99,5 @@ module.exports = {
   getOneUser,
   updateUser,
   deleteUserAdmin,
+  deleteManyUsersAdmin,
 };

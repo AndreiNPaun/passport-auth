@@ -82,4 +82,19 @@ export default {
       throw new Error(error);
     }
   },
+
+  deleteMany: async (resource, params) => {
+    try {
+      const response = await HttpRequest(
+        'post',
+        `${process.env.REACT_APP_SERVER_URL}/admin/delete-many-users`,
+        { ids: params.ids }
+      );
+
+      return { data: response.data };
+    } catch (error) {
+      console.error('Error:', error);
+      throw new Error(error);
+    }
+  },
 };
