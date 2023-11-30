@@ -38,7 +38,7 @@ const redirectSetTokens = (req, res, role) => {
 };
 
 const redirectSync = (req, res) => {
-  res.redirect(`${process.env.CLIENT_URL}/account-management`);
+  res.redirect(`${process.env.CLIENT_URL}`);
 };
 
 const redirectWithError = (req, res) => {

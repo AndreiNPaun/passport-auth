@@ -47,10 +47,10 @@ const MainNavigation = () => {
         <Box>
           {role && (role === 'owner' || role === 'admin') && (
             <Link m="0 1rem" as={RouterLink} to="admin-dashboard">
-              Dashboard
+              Admin Dashboard
             </Link>
           )}
-          <Link m="0 1rem" as={RouterLink} to="account-management">
+          <Link m="0 1rem" as={RouterLink} to="">
             My Account
           </Link>
           <Logout />
@@ -66,10 +66,10 @@ const MainNavigation = () => {
           <MenuList zIndex={1000}>
             {role && (role === 'owner' || role === 'admin') && (
               <MenuItem as={RouterLink} to="admin-dashboard">
-                Dashboard
+                Admin Dashboard
               </MenuItem>
             )}
-            <MenuItem as={RouterLink} to="account-management">
+            <MenuItem as={RouterLink} to="">
               My Account
             </MenuItem>
             <MenuItem>
