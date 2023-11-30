@@ -8,6 +8,7 @@ import {
   getOneUser,
   updateUser,
   deleteUserAdmin,
+  deleteManyUsersAdmin,
 } from './admin';
 
 let req;
@@ -205,5 +206,83 @@ describe('deleteUserAdmin()', () => {
 
     expect(res.status).toBeCalledWith(500);
     expect(res.send).toBeCalledWith('Server Error.');
+  });
+});
+
+describe('deleteUserAdmin()', () => {
+  beforeEach(() => {
+    req = {
+      params: { id: '1' },
+    };
+    res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+      send: vi.fn(),
+    };
+  });
+
+  it('should delete a user and return a success message', async () => {
+    User.findByIdAndDelete = vi.fn().mockResolvedValue({ _id: '1' });
+
+    await deleteUserAdmin(req, res);
+
+    expect(User.findByIdAndDelete).toHaveBeenCalledWith('1');
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      message: 'User deleted successfully.',
+    });
+  });
+
+  it('should throw with status code 500 and error message "Server Error." if deletion fails', async () => {
+    User.findByIdAndDelete = vi
+      .fn()
+      .mockRejectedValue(new Error('Deletion failed'));
+
+    await deleteUserAdmin(req, res);
+
+    expect(User.findByIdAndDelete).toHaveBeenCalledWith('1');
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.send).toHaveBeenCalledWith('Server Error.');
+  });
+});
+
+describe('deleteManyUsersAdmin()', () => {
+  beforeEach(() => {
+    req = {
+      body: {
+        ids: ['1', '2', '3'],
+      },
+    };
+    res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+      send: vi.fn(),
+    };
+  });
+
+  it('should delete multiple users and return a success message', async () => {
+    User.deleteMany = vi.fn().mockResolvedValue({ deletedCount: 3 });
+
+    await deleteManyUsersAdmin(req, res);
+
+    expect(User.deleteMany).toHaveBeenCalledWith({
+      _id: { $in: ['1', '2', '3'] },
+    });
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      message: 'Users deleted successfully.',
+    });
+  });
+
+  it('should throw with status code 500 and error message "Server Error." if deletion fails', async () => {
+    User.deleteMany = vi.fn().mockRejectedValue(new Error('Deletion failed'));
+
+    await deleteManyUsersAdmin(req, res);
+
+    expect(User.deleteMany).toHaveBeenCalledWith({
+      _id: { $in: ['1', '2', '3'] },
+    });
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.send).toHaveBeenCalledWith('Server Error.');
   });
 });
