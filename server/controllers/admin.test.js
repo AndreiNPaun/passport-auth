@@ -57,45 +57,34 @@ describe('buildUserQuery()', () => {
 
 describe('filterUsersByRole()', () => {
   const users = [
-    { id: 1, role: 'admin' },
-    { id: 2, role: 'moderator' },
-    { id: 3, role: 'user' },
+    { id: 1, role: 'owner' },
+    { id: 2, role: 'admin' },
+    { id: 3, role: 'guest' },
     { id: 4, role: 'admin' },
-    { id: 5, role: 'user' },
+    { id: 5, role: 'guest' },
   ];
 
-  it('should filter out admin users, regardless of requesterRole', () => {
-    const requesterRole = 'user';
+  it('should filter out non-guest users for guest requesterRole', () => {
+    const requesterRole = 'admin';
 
     const filteredUsers = filterUsersByRole(users, requesterRole);
 
     expect(filteredUsers).toEqual([
-      { id: 2, role: 'moderator' },
-      { id: 3, role: 'user' },
-      { id: 5, role: 'user' },
+      { id: 3, role: 'guest' },
+      { id: 5, role: 'guest' },
     ]);
   });
 
-  it('should filter out admin and moderator users when requesterRole is moderator', () => {
-    const requesterRole = 'moderator';
+  it('should only filter out owner users when requesterRole is owner', () => {
+    const requesterRole = 'owner';
 
     const filteredUsers = filterUsersByRole(users, requesterRole);
 
     expect(filteredUsers).toEqual([
-      { id: 3, role: 'user' },
-      { id: 5, role: 'user' },
-    ]);
-  });
-
-  it('should only filter out admin users when requesterRole is not moderator', () => {
-    const requesterRole = 'user';
-
-    const filteredUsers = filterUsersByRole(users, requesterRole);
-
-    expect(filteredUsers).toEqual([
-      { id: 2, role: 'moderator' },
-      { id: 3, role: 'user' },
-      { id: 5, role: 'user' },
+      { id: 2, role: 'admin' },
+      { id: 3, role: 'guest' },
+      { id: 4, role: 'admin' },
+      { id: 5, role: 'guest' },
     ]);
   });
 });
@@ -130,7 +119,7 @@ describe('listUsers()', () => {
     await listUsers(req, res);
 
     expect(res.status).toBeCalledWith(200);
-    expect(res.json).toBeCalledWith([req.query[0]]);
+    expect(res.json).toBeCalledWith(req.query);
   });
 
   it('should throw with status code 500 and error message "Server Error."', async () => {

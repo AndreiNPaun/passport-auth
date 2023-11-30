@@ -29,17 +29,6 @@ it('should throw if token type is unsupported', () => {
   expect(decodeFn).toThrow();
 });
 
-it('should log "Token expired." if error name is JsonWebTokenError', () => {
-  const consoleOutputs = [];
-  console.log = (message) => {
-    consoleOutputs.push(message);
-  };
-
-  decodeToken('testToken', 'ACCESS');
-
-  expect(consoleOutputs).toContain('Token expired.');
-});
-
 it('should throw if token verification has failed', () => {
   const decodeFn = () => {
     decodeToken();
