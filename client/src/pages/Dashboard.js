@@ -1,38 +1,46 @@
 import React, { Suspense } from 'react';
 
+import { useSelector } from 'react-redux';
 import { useLoaderData, defer, Await } from 'react-router-dom';
 import { Spinner, Center } from '@chakra-ui/react';
 
 import AccountManagement from '../components/AccountManagement/AccountManagement';
+import Login from '../components/Authentication/Login';
 import HttpRequest from '../utils/HttpRequest';
 import { TokenErrorComponent } from '../utils/TokenError';
 
-const AccountManagementPage = () => {
+const DashboardPage = () => {
+  const login = useSelector((state) => state.login.loginCheck);
   const { data } = useLoaderData();
 
   return (
-    <Suspense
-      fallback={
-        <Center>
-          <Spinner
-            mt={'20vh'}
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            color="blue.500"
-            size="xl"
-          />
-        </Center>
-      }
-    >
-      <Await resolve={data} errorElement={<TokenErrorComponent />}>
-        {(loadedData) => <AccountManagement userInfo={loadedData} />}
-      </Await>
-    </Suspense>
+    <>
+      {!login && <Login />}
+      {login && (
+        <Suspense
+          fallback={
+            <Center>
+              <Spinner
+                mt={'20vh'}
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                color="blue.500"
+                size="xl"
+              />
+            </Center>
+          }
+        >
+          <Await resolve={data} errorElement={<TokenErrorComponent />}>
+            {(loadedData) => <AccountManagement userInfo={loadedData} />}
+          </Await>
+        </Suspense>
+      )}
+    </>
   );
 };
 
-export default AccountManagementPage;
+export default DashboardPage;
 
 const loadedUserData = async () => {
   try {

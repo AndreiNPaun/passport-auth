@@ -244,7 +244,7 @@ const synchronizeAccount = async (req, res, next) => {
 
       redirectSync(req, res);
     } catch (error) {
-      res.status(401).redirect(`${process.env.CLIENT_URL}/account-management`);
+      res.status(401).redirect(`${process.env.CLIENT_URL}`);
     }
   }
   next();
