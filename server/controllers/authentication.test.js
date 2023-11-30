@@ -6,11 +6,11 @@ import {
   checkIfRecordExists,
   authErrorRedirect,
   setUserInformation,
+  setRoleForEmailDomain,
 } from './authentication';
 
 let givenName = 'John';
 let familyName = 'Doe';
-let role = 'guest';
 let providerType = 'google';
 let providerID = 1;
 let email = 'johndoe@gmail.com';
@@ -18,12 +18,13 @@ let email = 'johndoe@gmail.com';
 let req;
 let res;
 
+vi.stubEnv('EMAIL_DOMAIN', '@gmail.com');
+
 describe('functions used by both auth controllers', () => {
   it('should set user information into an object', () => {
     const userData = {
       givenName,
       familyName,
-      role,
       providerType,
       providerID,
       email,
@@ -33,7 +34,7 @@ describe('functions used by both auth controllers', () => {
 
     expect(setUserInfo.givenName).toBe('John');
     expect(setUserInfo.familyName).toBe('Doe');
-    expect(setUserInfo.role).toBe('guest');
+    expect(setUserInfo.role).toBe('admin');
     expect(setUserInfo.provider[providerType][0].email).toBe(
       'johndoe@gmail.com'
     );
@@ -45,7 +46,7 @@ describe('authenticateOrCreateAccount()', () => {
     User.findOne = vi.fn().mockReturnValueOnce({
       givenName,
       familyName,
-      role,
+      role: 'guest',
       provider: {
         [providerType]: {
           providerID,
@@ -65,6 +66,8 @@ describe('authenticateOrCreateAccount()', () => {
       providerID,
       email
     );
+
+    console.log('checkProviderExists', checkProviderExists);
 
     expect(checkProviderExists).not.toBeNull();
     expect(checkProviderExists.role).toBe('guest');
@@ -99,8 +102,6 @@ describe('authenticateOrCreateAccount()', () => {
 
     const checkRecordExists = await checkIfRecordExists(providerID, email);
 
-    console.log('checkRecordExists', checkRecordExists);
-
     expect(checkRecordExists.provider.google[0].email).toBe(
       'johndoe@gmail.com'
     );
@@ -120,5 +121,19 @@ describe('authenticateOrCreateAccount()', () => {
     expect(req.user.error.error).toBe(
       'Provider account is already linked to another account.'
     );
+  });
+
+  it('should set role to admin if email domain is @gmail.com', () => {
+    const role = setRoleForEmailDomain(email);
+
+    expect(role).toBe('admin');
+  });
+
+  it('should set role to guest if email domain is not @gmail.com', () => {
+    email = 'johndoe@test.com';
+
+    const role = setRoleForEmailDomain(email);
+
+    expect(role).toBe('guest');
   });
 });
