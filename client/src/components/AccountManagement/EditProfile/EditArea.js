@@ -48,8 +48,9 @@ const EditArea = ({ userData, showFormHandler }) => {
                 Personal Information
               </Text>
               <Text mt="1rem">
-                This section contains private user data. Ensure accuracy and
-                confidentiality.
+                The details in this area are sensitive and should be handled
+                with care. Please verify that all information is correct and
+                maintain strict privacy at all times.
               </Text>
             </Box>
           )}

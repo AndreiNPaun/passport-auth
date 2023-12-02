@@ -40,9 +40,9 @@ const ProviderArea = () => {
       )}
       <Center>
         <Card
-          m={['1rem', '2rem 1rem 0']} // Adjusted for responsive spacing
-          maxW={['90%', '70%', '60%']} // Adjusted for responsive width
-          w="100%" // Ensure the Card takes the full width on smaller screens
+          m={is1130 ? '2rem auto 0 auto' : '1rem auto'}
+          maxW={is1130 ? '60%' : '90%'}
+          w="100%"
           overflow="hidden"
         >
           <Grid templateColumns="30% 70%" gap="1rem">
@@ -52,12 +52,12 @@ const ProviderArea = () => {
                   Connections
                 </Text>
                 <Text mt="1rem">
-                  List of existing connections and platforms yet to be connected
-                  with&nbsp;
+                  Below is a comprehensive overview of your current integrations
+                  and potential platforms that can be linked with&nbsp;
                   <Box as="span" fontWeight="600" color="blue.500">
                     {process.env.REACT_APP_NAME}
                   </Box>
-                  .
+                  . Explore and manage your connectivity options.
                 </Text>
               </Box>
             )}

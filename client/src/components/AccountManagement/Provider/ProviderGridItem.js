@@ -46,6 +46,7 @@ const ProviderGridItem = ({
       templateRows="auto auto auto"
       gap="1rem"
       mb="1.5rem"
+      ml="2.5rem"
       alignItems="center"
       p="1rem"
       bg="white"
