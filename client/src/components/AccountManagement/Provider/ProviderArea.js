@@ -38,8 +38,13 @@ const ProviderArea = () => {
           <ProviderList providerName={providerName} />
         </Modal>
       )}
-      <Center ml="-1rem">
-        <Card m="1rem" maxW={is1130 ? '59%' : '70%'}>
+      <Center>
+        <Card
+          m={is1130 ? '2rem auto 0 auto' : '1rem auto'}
+          maxW={is1130 ? '60%' : '90%'}
+          w="100%"
+          overflow="hidden"
+        >
           <Grid templateColumns="30% 70%" gap="1rem">
             {is1130 && (
               <Box p="1rem" borderRight="1px solid" borderColor="gray.300">
@@ -47,12 +52,12 @@ const ProviderArea = () => {
                   Connections
                 </Text>
                 <Text mt="1rem">
-                  List of existing connections and platforms yet to be connected
-                  with&nbsp;
+                  Below is a comprehensive overview of your current integrations
+                  and potential platforms that can be linked with&nbsp;
                   <Box as="span" fontWeight="600" color="blue.500">
                     {process.env.REACT_APP_NAME}
                   </Box>
-                  .
+                  . Explore and manage your connectivity options.
                 </Text>
               </Box>
             )}

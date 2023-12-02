@@ -40,7 +40,7 @@ const EditArea = ({ userData, showFormHandler }) => {
 
   return (
     <Center>
-      <Card m="3rem 1rem 0 0" maxW={is1130 ? '60%' : '80%'} overflow="hidden">
+      <Card m="3rem 1rem 0" w={is1130 ? '60%' : '90%'} overflow="hidden">
         <Grid templateColumns={is1130 ? '30% 70%' : '100%'} gap="1rem">
           {is1130 && (
             <Box p="1rem" borderRight="1px solid" borderColor="gray.300">
@@ -48,8 +48,9 @@ const EditArea = ({ userData, showFormHandler }) => {
                 Personal Information
               </Text>
               <Text mt="1rem">
-                This section contains private user data. Ensure accuracy and
-                confidentiality.
+                The details in this area are sensitive and should be handled
+                with care. Please verify that all information is correct and
+                maintain strict privacy at all times.
               </Text>
             </Box>
           )}
