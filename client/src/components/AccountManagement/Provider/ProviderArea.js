@@ -38,8 +38,13 @@ const ProviderArea = () => {
           <ProviderList providerName={providerName} />
         </Modal>
       )}
-      <Center ml="-1rem">
-        <Card m="1rem" maxW={is1130 ? '59%' : '70%'}>
+      <Center>
+        <Card
+          m={['1rem', '2rem 1rem 0']} // Adjusted for responsive spacing
+          maxW={['90%', '70%', '60%']} // Adjusted for responsive width
+          w="100%" // Ensure the Card takes the full width on smaller screens
+          overflow="hidden"
+        >
           <Grid templateColumns="30% 70%" gap="1rem">
             {is1130 && (
               <Box p="1rem" borderRight="1px solid" borderColor="gray.300">

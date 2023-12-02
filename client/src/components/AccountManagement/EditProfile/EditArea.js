@@ -40,7 +40,7 @@ const EditArea = ({ userData, showFormHandler }) => {
 
   return (
     <Center>
-      <Card m="3rem 1rem 0 0" maxW={is1130 ? '60%' : '80%'} overflow="hidden">
+      <Card m="3rem 1rem 0" w={is1130 ? '60%' : '90%'} overflow="hidden">
         <Grid templateColumns={is1130 ? '30% 70%' : '100%'} gap="1rem">
           {is1130 && (
             <Box p="1rem" borderRight="1px solid" borderColor="gray.300">
