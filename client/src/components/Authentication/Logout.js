@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 
 import { unsetToken } from '../../store/action/login';
 
-const Logout = () => {
+const Logout = (props) => {
   const dispatch = useDispatch();
 
   const logoutUser = () => {
@@ -17,8 +17,8 @@ const Logout = () => {
       as={RouterLink}
       to="/"
       textDecoration="none"
-      color="gray.700"
-      padding="8px 12px"
+      color={props.color ? props.color : 'gray.700'}
+      padding="0 1rem"
       borderRadius="4px"
       transition="color 0.3s ease"
       _hover={{

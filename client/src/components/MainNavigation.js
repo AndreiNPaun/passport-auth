@@ -1,21 +1,10 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import {
-  Flex,
-  Box,
-  Link,
-  Text,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  IconButton,
-  useMediaQuery,
-} from '@chakra-ui/react';
-import { HamburgerIcon } from '@chakra-ui/icons';
+import { Flex, Box, Link, Text, useMediaQuery } from '@chakra-ui/react';
 
 import Logout from '../components/Authentication/Logout';
+import HamburgerMenu from './UI/HamburgerMenu';
 
 const MainNavigation = () => {
   const login = useSelector((state) => state.login.loginCheck);
@@ -56,27 +45,7 @@ const MainNavigation = () => {
           <Logout />
         </Box>
       ) : (
-        <Menu>
-          <MenuButton
-            as={IconButton}
-            aria-label="Options"
-            icon={<HamburgerIcon />}
-            variant="outline"
-          />
-          <MenuList zIndex={1000}>
-            {role && (role === 'owner' || role === 'admin') && (
-              <MenuItem as={RouterLink} to="admin-dashboard">
-                Admin Dashboard
-              </MenuItem>
-            )}
-            <MenuItem as={RouterLink} to="">
-              My Account
-            </MenuItem>
-            <MenuItem>
-              <Logout />
-            </MenuItem>
-          </MenuList>
-        </Menu>
+        <HamburgerMenu role={role} />
       )}
     </Flex>
   );
