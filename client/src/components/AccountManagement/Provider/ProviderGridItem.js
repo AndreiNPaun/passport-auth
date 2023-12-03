@@ -46,7 +46,7 @@ const ProviderGridItem = ({
       templateRows="auto auto auto"
       gap="1rem"
       mb="1.5rem"
-      ml="2.5rem"
+      ml="130%"
       alignItems="center"
       p="1rem"
       bg="white"
@@ -60,10 +60,15 @@ const ProviderGridItem = ({
       <CustomButton
         onClick={() => authorizationFunction(true)}
         gridColumn="span 2"
+        w="10rem"
       >
         Add
       </CustomButton>
-      <CustomButton onClick={() => onShowList(name)} gridColumn="span 3">
+      <CustomButton
+        onClick={() => onShowList(name)}
+        gridColumn="span 3"
+        w="10rem"
+      >
         See Connections
       </CustomButton>
     </Grid>
