@@ -69,6 +69,21 @@ const listUserProvider = async (req, res, next) => {
   }
 };
 
+const providerAccountsNumber = async (_id) => {
+  const user = await User.findOne({ _id });
+
+  const providers = ['google', 'github', 'microsoft', 'linkedin'];
+
+  let totalLinkedAccounts = 0;
+  providers.forEach((provider) => {
+    if (user.provider[provider] && Array.isArray(user.provider[provider])) {
+      totalLinkedAccounts += user.provider[provider].length;
+    }
+  });
+
+  return totalLinkedAccounts;
+};
+
 const deleteProvider = async (req, res, next) => {
   const _id = convertIDToObjectID(req.userID);
 
@@ -76,6 +91,17 @@ const deleteProvider = async (req, res, next) => {
   const providerType = req.body.providerType.toLowerCase();
 
   try {
+    const totalLinkedAccounts = await providerAccountsNumber(_id);
+
+    // Check if the user has only one provider
+    if (totalLinkedAccounts <= 1) {
+      return res
+        .status(400)
+        .send(
+          'Cannot delete linked provider as it is the only one linked to the account.'
+        );
+    }
+
     await User.updateOne(
       { _id },
       { $pull: { [`provider.${providerType}`]: { id: providerID } } }
@@ -83,6 +109,7 @@ const deleteProvider = async (req, res, next) => {
 
     res.status(200).send('Provider connection removed successfully.');
   } catch (error) {
+    console.log('err', error);
     res.status(500).send('Server Error.');
   }
 };
@@ -103,6 +130,7 @@ module.exports = {
   getEditProfile,
   postEditProfile,
   listUserProvider,
+  providerAccountsNumber,
   deleteProvider,
   deleteAccount,
 };

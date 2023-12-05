@@ -64,9 +64,18 @@ const ProviderList = ({ providerName }) => {
           (data) => data.id !== providerID
         );
         setUserData(updatedUserData);
+
+        window.alert('Connection deleted.');
       } catch (error) {
-        TokenErrorFunction(dispatch, navigate);
+        if (error.response.status === 400) {
+          window.alert(
+            'You cannot delete this provider as this is the only connection associated to this account. Add another conection if you wish to delete this one.'
+          );
+        } else {
+          TokenErrorFunction(dispatch, navigate);
+        }
       }
+    } else {
     }
   };
 

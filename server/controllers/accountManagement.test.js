@@ -6,6 +6,7 @@ import {
   getEditProfile,
   postEditProfile,
   listUserProvider,
+  providerAccountsNumber,
   deleteProvider,
   deleteAccount,
 } from './accountManagement';
@@ -153,6 +154,22 @@ describe('listUserProvider()', () => {
 
     expect(res.status).toBeCalledWith(500);
     expect(res.send).toBeCalledWith('Server Error.');
+  });
+});
+
+describe('providerAccountsNumber()', () => {
+  it('should return the total number of linked accounts', async () => {
+    User.findOne = vi.fn().mockResolvedValue({
+      provider: {
+        google: [{}],
+        github: [{}],
+        microsoft: [],
+        linkedin: [{}],
+      },
+    });
+
+    const total = await providerAccountsNumber('someId');
+    expect(total).toBe(3);
   });
 });
 

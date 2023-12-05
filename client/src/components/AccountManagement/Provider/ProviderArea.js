@@ -61,7 +61,7 @@ const ProviderArea = () => {
                 </Text>
               </Box>
             )}
-            <Box p="2rem">
+            <Box p="2rem" mt="1rem">
               {[
                 {
                   color: '#0078D4',
