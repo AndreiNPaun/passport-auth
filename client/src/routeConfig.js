@@ -30,6 +30,10 @@ const routerConfig = [
         path: 'admin-dashboard',
         element: <AdminDashboardPage />,
       },
+      {
+        path: 'github-proxy-server',
+        element: <GitHubProxyPage />,
+      },
     ],
   },
 ];

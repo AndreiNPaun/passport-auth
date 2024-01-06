@@ -42,6 +42,13 @@ const MainNavigation = () => {
           <Link m="0 1rem" as={RouterLink} to="">
             My Account
           </Link>
+          <Link
+            m="0 1rem"
+            as={RouterLink}
+            to="github-proxy-server?url=github.com"
+          >
+            GitHub
+          </Link>
           <Logout />
         </Box>
       ) : (
