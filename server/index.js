@@ -9,8 +9,8 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 // Read the certificate and key
-const privateKey = fs.readFileSync(process.env.CERTIFICATE_PATH, 'utf8');
-const certificate = fs.readFileSync(process.env.PRIVATE_KEY_PATH, 'utf8');
+const privateKey = fs.readFileSync(process.env.PRIVATE_KEY_PATH, 'utf8');
+const certificate = fs.readFileSync(process.env.CERTIFICATE_PATH, 'utf8');
 
 const credentials = { key: privateKey, cert: certificate };
 

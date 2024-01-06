@@ -5,7 +5,6 @@ import EditArea from './EditProfile/EditArea';
 import ProviderArea from './Provider/ProviderArea';
 
 const AccountManagement = ({ userInfo }) => {
-  console.log(userInfo);
   const [userData, setUserData] = useState(userInfo);
   const [isFormOpen, setIsFormOpen] = useState(false);
 

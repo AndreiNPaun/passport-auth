@@ -12,7 +12,7 @@ const DashboardPage = () => {
     if (role !== 'owner' && role !== 'admin') {
       navigate('/');
     }
-  }, []);
+  }, [role, navigate]);
 
   return <Dashboard />;
 };

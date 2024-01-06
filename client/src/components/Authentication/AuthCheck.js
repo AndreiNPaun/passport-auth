@@ -22,7 +22,7 @@ const AuthCheck = () => {
     } catch (error) {
       navigate('/');
     }
-  }, []);
+  }, [dispatch, navigate]);
 };
 
 export default AuthCheck;

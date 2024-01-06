@@ -20,7 +20,7 @@ const FailedTokenValidity = () => {
     } catch (error) {
       navigate('/');
     }
-  }, []);
+  }, [dispatch, navigate]);
 };
 
 export default FailedTokenValidity;

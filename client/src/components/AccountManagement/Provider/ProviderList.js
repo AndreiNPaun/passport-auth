@@ -45,7 +45,7 @@ const ProviderList = ({ providerName }) => {
         TokenErrorFunction(dispatch, navigate);
       }
     })();
-  }, []);
+  }, [dispatch, navigate, providerName]);
 
   const deleteConnectionHandler = async (providerID, providerType) => {
     const proceed = window.confirm(

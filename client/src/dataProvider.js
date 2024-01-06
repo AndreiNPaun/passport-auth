@@ -1,6 +1,6 @@
 import HttpRequest from './utils/HttpRequest';
 
-export default {
+const dataProvider = {
   getList: async (resource, params) => {
     try {
       const url = new URL(
@@ -98,3 +98,5 @@ export default {
     }
   },
 };
+
+export default dataProvider;
