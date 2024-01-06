@@ -19,6 +19,7 @@ const authRoute = require('./routes/authentication');
 const accountManagementRoute = require('./routes/accountManagement');
 const adminRoute = require('./routes/admin');
 const passport = require('./middleware/passport');
+const proxyServerRoute = require('./routes/proxyServer');
 
 mongoose.connect(process.env.MONGODB_URL, {
   useNewUrlParser: true,
@@ -58,6 +59,7 @@ app.get('/', (req, res) => {
 app.use('/', authRoute);
 app.use('/account-management/', accountManagementRoute);
 app.use('/admin/', adminRoute);
+app.use('/proxy-server', proxyServerRoute);
 
 // Create the HTTPS server
 const httpsServer = https.createServer(credentials, app);

@@ -8,6 +8,7 @@ import DashboardPage, {
 import NoEmailMessage from './components/Authentication/SubmitAccount/NoEmailMessage.js';
 import FailedTokenValidityPage from './pages/Checks/FailedTokenValidity.js';
 import AdminDashboardPage from './pages/Admin/Dashboard.js';
+import GitHubProxyPage from './pages/GitHubProxy.js';
 
 const routerConfig = [
   {
